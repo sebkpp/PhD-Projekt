@@ -2,7 +2,7 @@ using UnityEngine;
 namespace Managers
 
 {
-    public class Spawner : MonoBehaviour, IPlayerJoined, IPlayerLeft
+    public class Spawner : MonoBehaviour, IPlayerJoined, IPlayerLeft //Besser INetworkRunnerCallbacks
 
     /*[SerializeField] private unserPlayerPrefab playerPrefab;
     [Networked, Capacity(2)] private NetworkDic<PlayerRef, Player> Players => default;
