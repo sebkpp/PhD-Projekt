@@ -1,41 +1,46 @@
 using UnityEngine;
 namespace Managers
 
-{
-    public class Spawner : MonoBehaviour, IPlayerJoined, IPlayerLeft //Besser INetworkRunnerCallbacks
+using Fusion;
+using UnityEngine;
 
-    /*[SerializeField] private unserPlayerPrefab playerPrefab;
-    [Networked, Capacity(2)] private NetworkDic<PlayerRef, Player> Players => default;
+public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
+{
+    [SerializeField] private GameObject avatarPrefab;
+
+    private void Start()
     {
-        //toDo: Behaviour anpassen/recherchieren, evt. SimulationBehaviour. Was brauchen wir hier?
-        //toDo: welche Felder braucht es hier? 
+        var runner = ConnectionManager.Instance.GetRunner();
+        runner.AddCallbacks(this);
     }
 
-    
-    nur Host soll Spwanen erlauben
-     private void PlayerJoined(PlayerRef player)
-     {
-        if (HasStateAuthority)
+    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+    {
+        Debug.Log($"Spieler {player} ist beigetreten.");
+
+        if (runner.IsServer)
         {
-            NetworkObject playerObject = Runner.Spawn(unserPlayerPrefab, Vector3.up, Quaternion.identity, player)
-            Players.Add(player, playerObject.GetComponent<Player>());
+            Vector3 spawnPosition = new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5));
+            runner.Spawn(avatarPrefab, spawnPosition, Quaternion.identity, player);
         }
-     }
+    }
 
+    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+    {
+        Debug.Log($"Spieler {player} hat die Sitzung verlassen.");
+    }
 
-     private void PlayerLeft(PlayerRef player)
-     {
-        if (!HasStateAuthority)
-            return;
-
-        if(Players.TryGet(plyer, out Player playerBehaviour))
-        {
-            Players.remove(player);
-            Runner.Despawn(playerBehaviour.Object);
-        }
-     }
-
-     
-     private Vector3 GetSpawnPosition()
-     */
+    // Weitere Callbacks können hier hinzugefügt werden
+    public void OnInput(NetworkRunner runner, NetworkInput input) { }
+    public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
+    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
+    public void OnDisconnectedFromServer(NetworkRunner runner) { }
+    public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
+    public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
+    public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
+    public void OnSessionListUpdated(NetworkRunner runner, System.Collections.Generic.List<SessionInfo> sessionList) { }
+    public void OnCustomAuthenticationResponse(NetworkRunner runner, System.Collections.Generic.IDictionary<string, object> data) { }
+    public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data) { }
+    public void OnSceneLoadStart(NetworkRunner runner) { }
+    public void OnSceneLoadDone(NetworkRunner runner) { }
 }
