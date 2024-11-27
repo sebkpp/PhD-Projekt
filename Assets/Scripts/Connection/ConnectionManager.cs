@@ -24,7 +24,6 @@ public class ConnectionManager : MonoBehaviour
 
     private async void Start()
     {
-        // Startet die Verbindung
         networkRunner = gameObject.AddComponent<NetworkRunner>();
         networkRunner.ProvideInput = true;
 
