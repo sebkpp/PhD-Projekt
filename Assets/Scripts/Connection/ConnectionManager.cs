@@ -1,178 +1,270 @@
-using Fusion;
-using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
+using Fusion;
+using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ConnectionManager : MonoBehaviour
+namespace Connection
 {
-    public static ConnectionManager Instance;
-
-    private NetworkRunner networkRunner;
-    private Dictionary<PlayerRef, GameObject> playerAvatars = new Dictionary<PlayerRef, GameObject>();
-
-    public event Action<PlayerRef> OnPlayerJoinedEvent;
-    public event Action<PlayerRef> OnPlayerLeftEvent;
-    public event Action<string> OnNetworkErrorEvent;
-
-    private void Awake()
+    public class ConnectionManager : MonoBehaviour, INetworkRunnerCallbacks
     {
-        if (Instance == null)
+        public static ConnectionManager Instance;
+
+        private NetworkRunner _runner;
+        private Dictionary<PlayerRef, GameObject> _playerAvatars = new Dictionary<PlayerRef, GameObject>();
+
+        public event Action<PlayerRef> OnPlayerJoinedEvent;
+        public event Action<PlayerRef> OnPlayerLeftEvent;
+        public event Action<string> OnNetworkErrorEvent;
+
+        private void Awake()
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
+            // Check if a runner exist on the same game object
+            if (_runner == null) _runner = GetComponent<NetworkRunner>();
+
+            // Create the Fusion runner and let it know that we will be providing user input
+            if (_runner == null) _runner = gameObject.AddComponent<NetworkRunner>();
+            //runner.ProvideInput = true;
         }
-        else
+
+
+        private async void Start()
         {
-            Destroy(gameObject);
-        }
-    }
+            _runner = gameObject.AddComponent<NetworkRunner>();
+            _runner.ProvideInput = true;
 
-    private async void Start()
-    {
-        networkRunner = gameObject.AddComponent<NetworkRunner>();
-        networkRunner.ProvideInput = true;
+            OnPlayerJoined(_runner, new PlayerRef()); 
+            OnPlayerLeft(_runner, new PlayerRef()); 
 
-        networkRunner.SessionListUpdated += OnSessionListUpdated;
-        networkRunner.PlayerJoined += OnPlayerJoined;
-        networkRunner.PlayerLeft += OnPlayerLeft;
+            // Attempt to join or start a session
+            var startResult = await _runner.StartGame(new StartGameArgs
+            {
+                GameMode = GameMode.AutoHostOrClient,   // Game mode determines host/client role
+                SessionName = "AvatarSession"         // Session name
+                
+            });
 
-        var joinResult = await networkRunner.JoinSessionLobby(SessionLobby.ClientServer);
-
-        if (!joinResult.Ok)
-        {
-            Debug.LogWarning("Keine Sitzung gefunden. Erstelle neue Sitzung...");
+            if (startResult.Ok) return;
+            Debug.LogWarning("No session found. Creating a new session...");
             StartSession();
         }
-    }
 
-    private async void StartSession()
-    {
-        var startResult = await networkRunner.StartGame(new StartGameArgs
+        private async void StartSession()
         {
-            GameMode = GameMode.AutoHostOrClient,
-            SessionName = "AvatarSession",
-            Scene = SceneManager.GetActiveScene().buildIndex
-        });
+            var startResult = await _runner.StartGame(new StartGameArgs
+            {
+                GameMode = GameMode.AutoHostOrClient,
+                SessionName = "AvatarSession"
+            });
 
-        if (startResult.Ok)
-        {
-            Debug.Log("Sitzung erfolgreich gestartet!");
+            if (startResult.Ok)
+            {
+                Debug.Log("Session successfully started!");
+            }
+            else
+            {
+                Debug.LogError($"Network error: {startResult.ShutdownReason}");
+                OnNetworkErrorEvent?.Invoke(startResult.ShutdownReason.ToString());
+            }
         }
-        else
+
+        private void HandlePlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-            Debug.LogError($"Netzwerkfehler: {startResult.ShutdownReason}");
-            OnNetworkErrorEvent?.Invoke(startResult.ShutdownReason.ToString());
+            Debug.Log($"Player {player.PlayerId} has joined!");
+            OnPlayerJoinedEvent?.Invoke(player);
+        }
+
+        private void HandlePlayerLeft(NetworkRunner runner, PlayerRef player)
+        {
+            Debug.Log($"Player {player.PlayerId} has left.");
+            if (_playerAvatars.ContainsKey(player))
+            {
+                Destroy(_playerAvatars[player]);
+                _playerAvatars.Remove(player);
+            }
+
+            OnPlayerLeftEvent?.Invoke(player);
+        }
+
+        public void RegisterAvatar(PlayerRef player, GameObject avatar)
+        {
+            if (!_playerAvatars.ContainsKey(player))
+            {
+                _playerAvatars[player] = avatar;
+            }
+        }
+
+        public GameObject GetAvatar(PlayerRef player)
+        {
+            return _playerAvatars.TryGetValue(player, out var avatar) ? avatar : null;
+        }
+
+        public async void LoadScene(string sceneName)
+        {
+            int sceneIndex = SceneManager.GetSceneByName(sceneName).buildIndex;
+
+            if (_runner.IsServer)
+            {
+                Debug.Log($"Switching to scene: {sceneName}");
+                
+            }
+            else
+            {
+                Debug.LogWarning("Only the host can change scenes.");
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (_runner != null)
+            {
+                OnPlayerJoined(_runner, new PlayerRef()); 
+                OnPlayerLeft(_runner, new PlayerRef()); 
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (_runner != null)
+            {
+                _runner.Shutdown();
+            }
+        }
+
+        public NetworkRunner GetRunner()
+        {
+            return _runner;
+        }
+        
+        public virtual NetworkSceneInfo CurrentSceneInfo()
+        {
+            var activeScene = SceneManager.GetActiveScene();
+            SceneRef sceneRef = default;
+
+            if (activeScene.buildIndex < 0 || activeScene.buildIndex >= SceneManager.sceneCountInBuildSettings)
+            {
+                Debug.LogError("Current scene is not part of the build settings");
+            }
+            else
+            {
+                sceneRef = SceneRef.FromIndex(activeScene.buildIndex);
+            }
+
+            var sceneInfo = new NetworkSceneInfo();
+            if (sceneRef.IsValid)
+            {
+                sceneInfo.AddSceneRef(sceneRef, LoadSceneMode.Single);
+            }
+            return sceneInfo;
+        }
+
+        
+        
+        #region INetworkRunnerCallbacks
+        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) { }
+     
+        
+        public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
+        #endregion
+
+        #region INetworkRunnerCallbacks (debug log only)
+        public void OnConnectedToServer(NetworkRunner runner)
+        {
+            Debug.Log("<color=#ADD8E6>[Network]</color> OnConnectedToServer");
+
+        }
+        public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
+        {
+            Debug.Log("<color=#ADD8E6>[Network]</color> Shutdown: " + shutdownReason);
+        }
+        public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
+        {
+            Debug.Log("<color=#ADD8E6>[Network]</color> OnDisconnectedFromServer: " + reason);
+        }
+        public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
+        {
+            Debug.Log("<color=#ADD8E6>[Network]</color> OnConnectFailed: " + reason);
+        }
+        #endregion
+
+
+
+        public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
+        {
+            throw new NotImplementedException();
+        }
+        
+
+        public void OnInput(NetworkRunner runner, NetworkInput input)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
+        {
+            throw new NotImplementedException();
+        }
+        
+
+        public void OnConnectedToServer()
+        {
+            throw new NotImplementedException();
+        }
+        
+
+        public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
+        {
+            throw new NotImplementedException();
+        }
+        
+
+        public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnSceneLoadDone(NetworkRunner runner)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnSceneLoadStart(NetworkRunner runner)
+        {
+            throw new NotImplementedException();
         }
     }
-
-    private void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
-    {
-        Debug.Log($"Spieler {player.PlayerId} ist beigetreten!");
-        OnPlayerJoinedEvent?.Invoke(player);
-    }
-
-    private void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
-    {
-        Debug.Log($"Spieler {player.PlayerId} hat das Spiel verlassen.");
-        if (playerAvatars.ContainsKey(player))
-        {
-            Destroy(playerAvatars[player]);
-            playerAvatars.Remove(player);
-        }
-        OnPlayerLeftEvent?.Invoke(player);
-    }
-
-    private void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
-    {
-        Debug.Log("Sitzungsliste aktualisiert.");
-        if (sessionList.Count > 0)
-        {
-            Debug.Log($"Beitreten zu Sitzung {sessionList[0].Name}");
-            networkRunner.JoinSession(sessionList[0]);
-        }
-        else
-        {
-            Debug.Log("Keine Sitzung gefunden.");
-        }
-    }
-
-    public void RegisterAvatar(PlayerRef player, GameObject avatar)
-    {
-        if (!playerAvatars.ContainsKey(player))
-        {
-            playerAvatars[player] = avatar;
-        }
-    }
-
-    public GameObject GetAvatar(PlayerRef player)
-    {
-        return playerAvatars.TryGetValue(player, out var avatar) ? avatar : null;
-    }
-
-    public async void LoadScene(string sceneName)
-    {
-        int sceneIndex = SceneManager.GetSceneByName(sceneName).buildIndex;
-
-        if (networkRunner.IsServer)
-        {
-            Debug.Log($"Wechsel zur Szene: {sceneName}");
-            await networkRunner.SetActiveScene(sceneIndex);
-        }
-        else
-        {
-            Debug.LogWarning("Nur der Host kann Szenen wechseln.");
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (networkRunner != null)
-        {
-            networkRunner.SessionListUpdated -= OnSessionListUpdated;
-            networkRunner.PlayerJoined -= OnPlayerJoined;
-            networkRunner.PlayerLeft -= OnPlayerLeft;
-        }
-    }
-
-    private void OnDisable()
-    {
-        if (networkRunner != null)
-        {
-            networkRunner.Shutdown();
-        }
-    }
-
-    public NetworkRunner GetRunner()
-    {
-        return networkRunner;
-    }
-
-    private void OnInput(NetworkRunner runner, NetworkInput input)
-    {
-        VRPlayerInput vrInput = new VRPlayerInput
-        {
-            HeadPosition = VRInputManager.HeadPosition,
-            HeadRotation = VRInputManager.HeadRotation,
-            LeftHandPosition = VRInputManager.LeftHandPosition,
-            LeftHandRotation = VRInputManager.LeftHandRotation,
-            RightHandPosition = VRInputManager.RightHandPosition,
-            RightHandRotation = VRInputManager.RightHandRotation,
-            IsGrabbing = VRInputManager.IsGrabbing
-        };
-
-        input.Set(vrInput);
-    }
+    
 }
 
-public struct VRPlayerInput : INetworkInput
-{
-    public Vector3 HeadPosition;
-    public Quaternion HeadRotation;
-    public Vector3 LeftHandPosition;
-    public Quaternion LeftHandRotation;
-    public Vector3 RightHandPosition;
-    public Quaternion RightHandRotation;
-    public bool IsGrabbing;
-}
+
