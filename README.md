@@ -10,7 +10,7 @@ SSH: git@gitlab.rz.htw-berlin.de:s0583646/projekt_ws24.git
 We use
 Rider for writing scripts in C# and integration with Unity: https://www.jetbrains.com/rider/
 Unity Editor version 6000.0.24f1
-App-ID zum starten von Photon-Fusio 5c77e000-f752-43ad-996a-25c8149edcf6
+App-ID zum starten von Photon-Fusion 5c77e000-f752-43ad-996a-25c8149edcf6
 
 ## Add your files
 ```
