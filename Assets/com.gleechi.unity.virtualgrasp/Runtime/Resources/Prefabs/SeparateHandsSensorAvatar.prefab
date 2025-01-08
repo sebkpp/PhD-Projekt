@@ -48,7 +48,7 @@ MonoBehaviour:
   m_avatars:
   - m_skeletalMesh: {fileID: 8917928143225620111}
     m_primarySensorSetup:
-      m_profile: {fileID: 11400000, guid: 9b469b2901cb13d4ea79de0becbc377a, type: 2}
+      m_profile: {fileID: 11400000, guid: fcbaf992ebf1a4d4fadfca70ac217ed2, type: 2}
       m_origin: {fileID: 7348614397281727259}
     m_secondarySensorSetup:
       m_profile: {fileID: 0}
