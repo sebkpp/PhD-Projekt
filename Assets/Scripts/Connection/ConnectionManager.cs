@@ -11,7 +11,7 @@ namespace Connection
     {
         public static ConnectionManager Instance;
 
-        private NetworkRunner _runner;
+        [SerializeField] private NetworkRunner _runner;
         private Dictionary<PlayerRef, GameObject> _playerAvatars = new Dictionary<PlayerRef, GameObject>();
 
         public event Action<PlayerRef> OnPlayerJoinedEvent;
@@ -31,11 +31,11 @@ namespace Connection
 
         private async void Start()
         {
-            _runner = gameObject.AddComponent<NetworkRunner>();
-            _runner.ProvideInput = true;
+            //_runner = gameObject.AddComponent<NetworkRunner>();
+            //_runner.ProvideInput = true;
 
-            OnPlayerJoined(_runner, new PlayerRef()); 
-            OnPlayerLeft(_runner, new PlayerRef()); 
+            //OnPlayerJoined(_runner, new PlayerRef()); 
+            //OnPlayerLeft(_runner, new PlayerRef()); 
 
             // Attempt to join or start a session
             var startResult = await _runner.StartGame(new StartGameArgs
