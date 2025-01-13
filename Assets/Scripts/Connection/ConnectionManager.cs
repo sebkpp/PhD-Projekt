@@ -7,17 +7,19 @@ using UnityEngine.SceneManagement;
 
 namespace Connection
 {
+    [RequireComponent(typeof(NetworkRunner))]
     public class ConnectionManager : MonoBehaviour, INetworkRunnerCallbacks
     {
-        public static ConnectionManager Instance;
-
         [SerializeField] private NetworkRunner _runner;
-        private Dictionary<PlayerRef, GameObject> _playerAvatars = new Dictionary<PlayerRef, GameObject>();
+        [SerializeField] private NetworkObject _avatarPrefab;
+        [SerializeField] private Transform _spawnPoint;
 
-        public event Action<PlayerRef> OnPlayerJoinedEvent;
-        public event Action<PlayerRef> OnPlayerLeftEvent;
-        public event Action<string> OnNetworkErrorEvent;
-
+        [SerializeField] private GameMode _gameMode = GameMode.Shared;
+        [SerializeField] private string _room = "OP";
+        [SerializeField] private bool _connectOnStart = true;
+        
+        private Dictionary<PlayerRef, NetworkObject> _spawnedAvatars = new Dictionary<PlayerRef, NetworkObject>();
+        
         private void Awake()
         {
             // Check if a runner exist on the same game object
