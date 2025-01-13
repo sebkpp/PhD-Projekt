@@ -22,15 +22,12 @@ namespace Connection
         
         private void Awake()
         {
-            // Check if a runner exist on the same game object
-            if (_runner == null) _runner = GetComponent<NetworkRunner>();
-
-            // Create the Fusion runner and let it know that we will be providing user input
+            // Check: existiert Runner?
+            _runner = GetComponent<NetworkRunner>();
             if (_runner == null) _runner = gameObject.AddComponent<NetworkRunner>();
-            //runner.ProvideInput = true;
+            _runner.ProvideInput = true;
         }
-
-
+        
         private async void Start()
         {
             //_runner = gameObject.AddComponent<NetworkRunner>();
