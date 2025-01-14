@@ -69,6 +69,30 @@ namespace Connection
             }
             return sceneInfo;
         }
+
+        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+        {
+            Debug.Log($"$Player {player.PlayerId} joined");
+            
+            // spawn avatar for local player
+            if (player == runner.LocalPlayer)
+            {
+                Vector3 spawnPosition = _spawnPoint != null ? _spawnPoint.position : Vector3.up * 2;
+                Quaternion spawnRotation = _spawnPoint != null ? _spawnPoint.rotation : Quaternion.identity;
+                NetworkObject networkPlayerObject = runner.Spawn(_avatarPrefab, spawnPosition, spawnRotation, player);
+                networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
+                
+                _spawnedAvatars.Add(player, networkPlayerObject);
+                
+                Debug.Log($"Spawned local avatar for player {player.PlayerId}");
+            }
+        }
+
+        //ToDo: Methode implementieren
+        public void OnPlayerLeft()
+        {
+            
+        }
         
         /*private async void StartSession()
         {
@@ -162,7 +186,7 @@ namespace Connection
         
         
         #region INetworkRunnerCallbacks
-        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) { }
+        // public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) { }
      
         
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
