@@ -30,26 +30,25 @@ namespace Connection
         
         private async void Start()
         {
-            //_runner = gameObject.AddComponent<NetworkRunner>();
-            //_runner.ProvideInput = true;
-
-            //OnPlayerJoined(_runner, new PlayerRef()); 
-            //OnPlayerLeft(_runner, new PlayerRef()); 
-
-            // Attempt to join or start a session
-            var startResult = await _runner.StartGame(new StartGameArgs
+            if (_connectOnStart)
             {
-                GameMode = GameMode.AutoHostOrClient,   // Game mode determines host/client role
-                SessionName = "AvatarSession"         // Session name
+                var startGameArgs = new StartGameArgs()
+                {
+                    GameMode = _gameMode,
+                    SessionName = _room,
+                    //Scene = CurrentSceneInfo(), ToDo: public virtual NetworkSceneInfo CurrentSceneInfo() implementieren
+                    SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+                };
                 
-            });
-
-            if (startResult.Ok) return;
-            Debug.LogWarning("No session found. Creating a new session...");
-            StartSession();
+                var result = await _runner.StartGame(startGameArgs);
+                if (!result.Ok)
+                {
+                    Debug.LogError($"Kann nicht gestartet werden: {result.ShutdownReason}");
+                }
+            }
         }
-
-        private async void StartSession()
+        
+        /*private async void StartSession()
         {
             var startResult = await _runner.StartGame(new StartGameArgs
             {
@@ -66,15 +65,15 @@ namespace Connection
                 Debug.LogError($"Network error: {startResult.ShutdownReason}");
                 OnNetworkErrorEvent?.Invoke(startResult.ShutdownReason.ToString());
             }
-        }
+        }*/
 
-        private void HandlePlayerJoined(NetworkRunner runner, PlayerRef player)
+        /*private void HandlePlayerJoined(NetworkRunner runner, PlayerRef player)
         {
             Debug.Log($"Player {player.PlayerId} has joined!");
             OnPlayerJoinedEvent?.Invoke(player);
-        }
+        }*/
 
-        private void HandlePlayerLeft(NetworkRunner runner, PlayerRef player)
+        /*private void HandlePlayerLeft(NetworkRunner runner, PlayerRef player)
         {
             Debug.Log($"Player {player.PlayerId} has left.");
             if (_playerAvatars.ContainsKey(player))
@@ -156,7 +155,7 @@ namespace Connection
                 sceneInfo.AddSceneRef(sceneRef, LoadSceneMode.Single);
             }
             return sceneInfo;
-        }
+        }*/
 
         
         
