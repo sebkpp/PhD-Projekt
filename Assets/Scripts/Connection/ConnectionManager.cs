@@ -36,7 +36,7 @@ namespace Connection
                 {
                     GameMode = _gameMode,
                     SessionName = _room,
-                    //Scene = CurrentSceneInfo(), ToDo: public virtual NetworkSceneInfo CurrentSceneInfo() implementieren
+                    Scene = CurrentSceneInfo(), 
                     SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
                 };
                 
@@ -46,6 +46,28 @@ namespace Connection
                     Debug.LogError($"Kann nicht gestartet werden: {result.ShutdownReason}");
                 }
             }
+        }
+        
+        public virtual NetworkSceneInfo CurrentSceneInfo()
+        {
+            var activeScene = SceneManager.GetActiveScene();
+            SceneRef sceneRef = default;
+
+            if (activeScene.buildIndex < 0 || activeScene.buildIndex >= SceneManager.sceneCountInBuildSettings)
+            {
+                Debug.LogError("Current scene is not part of the build settings");
+            }
+            else
+            {
+                sceneRef = SceneRef.FromIndex(activeScene.buildIndex);
+            }
+
+            var sceneInfo = new NetworkSceneInfo();
+            if (sceneRef.IsValid)
+            {
+                sceneInfo.AddSceneRef(sceneRef, LoadSceneMode.Single);
+            }
+            return sceneInfo;
         }
         
         /*private async void StartSession()
@@ -133,29 +155,9 @@ namespace Connection
         public NetworkRunner GetRunner()
         {
             return _runner;
-        }
-        
-        public virtual NetworkSceneInfo CurrentSceneInfo()
-        {
-            var activeScene = SceneManager.GetActiveScene();
-            SceneRef sceneRef = default;
-
-            if (activeScene.buildIndex < 0 || activeScene.buildIndex >= SceneManager.sceneCountInBuildSettings)
-            {
-                Debug.LogError("Current scene is not part of the build settings");
-            }
-            else
-            {
-                sceneRef = SceneRef.FromIndex(activeScene.buildIndex);
-            }
-
-            var sceneInfo = new NetworkSceneInfo();
-            if (sceneRef.IsValid)
-            {
-                sceneInfo.AddSceneRef(sceneRef, LoadSceneMode.Single);
-            }
-            return sceneInfo;
         }*/
+        
+        
 
         
         
