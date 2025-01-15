@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using Fusion.Sockets;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,8 +13,11 @@ namespace Connection
     public class ConnectionManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         [SerializeField] private NetworkRunner _runner;
-        [SerializeField] private NetworkObject _avatarPrefab;
-        [SerializeField] private Transform _spawnPoint;
+        [SerializeField] private NetworkObject _avatarPrefabMale;
+        [SerializeField] private NetworkObject _avatarPrefabFemale;
+        
+        [SerializeField] private Transform _spawnPoint_P1;
+        [SerializeField] private Transform _spawnPoint_P2;
 
         [SerializeField] private GameMode _gameMode = GameMode.Shared;
         [SerializeField] private string _room = "OP";
@@ -69,36 +74,36 @@ namespace Connection
             }
             return sceneInfo;
         }
-
-        //public GameObject medicalFemale;
-        //public GameObject medicalMale;
-        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+        
+        public void OnPlayerJoinedHostMode(NetworkRunner runner, PlayerRef player)
         {
+            if (!runner.IsServer) return;
+            
             Debug.Log($"Player {player.PlayerId} joined");
+            Debug.Log($"Player {runner.ActivePlayers.Count()} present");
             
             // spawn avatar for local player
             if (player == runner.LocalPlayer)
             {
-                Vector3 spawnPosition = _spawnPoint != null ? _spawnPoint.position : Vector3.up * 2; Quaternion spawnRotation = _spawnPoint != null ? _spawnPoint.rotation : Quaternion.identity;
-               NetworkObject networkPlayerObject = runner.Spawn(_avatarPrefab, spawnPosition, spawnRotation, player);
-               networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
-               _spawnedAvatars.Add(player, networkPlayerObject);
-        
-                // Spawn medical male
-                // NetworkObject maleAvatar = runner.Spawn(medicalMale, spawnPosition + new Vector3(2f, 0f, 0f), spawnRotation, player);
-                // maleAvatar.gameObject.name = $"MedicalMale_{player.PlayerId}";
-                // _spawnedAvatars.Add(player, maleAvatar);
+               if (runner.ActivePlayers.Count() == 1){
+                   Vector3 spawnPosition = _spawnPoint_P1 != null ? _spawnPoint_P1.position : Vector3.up * 2; Quaternion spawnRotation = _spawnPoint_P1 != null ? _spawnPoint_P1.rotation : Quaternion.identity;
+                   NetworkObject networkPlayerObject = runner.Spawn(_avatarPrefabMale, spawnPosition, spawnRotation, player);
+                   networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
+                   _spawnedAvatars.Add(player, networkPlayerObject);
+               }
+
+               else if (runner.ActivePlayers.Count() == 2)
+               {
+                   Vector3 spawnPosition = _spawnPoint_P2 != null ? _spawnPoint_P2.position : Vector3.up * 2; Quaternion spawnRotation = _spawnPoint_P2 != null ? _spawnPoint_P2.rotation : Quaternion.identity;
+                   NetworkObject networkPlayerObject = runner.Spawn(_avatarPrefabFemale, spawnPosition, spawnRotation, player);
+                   networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
+                   _spawnedAvatars.Add(player, networkPlayerObject); 
+               }
                 
-                
-                // Spawn medical female
-                // NetworkObject femaleAvatar = runner.Spawn(medicalFemale, spawnPosition, spawnRotation, player);
-                // femaleAvatar.gameObject.name = $"MedicalFemale_{player.PlayerId}";
-                // _spawnedAvatars.Add(player, femaleAvatar);
-                
-                Debug.Log($"Spawned local avatar for player {player.PlayerId}");
+               Debug.Log($"Spawned local avatar for player {player.PlayerId}");
             }
         }
-        public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+        public void OnPlayerLeftHostMode(NetworkRunner runner, PlayerRef player)
         {
             Debug.Log($"$Player {player.PlayerId} left");
 
@@ -201,10 +206,23 @@ namespace Connection
         
         
         #region INetworkRunnerCallbacks
-        // public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) { }
-     
+
+        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+        {
+            if (runner.Topology == Topologies.ClientServer)
+            {
+                OnPlayerJoinedHostMode(runner, player);
+            }
+        }
         
-        // public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
+
+        public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+        {
+            if (runner.Topology == Topologies.ClientServer)
+            {
+                OnPlayerLeftHostMode(runner, player);
+            }
+        }
         #endregion
 
         #region INetworkRunnerCallbacks (debug log only)
