@@ -70,6 +70,8 @@ namespace Connection
             return sceneInfo;
         }
 
+        //public GameObject medicalFemale;
+        //public GameObject medicalMale;
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
             Debug.Log($"Player {player.PlayerId} joined");
@@ -77,12 +79,21 @@ namespace Connection
             // spawn avatar for local player
             if (player == runner.LocalPlayer)
             {
-                Vector3 spawnPosition = _spawnPoint != null ? _spawnPoint.position : Vector3.up * 2;
-                Quaternion spawnRotation = _spawnPoint != null ? _spawnPoint.rotation : Quaternion.identity;
-                NetworkObject networkPlayerObject = runner.Spawn(_avatarPrefab, spawnPosition, spawnRotation, player);
-                networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
+                Vector3 spawnPosition = _spawnPoint != null ? _spawnPoint.position : Vector3.up * 2; Quaternion spawnRotation = _spawnPoint != null ? _spawnPoint.rotation : Quaternion.identity;
+               NetworkObject networkPlayerObject = runner.Spawn(_avatarPrefab, spawnPosition, spawnRotation, player);
+               networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
+               _spawnedAvatars.Add(player, networkPlayerObject);
+        
+                // Spawn medical male
+                // NetworkObject maleAvatar = runner.Spawn(medicalMale, spawnPosition + new Vector3(2f, 0f, 0f), spawnRotation, player);
+                // maleAvatar.gameObject.name = $"MedicalMale_{player.PlayerId}";
+                // _spawnedAvatars.Add(player, maleAvatar);
                 
-                _spawnedAvatars.Add(player, networkPlayerObject);
+                
+                // Spawn medical female
+                // NetworkObject femaleAvatar = runner.Spawn(medicalFemale, spawnPosition, spawnRotation, player);
+                // femaleAvatar.gameObject.name = $"MedicalFemale_{player.PlayerId}";
+                // _spawnedAvatars.Add(player, femaleAvatar);
                 
                 Debug.Log($"Spawned local avatar for player {player.PlayerId}");
             }
@@ -231,12 +242,12 @@ namespace Connection
 
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
         {
-            throw new NotImplementedException();
+            
         }
         
 
@@ -248,13 +259,13 @@ namespace Connection
 
         public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
         {
-            throw new NotImplementedException();
+            
         }
         
 
         public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
@@ -284,12 +295,12 @@ namespace Connection
 
         public void OnSceneLoadDone(NetworkRunner runner)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void OnSceneLoadStart(NetworkRunner runner)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
