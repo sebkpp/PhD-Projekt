@@ -72,7 +72,7 @@ namespace Connection
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-            Debug.Log($"$Player {player.PlayerId} joined");
+            Debug.Log($"Player {player.PlayerId} joined");
             
             // spawn avatar for local player
             if (player == runner.LocalPlayer)
@@ -87,11 +87,15 @@ namespace Connection
                 Debug.Log($"Spawned local avatar for player {player.PlayerId}");
             }
         }
-
-        //ToDo: Methode implementieren
-        public void OnPlayerLeft()
+        public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
-            
+            Debug.Log($"$Player {player.PlayerId} left");
+
+            if (_spawnedAvatars.TryGetValue(player, out NetworkObject networkObject))
+            {
+                runner.Despawn(networkObject);
+                _spawnedAvatars.Remove(player);
+            }
         }
         
         /*private async void StartSession()
@@ -189,7 +193,7 @@ namespace Connection
         // public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) { }
      
         
-        public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
+        // public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
         #endregion
 
         #region INetworkRunnerCallbacks (debug log only)
@@ -288,7 +292,6 @@ namespace Connection
             throw new NotImplementedException();
         }
     }
-    
 }
 
 
