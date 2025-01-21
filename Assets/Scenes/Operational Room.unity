@@ -731,7 +731,7 @@ MonoBehaviour:
   _avatarPrefabFemale: {fileID: 2259896183627548241, guid: 32963b2b29eac4d4b99801b74af097e7, type: 3}
   _spawnPoint_P1: {fileID: 1930594876}
   _spawnPoint_P2: {fileID: 1830078517}
-  _gameMode: 2
+  _gameMode: 6
   _room: OP
   _connectOnStart: 1
 --- !u!114 &2095437326
