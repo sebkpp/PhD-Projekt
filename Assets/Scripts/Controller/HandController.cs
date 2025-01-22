@@ -1,3 +1,4 @@
+/*
 using Connection;
 using UnityEngine;
 public class HandController : MonoBehaviour
@@ -47,3 +48,4 @@ public class HandController : MonoBehaviour
         }
     }
 }
+*/
