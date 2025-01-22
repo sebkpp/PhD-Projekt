@@ -1,28 +1,22 @@
+using Fusion;
 using UnityEngine;
 
 namespace Managers
-
 {
-    public class Spawner : MonoBehaviour
+    public class Spawner : SimulationBehaviour, IPlayerJoined
     {
-        public GameObject medicalPrefab;
-        public Transform spawnPoint;
+        [SerializeField] private NetworkObject medicalPrefab;
+        [SerializeField] private Transform spawnPoint;
 
-        void Start()
+        public void PlayerJoined(PlayerRef player)
         {
-            SpawnAvatar();
-        }
+            if (medicalPrefab == null || spawnPoint == null)
+            {
+                Debug.LogError("Prefab or SpawnPoint is not set");
+                return;
+            }
 
-        private void SpawnAvatar()
-        {
-            if (medicalPrefab != null)
-            {
-                Instantiate(medicalPrefab, spawnPoint.position, spawnPoint.rotation);
-            }
-            else
-            {
-                Debug.LogError("No avatar prefab assigned");
-            }
+            Runner.Spawn(medicalPrefab, spawnPoint.position, spawnPoint.rotation, player);
         }
     }
 }

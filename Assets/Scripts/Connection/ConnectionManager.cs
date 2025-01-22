@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.NetworkInformation;
 using Fusion;
 using Fusion.Sockets;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,21 +14,28 @@ namespace Connection
     public class ConnectionManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         [SerializeField] private NetworkRunner _runner;
-        [SerializeField] private NetworkObject _avatarPrefab;
-        [SerializeField] private Transform _spawnPoint;
+        [SerializeField] private NetworkObject _avatarPrefabMale;
+        [SerializeField] private NetworkObject _avatarPrefabFemale;
+        
+        [SerializeField] private Transform _spawnPoint_P1;
+        [SerializeField] private Transform _spawnPoint_P2;
 
-        [SerializeField] private GameMode _gameMode = GameMode.Shared;
+        [SerializeField] private GameMode _gameMode = GameMode.AutoHostOrClient;
         [SerializeField] private string _room = "OP";
         [SerializeField] private bool _connectOnStart = true;
         
         private Dictionary<PlayerRef, NetworkObject> _spawnedAvatars = new Dictionary<PlayerRef, NetworkObject>();
         
+        //debugging: wird initialisiert?
+        private bool _initialized = false;
         private void Awake()
         {
             // Check: existiert Runner?
             _runner = GetComponent<NetworkRunner>();
             if (_runner == null) _runner = gameObject.AddComponent<NetworkRunner>();
             _runner.ProvideInput = true;
+            _initialized = true;
+            Debug.Log("<color=yellow>[ConnectionManager] Initialized</color>");
         }
         
         private async void Start()
@@ -69,25 +79,59 @@ namespace Connection
             }
             return sceneInfo;
         }
-
-        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+        
+        public void OnPlayerJoinedHostMode(NetworkRunner runner, PlayerRef player)
         {
-            Debug.Log($"Player {player.PlayerId} joined");
+            if (!_initialized)
+            {
+                Debug.LogError("<color=red>[ConnectionManager] Not initialized!</color>");
+                return;
+            }
+            
+            Debug.Log($"<color=yellow>[ConnectionManager] OnPlayerJoinedHostMode called for player {player.PlayerId}</color>");
+            Debug.Log($"<color=yellow>[ConnectionManager] Is Server: {runner.IsServer}</color>");
+
+            if (!runner.IsServer)
+            {
+                Debug.Log("<color=orange>[ConnectionManager] Not server, skipping spawn</color>");
+                Debug.Log($"Player {player.PlayerId} joined");
+                Debug.Log($"Player {runner.ActivePlayers.Count()} present");
+                return;
+            }
+            
+            var playerCount = runner.ActivePlayers.Count();
+            Debug.Log($"<color=yellow>[ConnectionManager] Active players: {playerCount}</color>");
+            if (playerCount > 2)
+            {
+                Debug.LogWarning($"<color=red>[ConnectionManager] Too many players: {playerCount}</color>");
+                return;
+            }
             
             // spawn avatar for local player
-            if (player == runner.LocalPlayer)
+            //if (player == runner.LocalPlayer)
+            //if (runner.ActivePlayers.Count() == 1){
+            if (playerCount == 1)
             {
-                Vector3 spawnPosition = _spawnPoint != null ? _spawnPoint.position : Vector3.up * 2;
-                Quaternion spawnRotation = _spawnPoint != null ? _spawnPoint.rotation : Quaternion.identity;
-                NetworkObject networkPlayerObject = runner.Spawn(_avatarPrefab, spawnPosition, spawnRotation, player);
-                networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
-                
-                _spawnedAvatars.Add(player, networkPlayerObject);
-                
-                Debug.Log($"Spawned local avatar for player {player.PlayerId}");
+                   Vector3 spawnPosition = _spawnPoint_P1 != null ? _spawnPoint_P1.position : Vector3.up * 2; Quaternion spawnRotation = _spawnPoint_P1 != null ? _spawnPoint_P1.rotation : Quaternion.identity;
+                   NetworkObject networkPlayerObject = runner.Spawn(_avatarPrefabMale, spawnPosition, spawnRotation, player);
+                   networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
+                   _spawnedAvatars.Add(player, networkPlayerObject);
+                   Debug.Log($"<color=green>[ConnectionManager] Spawned MALE avatar for player {player.PlayerId}</color>");
             }
-        }
-        public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+
+            else if (playerCount == 2)
+            {
+                Vector3 spawnPosition = _spawnPoint_P2 != null ? _spawnPoint_P2.position : Vector3.up * 2; Quaternion spawnRotation = _spawnPoint_P2 != null ? _spawnPoint_P2.rotation : Quaternion.identity;
+                NetworkObject networkPlayerObject = runner.Spawn(_avatarPrefabFemale, spawnPosition, spawnRotation, player);
+                networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
+                _spawnedAvatars.Add(player, networkPlayerObject); 
+                Debug.Log($"<color=green>[ConnectionManager] Spawned FEMALE avatar for player {player.PlayerId}</color>");
+
+            }
+                
+            Debug.Log($"Spawned local avatar for player {player.PlayerId}");
+            }
+        public void OnPlayerLeftHostMode(NetworkRunner runner, PlayerRef player)
         {
             Debug.Log($"$Player {player.PlayerId} left");
 
@@ -190,10 +234,22 @@ namespace Connection
         
         
         #region INetworkRunnerCallbacks
-        // public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) { }
-     
-        
-        // public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
+
+        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+        {
+            if (runner.Topology == Topologies.ClientServer)
+            {
+                OnPlayerJoinedHostMode(runner, player);
+            }
+        }
+
+        public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+        {
+            if (runner.Topology == Topologies.ClientServer)
+            {
+                OnPlayerLeftHostMode(runner, player);
+            }
+        }
         #endregion
 
         #region INetworkRunnerCallbacks (debug log only)
@@ -231,30 +287,30 @@ namespace Connection
 
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
         {
-            throw new NotImplementedException();
+            
         }
         
 
-        public void OnConnectedToServer()
+        /*public void OnConnectedToServer()
         {
             throw new NotImplementedException();
-        }
+        }*/
         
 
         public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
         {
-            throw new NotImplementedException();
+            
         }
         
 
         public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
@@ -284,12 +340,12 @@ namespace Connection
 
         public void OnSceneLoadDone(NetworkRunner runner)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void OnSceneLoadStart(NetworkRunner runner)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
