@@ -1,58 +1,69 @@
 //using Fusion;
 //using UnityEngine;
 
-//public class InteractableObject : NetworkBehaviour
-//{
-//    [Networked(OnChanged = nameof(OnOwnerChanged))]
-//    public PlayerRef CurrentOwner { get; private set; }
+namespace InteractableObject
+{
+    public class InteractableObject : NetworkBehaviour
+    {
+        private ChangeDetector _changes;
+        private PlayerRef _currentOwner;
+        
+        [Networked] public int State { get; set; }
 
-//    private Transform followTransform;
-//    private bool isHeld = false;
+        public PlayerRef CurrentOwner { get; private set; }
 
-//    public override void FixedUpdateNetwork()
-//    {
-//        if (Object.HasStateAuthority && isHeld && followTransform != null)
-//        {
-//            // Synchronisiere das Objekt mit der Hand des Halters
-//            transform.position = followTransform.position;
-//            transform.rotation = followTransform.rotation;
-//        }
-//    }
+        private Transform _followTransform;
+        private bool _isHeld = false;
 
-//    public void Grab(PlayerRef newOwner, Transform handTransform)
-//    {
-//        if (Object.HasStateAuthority || Object.HasInputAuthority)
-//        {
-//            RPC_SetOwner(newOwner);
-//            followTransform = handTransform;
-//            isHeld = true;
-//        }
-//    }
+        public override void FixedUpdateNetwork()
+        {
+            if (Object.HasStateAuthority && _isHeld && _followTransform != null)
+            {
+                // Synchronisiere das Objekt mit der Hand des Halters
+                transform.position = _followTransform.position;
+                transform.rotation = _followTransform.rotation;
+            }
+        }
 
-//    public void Release()
-//    {
-//        if (Object.HasStateAuthority || Object.HasInputAuthority)
-//        {
-//            followTransform = null;
-//            isHeld = false;
-//        }
-//    }
+        public void Grab(PlayerRef newOwner, Transform handTransform)
+        {
+            if (Object.HasStateAuthority || Object.HasInputAuthority)
+            {
+                RPC_SetOwner(newOwner);
+                _followTransform = handTransform;
+                _isHeld = true;
+            }
+        }
 
-//    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-//    private void RPC_SetOwner(PlayerRef newOwner)
-//    {
-//        CurrentOwner = newOwner;
-//    }
+        public void Release()
+        {
+            if (Object.HasStateAuthority || Object.HasInputAuthority)
+            {
+                _followTransform = null;
+                _isHeld = false;
+            }
+        }
 
-//    private static void OnOwnerChanged(Changed<InteractableObject> changed)
-//    {
-//        if (changed.Behaviour.CurrentOwner == Runner.LocalPlayer)
-//        {
-//            changed.Behaviour.Object.AssignInputAuthority(Runner.LocalPlayer);
-//        }
-//        else
-//        {
-//            changed.Behaviour.Object.RemoveInputAuthority();
-//        }
-//    }
-//}
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        private void RPC_SetOwner(PlayerRef newOwner)
+        {
+            CurrentOwner = newOwner;
+        }
+
+        // This method is called when the ownership of this object changes
+        private void HandleOwnerChanged(PlayerRef previousOwner, PlayerRef newOwner)
+        {
+            if (newOwner == Runner.LocalPlayer)
+            {
+                // Assign input authority to the local player
+                Object.AssignInputAuthority(newOwner);
+            }
+            else
+            {
+                // Remove input authority if no longer owned by the local player
+                Object.RemoveInputAuthority();
+            }
+        }
+    }
+}
+
