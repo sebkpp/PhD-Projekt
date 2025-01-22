@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "com.exitgames.photonfusion": {
-      "version": "file:../Assets/Photon/Fusion",
+    "com.unity.2d.sprite": {
+      "version": "1.0.0",
       "depth": 0,
-      "source": "local",
+      "source": "builtin",
       "dependencies": {}
     },
     "com.unity.ai.navigation": {
