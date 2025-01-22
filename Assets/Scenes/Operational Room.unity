@@ -700,6 +700,7 @@ GameObject:
   - component: {fileID: 2095437324}
   - component: {fileID: 2095437325}
   - component: {fileID: 2095437326}
+  - component: {fileID: 2095437327}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -739,7 +740,7 @@ MonoBehaviour:
   _avatarPrefabFemale: {fileID: 2259896183627548241, guid: 32963b2b29eac4d4b99801b74af097e7, type: 3}
   _spawnPoint_P1: {fileID: 1930594876}
   _spawnPoint_P2: {fileID: 1830078517}
-  _gameMode: 6
+  _gameMode: 2
   _room: OP
   _connectOnStart: 1
 --- !u!114 &2095437326
@@ -754,6 +755,23 @@ MonoBehaviour:
   m_Script: {fileID: -1199893898, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2095437327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095437322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d22109db6f94b15862ffb6840f995a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  medicalPrefab: {fileID: 0}
+  _spawnPoint_P1: {fileID: 1930594876}
+  _spawnPoint_P2: {fileID: 1830078517}
+  _avatarPrefabMale: {fileID: 4387219227423098078, guid: 3c30bd54494064c33af8f7cb8a710df8, type: 3}
+  _avatarPrefabFemale: {fileID: 2259896183627548241, guid: 32963b2b29eac4d4b99801b74af097e7, type: 3}
 --- !u!1 &22812092427287956
 GameObject:
   m_ObjectHideFlags: 0
