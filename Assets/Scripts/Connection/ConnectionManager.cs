@@ -20,7 +20,7 @@ namespace Connection
         [SerializeField] private Transform _spawnPoint_P1;
         [SerializeField] private Transform _spawnPoint_P2;
 
-        [SerializeField] private GameMode _gameMode = GameMode.AutoHostOrClient;
+        [SerializeField] private GameMode _gameMode = GameMode.Shared;
         [SerializeField] private string _room = "OP";
         [SerializeField] private bool _connectOnStart = true;
         
@@ -239,7 +239,7 @@ namespace Connection
         {
             if (runner.Topology == Topologies.ClientServer)
             {
-                OnPlayerJoinedHostMode(runner, player);
+                // OnPlayerJoinedHostMode(runner, player);
             }
         }
 
@@ -281,7 +281,7 @@ namespace Connection
 
         public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
         
 
