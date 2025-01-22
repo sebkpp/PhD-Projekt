@@ -119,70 +119,86 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &21650193
-PrefabInstance:
+--- !u!1 &3810583
+GameObject:
   m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3810584}
+  m_Layer: 0
+  m_Name: finger vr target lift (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3810584
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3810583}
   serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1388151993}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-      propertyPath: m_Name
-      value: RightHand
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1238480905}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &94828885
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 94828886}
+  m_Layer: 0
+  m_Name: finger vr target lift (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &94828886
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 94828885}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1238480905}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &106658045 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4540081821808363922, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
+  m_PrefabInstance: {fileID: 322715980}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &144578540 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3168161489117383928, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
+  m_PrefabInstance: {fileID: 322715980}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &235936687 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 560609087534984640, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
+  m_PrefabInstance: {fileID: 322715980}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &291013103 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8332477512041993521, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
   m_PrefabInstance: {fileID: 322715980}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &322715980
@@ -195,7 +211,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1516573021940627364, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2929033677921109728, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_Enabled
@@ -203,15 +219,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4103398863722821927, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4116393703742668639, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4156981804281305309, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4765430609508107535, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_Name
@@ -219,7 +235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5027345874454292394, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5290011336924815285, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -275,23 +291,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6309440817161485397, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6870029754255087807, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6978957748495679172, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8167747681181106300, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8724187553555961918, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -370,6 +386,104 @@ Transform:
   - {fileID: 1238480905}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &468269991
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 468269992}
+  m_Layer: 0
+  m_Name: finger vr target lift
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &468269992
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 468269991}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1238480905}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &683495107 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2466875665252301280, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
+  m_PrefabInstance: {fileID: 322715980}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &684448673
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 684448674}
+  m_Layer: 0
+  m_Name: finger vr target right (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &684448674
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 684448673}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1388151993}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &699860446
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 699860447}
+  m_Layer: 0
+  m_Name: finger vr target right (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &699860447
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699860446}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1388151993}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &754593665
 GameObject:
   m_ObjectHideFlags: 0
@@ -401,6 +515,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1238480905}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &902499099 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8124213969983153024, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
+  m_PrefabInstance: {fileID: 322715980}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &903455715
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -458,10 +577,10 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 41ad7d89395d4af4aba5fd3706ab919f, type: 3}
---- !u!4 &908830244 stripped
+--- !u!4 &904948049 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5ecaff3112876fc42a7c825e62e45e17, type: 3}
-  m_PrefabInstance: {fileID: 21650193}
+  m_CorrespondingSourceObject: {fileID: 9066250283801891921, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
+  m_PrefabInstance: {fileID: 322715980}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &915331268
 GameObject:
@@ -494,67 +613,42 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1299502873}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1024545523
-PrefabInstance:
+--- !u!1 &924152381
+GameObject:
   m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 924152382}
+  m_Layer: 0
+  m_Name: finger vr target right (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &924152382
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 924152381}
   serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1238480905}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-      propertyPath: m_Name
-      value: LeftHand
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1388151993}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &998812519 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 490103277077137282, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
+  m_PrefabInstance: {fileID: 322715980}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1184219153 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3806394271660382021, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
@@ -589,9 +683,44 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1563097603}
   - {fileID: 754593666}
+  - {fileID: 468269992}
+  - {fileID: 1244310889}
+  - {fileID: 1468718832}
+  - {fileID: 94828886}
+  - {fileID: 3810584}
   m_Father: {fileID: 384942984}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1244310888
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1244310889}
+  m_Layer: 0
+  m_Name: finger vr target lift (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1244310889
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244310888}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1238480905}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1299502872
 GameObject:
@@ -870,10 +999,19 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 908830244}
   - {fileID: 1424526491}
+  - {fileID: 1954227199}
+  - {fileID: 1702056828}
+  - {fileID: 924152382}
+  - {fileID: 684448674}
+  - {fileID: 699860447}
   m_Father: {fileID: 384942984}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1406213641 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6657655417268760822, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
+  m_PrefabInstance: {fileID: 322715980}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1409651330
 GameObject:
   m_ObjectHideFlags: 0
@@ -1089,16 +1227,83 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!4 &1563097603 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b1cb4b5686ebb7e41902813d5f2b1b0b, type: 3}
-  m_PrefabInstance: {fileID: 1024545523}
+--- !u!1 &1468718831
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1468718832}
+  m_Layer: 0
+  m_Name: finger vr target lift (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1468718832
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1468718831}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1238480905}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1579872238 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1660949748957641542, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
   m_PrefabInstance: {fileID: 322715980}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1618133826 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3389618136672459619, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
+  m_PrefabInstance: {fileID: 322715980}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1699233761 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8871324661357800759, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
+  m_PrefabInstance: {fileID: 322715980}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1702056827
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1702056828}
+  m_Layer: 0
+  m_Name: finger vr target right (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1702056828
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702056827}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1388151993}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1806205233 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4717405527655144966, guid: 257d8f80585e06243877dd8f480268e1, type: 3}
@@ -1191,6 +1396,48 @@ MonoBehaviour:
     ikTarget: {fileID: 1579872238}
     trackingPositionOffset: {x: 0, y: 0, z: 0}
     trackingRotationOffset: {x: 180, y: 90, z: 0}
+  leftHandFingers:
+  - vrTarget: {fileID: 468269992}
+    ikTarget: {fileID: 904948049}
+    trackingPositionOffset: {x: -0.0745, y: 0.2346, z: 0.0702}
+    trackingRotationOffset: {x: 246.04, y: -238.836, z: 333.273}
+  - vrTarget: {fileID: 1244310889}
+    ikTarget: {fileID: 1618133826}
+    trackingPositionOffset: {x: -0.0111, y: -0.0034, z: 0.1426}
+    trackingRotationOffset: {x: 3.866, y: -85.701, z: 172.179}
+  - vrTarget: {fileID: 1468718832}
+    ikTarget: {fileID: 998812519}
+    trackingPositionOffset: {x: -0.0539, y: -0.0145, z: 0.0033}
+    trackingRotationOffset: {x: -176.315, y: 95.131, z: -32.29901}
+  - vrTarget: {fileID: 94828886}
+    ikTarget: {fileID: 902499099}
+    trackingPositionOffset: {x: -0.079, y: -0.028, z: 0.018}
+    trackingRotationOffset: {x: 175.562, y: 80.939, z: -0.075012}
+  - vrTarget: {fileID: 3810584}
+    ikTarget: {fileID: 291013103}
+    trackingPositionOffset: {x: -0.1048, y: -0.0331, z: -0.0002}
+    trackingRotationOffset: {x: 32.408, y: -125.373, z: -241.781}
+  rightHandFingers:
+  - vrTarget: {fileID: 1954227199}
+    ikTarget: {fileID: 1406213641}
+    trackingPositionOffset: {x: 0.096164, y: 1.335105, z: 0.698613}
+    trackingRotationOffset: {x: 128.214, y: -25.41299, z: -104.32}
+  - vrTarget: {fileID: 1702056828}
+    ikTarget: {fileID: 235936687}
+    trackingPositionOffset: {x: 0.163554, y: 1.357905, z: 0.592941}
+    trackingRotationOffset: {x: -16.149, y: -77.273, z: 132.859}
+  - vrTarget: {fileID: 924152382}
+    ikTarget: {fileID: 1699233761}
+    trackingPositionOffset: {x: 0.200246, y: 1.285679, z: 0.84627}
+    trackingRotationOffset: {x: -9.093, y: -77.228, z: 141.953}
+  - vrTarget: {fileID: 684448674}
+    ikTarget: {fileID: 683495107}
+    trackingPositionOffset: {x: 0.2061945, y: 1.331105, z: 0.700357}
+    trackingRotationOffset: {x: 3.614, y: -87.191, z: 147.884}
+  - vrTarget: {fileID: 699860447}
+    ikTarget: {fileID: 106658045}
+    trackingPositionOffset: {x: 0.2184218, y: 1.341905, z: 0.6507719}
+    trackingRotationOffset: {x: 1.345, y: -83.376, z: 139.195}
   headBodyPositionOffset: {x: 0, y: -1.5, z: 0}
   headBodyYawOffset: 0
 --- !u!1 &1916925381
@@ -1238,6 +1485,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1954227198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1954227199}
+  m_Layer: 0
+  m_Name: finger vr target right
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1954227199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1954227198}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1388151993}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2143869783 stripped
 Transform:
