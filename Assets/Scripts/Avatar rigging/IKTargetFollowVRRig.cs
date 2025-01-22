@@ -14,6 +14,20 @@ public class VRMap
     }
 }
 
+[System.Serializable]
+public class VRFingerMap
+{
+    public Transform vrTarget;
+    public Transform ikTarget;
+    public Vector3 trackingPositionOffset;
+    public Vector3 trackingRotationOffset;
+    public void Map()
+    {
+        ikTarget.position = vrTarget.TransformPoint(trackingPositionOffset);
+        ikTarget.rotation = vrTarget.rotation * Quaternion.Euler(trackingRotationOffset);
+    }
+}
+
 public class IKTargetFollowVRRig : MonoBehaviour
 {
     [Range(0,1)]
@@ -21,6 +35,8 @@ public class IKTargetFollowVRRig : MonoBehaviour
     public VRMap head;
     public VRMap leftHand;
     public VRMap rightHand;
+    public VRFingerMap[] leftHandFingers;
+    public VRFingerMap[] rightHandFingers;
 
     public Vector3 headBodyPositionOffset;
     public float headBodyYawOffset;
@@ -35,5 +51,14 @@ public class IKTargetFollowVRRig : MonoBehaviour
         head.Map();
         leftHand.Map();
         rightHand.Map();
+        foreach (var finger in leftHandFingers)
+        {
+            finger.Map();
+        }
+
+        foreach (var finger in rightHandFingers)
+        {
+            finger.Map();
+        }
     }
 }
