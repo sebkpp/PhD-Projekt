@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "com.exitgames.photonfusion": {
-      "version": "file:../Assets/Photon/Fusion",
+    "com.unity.2d.sprite": {
+      "version": "1.0.0",
       "depth": 0,
-      "source": "local",
+      "source": "builtin",
       "dependencies": {}
     },
     "com.unity.ai.navigation": {
@@ -299,6 +299,13 @@
         "com.unity.xr.legacyinputhelpers": "2.1.2"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.veriorpies.parrelsync": {
+      "version": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "d1ef610e9fe3ad0b490cce91594449fc0af809a6"
     },
     "org.khronos.unitygltf": {
       "version": "https://github.com/KhronosGroup/UnityGLTF.git",
