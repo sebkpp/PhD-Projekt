@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Fusion;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class VRMap
@@ -12,6 +14,7 @@ public class VRMap
         ikTarget.position = vrTarget.TransformPoint(trackingPositionOffset);
         ikTarget.rotation = vrTarget.rotation * Quaternion.Euler(trackingRotationOffset);
     }
+    
 }
 
 [System.Serializable]
@@ -41,11 +44,81 @@ public class IKTargetFollowVRRig : MonoBehaviour
     public Vector3 headBodyPositionOffset;
     public float headBodyYawOffset;
 
-    // Update is called once per frame
+
+
+    void Start()
+    {
+        GameObject targetHead = GameObject.FindWithTag("HeadVrTarget");
+        GameObject targetLeftHand = GameObject.FindWithTag("LifthandVrTarget");
+        GameObject targetRightHand = GameObject.FindWithTag("RighthandVrTarget");
+
+        GameObject[] targetRightfinger = new GameObject[5];
+        GameObject[] targetLeftfinger = new GameObject[5];
+
+        bool allTargetsFound = true;
+
+        if (targetHead == null)
+        {
+            Debug.LogWarning("HeadVrTarget not found in the active scene.");
+            allTargetsFound = false;
+        }
+        if (targetLeftHand == null)
+        {
+            Debug.LogWarning("LeftHandVrTarget not found in the active scene.");
+            allTargetsFound = false;
+        }
+        if (targetRightHand == null)
+        {
+            Debug.LogWarning("RightHandVrTarget not found in the active scene.");
+            allTargetsFound = false;
+        }
+
+        for (int i = 0; i < 5; i++)
+        {
+            targetRightfinger[i] = GameObject.FindWithTag("RFVrTarget" + i);
+            targetLeftfinger[i] = GameObject.FindWithTag("LFVrTarget" + i);
+
+            if (targetRightfinger[i] == null)
+            {
+                Debug.LogWarning("RFVrTarget" + i + " not found in the active scene.");
+                allTargetsFound = false;
+            }
+            if (targetLeftfinger[i] == null)
+            {
+                Debug.LogWarning("LFVrTarget" + i + " not found in the active scene.");
+                allTargetsFound = false;
+            }
+        }
+
+        if (allTargetsFound)
+        {
+            head.vrTarget = targetHead.transform;
+            leftHand.vrTarget = targetLeftHand.transform;
+            rightHand.vrTarget = targetRightHand.transform;
+
+            for (int i = 0; i < 5; i++)
+            {
+                rightHandFingers[i].vrTarget = targetRightfinger[i].transform;
+                leftHandFingers[i].vrTarget = targetLeftfinger[i].transform;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Object with the specified tag not found in the active scene.");
+        }
+    }
+
+
     void LateUpdate()
     {
-        transform.position = head.ikTarget.position + headBodyPositionOffset;
-        float yaw = head.vrTarget.eulerAngles.y;
+        
+        if (head.vrTarget != null)
+            
+        {
+            
+        
+         transform.position = head.ikTarget.position + headBodyPositionOffset;
+         float yaw = head.vrTarget.eulerAngles.y;
         transform.rotation = Quaternion.Lerp(transform.rotation,Quaternion.Euler(transform.eulerAngles.x, yaw, transform.eulerAngles.z),turnSmoothness);
 
         head.Map();
@@ -59,6 +132,7 @@ public class IKTargetFollowVRRig : MonoBehaviour
         foreach (var finger in rightHandFingers)
         {
             finger.Map();
+        }
         }
     }
 }
