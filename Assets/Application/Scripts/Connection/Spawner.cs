@@ -2,34 +2,24 @@ using System.Collections.Generic;
 using System.Linq;
 using Fusion;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Managers
 {
-    public class Spawner : SimulationBehaviour, IPlayerJoined
+    public class Spawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
     {
-        [SerializeField] private NetworkObject medicalPrefab;
         [SerializeField] private Transform _spawnPoint_P1;
         [SerializeField] private Transform _spawnPoint_P2;
-        // [FormerlySerializedAs("runner")] [SerializeField] private NetworkRunner _runner;
+
         [SerializeField] private NetworkObject _avatarPrefabMale;
         [SerializeField] private NetworkObject _avatarPrefabFemale;
+        
         private Dictionary<PlayerRef, NetworkObject> _spawnedAvatars = new Dictionary<PlayerRef, NetworkObject>();
-
 
         public void PlayerJoined(PlayerRef player)
         {
             
             Debug.Log($"<color=yellow>[ConnectionManager] OnPlayerJoinedHostMode called for player {player.PlayerId}</color>");
             Debug.Log($"<color=yellow>[ConnectionManager] Is Server: {Runner.IsServer}</color>");
-
-            /*if (!Runner.IsServer)
-            {
-                Debug.Log("<color=orange>[ConnectionManager] Not server, skipping spawn</color>");
-                Debug.Log($"Player {player.PlayerId} joined");
-                Debug.Log($"Player {Runner.ActivePlayers.Count()} present");
-                return;
-            }*/
             
             var playerCount = Runner.ActivePlayers.Count();
             Debug.Log($"<color=yellow>[ConnectionManager] Active players: {playerCount}</color>");
@@ -38,9 +28,6 @@ namespace Managers
                 Debug.LogWarning($"<color=red>[ConnectionManager] Too many players: {playerCount}</color>");
                 return;
             }
-            
-            // spawn avatar for local player
-            // if (player == Runner.LocalPlayer)
             
             if (playerCount == 1 && player == Runner.LocalPlayer)
             {
@@ -58,13 +45,20 @@ namespace Managers
                 networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
                 _spawnedAvatars.Add(player, networkPlayerObject); 
                 Debug.Log($"<color=green>[ConnectionManager] Spawned FEMALE avatar for player {player.PlayerId}</color>");
-
             }
                 
             Debug.Log($"Spawned local avatar for player {player.PlayerId}");
-            
+        }
 
-            // Runner.Spawn(medicalPrefab, spawnPoint.position, spawnPoint.rotation, player);
+        public void PlayerLeft(PlayerRef player)
+        {
+            Debug.Log($"$Player {player.PlayerId} left");
+
+            if (_spawnedAvatars.TryGetValue(player, out NetworkObject networkObject))
+            {
+                Runner.Despawn(networkObject);
+                _spawnedAvatars.Remove(player);
+            }
         }
     }
 }
