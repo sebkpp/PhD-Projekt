@@ -9,12 +9,12 @@ public class VRMap
     public Transform ikTarget;
     public Vector3 trackingPositionOffset;
     public Vector3 trackingRotationOffset;
+
     public void Map()
     {
         ikTarget.position = vrTarget.TransformPoint(trackingPositionOffset);
         ikTarget.rotation = vrTarget.rotation * Quaternion.Euler(trackingRotationOffset);
     }
-    
 }
 
 [System.Serializable]
@@ -24,6 +24,7 @@ public class VRFingerMap
     public Transform ikTarget;
     public Vector3 trackingPositionOffset;
     public Vector3 trackingRotationOffset;
+
     public void Map()
     {
         ikTarget.position = vrTarget.TransformPoint(trackingPositionOffset);
@@ -33,8 +34,7 @@ public class VRFingerMap
 
 public class IKTargetFollowVRRig : MonoBehaviour
 {
-    [Range(0,1)]
-    public float turnSmoothness = 0.1f;
+    [Range(0, 1)] public float turnSmoothness = 0.1f;
     public VRMap head;
     public VRMap leftHand;
     public VRMap rightHand;
@@ -43,8 +43,6 @@ public class IKTargetFollowVRRig : MonoBehaviour
 
     public Vector3 headBodyPositionOffset;
     public float headBodyYawOffset;
-
-
 
     void Start()
     {
@@ -62,11 +60,13 @@ public class IKTargetFollowVRRig : MonoBehaviour
             Debug.LogWarning("HeadVrTarget not found in the active scene.");
             allTargetsFound = false;
         }
+
         if (targetLeftHand == null)
         {
             Debug.LogWarning("LeftHandVrTarget not found in the active scene.");
             allTargetsFound = false;
         }
+
         if (targetRightHand == null)
         {
             Debug.LogWarning("RightHandVrTarget not found in the active scene.");
@@ -83,6 +83,7 @@ public class IKTargetFollowVRRig : MonoBehaviour
                 Debug.LogWarning("RFVrTarget" + i + " not found in the active scene.");
                 allTargetsFound = false;
             }
+
             if (targetLeftfinger[i] == null)
             {
                 Debug.LogWarning("LFVrTarget" + i + " not found in the active scene.");
@@ -111,28 +112,25 @@ public class IKTargetFollowVRRig : MonoBehaviour
 
     void LateUpdate()
     {
-        
         if (head.vrTarget != null)
-            
         {
-            
-        
-         transform.position = head.ikTarget.position + headBodyPositionOffset;
-         float yaw = head.vrTarget.eulerAngles.y;
-        transform.rotation = Quaternion.Lerp(transform.rotation,Quaternion.Euler(transform.eulerAngles.x, yaw, transform.eulerAngles.z),turnSmoothness);
+            transform.position = head.ikTarget.position + headBodyPositionOffset;
+            float yaw = head.vrTarget.eulerAngles.y;
+            transform.rotation = Quaternion.Lerp(transform.rotation,
+                Quaternion.Euler(transform.eulerAngles.x, yaw, transform.eulerAngles.z), turnSmoothness);
 
-        head.Map();
-        leftHand.Map();
-        rightHand.Map();
-        foreach (var finger in leftHandFingers)
-        {
-            finger.Map();
-        }
+            head.Map();
+            leftHand.Map();
+            rightHand.Map();
+            foreach (var finger in leftHandFingers)
+            {
+                finger.Map();
+            }
 
-        foreach (var finger in rightHandFingers)
-        {
-            finger.Map();
-        }
+            foreach (var finger in rightHandFingers)
+            {
+                finger.Map();
+            }
         }
     }
 }
