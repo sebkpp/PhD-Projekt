@@ -1,0 +1,124 @@
+fileFormatVersion: 2
+guid: c25ec765726464b438b14e15069a356a
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 804e1ce4c496647cfa3f1a1134187c71, type: 3}
+  _removeEmptyRootObjects: 1
+  _scaleFactor: 1
+  _deduplicateResources: 0
+  _maximumLod: 300
+  _readWriteEnabled: 1
+  _generateColliders: 0
+  _swapUvs: 0
+  _generateLightmapUVs: 1
+  _importBlendShapeNames: 1
+  _blendShapeFrameWeight:
+    _option: 0
+    _multiplier: 1
+  _importNormals: 0
+  _importTangents: 0
+  _importCamera: 2
+  _importAnimations: 2
+  _mecanimHumanoidFlip: 0
+  _addAnimatorComponent: 0
+  _animationLoopTime: 1
+  _animationLoopPose: 0
+  _importMaterials: 1
+  _enableGpuInstancing: 0
+  _texturesReadWriteEnabled: 1
+  _generateMipMaps: 1
+  _useSceneNameIdentifier: 1
+  _textureCompression: -50
+  _gltfAsset: '<b>Generator: </b>Sketchfab-15.77.0
+
+    <b>Version: </b>2.0
+
+    
+
+    <b>Extras:
+    </b>
+
+    "author": "Janis Zeps (https://sketchfab.com/zeps9001)"
+
+    "license":
+    "SKETCHFAB Standard (https://sketchfab.com/licenses)"
+
+    "source": "https://sketchfab.com/3d-models/operating-room-4248fba251a5482ca501d23919c5b8c6"
+
+    "title":
+    "Operating Room"
+
+'
+  optimizeGameObjects: 0
+  materials:
+  - {fileID: 7411952554714076243, guid: c25ec765726464b438b14e15069a356a, type: 3}
+  - {fileID: -3104152535176750950, guid: c25ec765726464b438b14e15069a356a, type: 3}
+  - {fileID: 1401673223885815228, guid: c25ec765726464b438b14e15069a356a, type: 3}
+  - {fileID: -5049986331724833093, guid: c25ec765726464b438b14e15069a356a, type: 3}
+  - {fileID: -2509481814828291687, guid: c25ec765726464b438b14e15069a356a, type: 3}
+  - {fileID: 5610323545378135778, guid: c25ec765726464b438b14e15069a356a, type: 3}
+  - {fileID: 1002961719547026963, guid: c25ec765726464b438b14e15069a356a, type: 3}
+  - {fileID: 8379705102195234077, guid: c25ec765726464b438b14e15069a356a, type: 3}
+  - {fileID: 7880399862563698274, guid: c25ec765726464b438b14e15069a356a, type: 3}
+  - {fileID: -1701948444814776503, guid: c25ec765726464b438b14e15069a356a, type: 3}
+  - {fileID: 7581399163714188766, guid: c25ec765726464b438b14e15069a356a, type: 3}
+  - {fileID: -2842835351096047172, guid: c25ec765726464b438b14e15069a356a, type: 3}
+  textures:
+  - {fileID: 2800000, guid: 46a3a065ec05a1241a24ea9c53b31ad6, type: 3}
+  - {fileID: 2800000, guid: d492f6c843c77c7488e110cae39f32ee, type: 3}
+  - {fileID: 2800000, guid: 6b694433cf7a08740b3213fa9e5b11d0, type: 3}
+  - {fileID: 2800000, guid: 11224b4d4e1dbae41a57d51915a211e5, type: 3}
+  - {fileID: 2800000, guid: 871410b2a52492e4ea42ab660abed616, type: 3}
+  - {fileID: 2800000, guid: 916ba3760707a294991e571b4cbdbf1b, type: 3}
+  - {fileID: 2800000, guid: cc8ea50e7c65f90458f00b465287165d, type: 3}
+  - {fileID: 2800000, guid: 523fe3c6853c5884c997f1f84a3777af, type: 3}
+  hasSceneData: 1
+  hasAnimationData: 0
+  hasMaterialData: 1
+  hasTextureData: 1
+  animations: []
+  _extensions:
+  - name: KHR_materials_specular
+    supported: 1
+    used: 1
+    required: 0
+  - name: KHR_texture_transform
+    supported: 1
+    used: 1
+    required: 0
+  - name: KHR_materials_emissive_strength
+    supported: 1
+    used: 1
+    required: 0
+  _textures:
+  - texture: {fileID: 2800000, guid: 46a3a065ec05a1241a24ea9c53b31ad6, type: 3}
+    shouldBeLinear: 0
+    shouldBeNormalMap: 0
+  - texture: {fileID: 2800000, guid: d492f6c843c77c7488e110cae39f32ee, type: 3}
+    shouldBeLinear: 0
+    shouldBeNormalMap: 0
+  - texture: {fileID: 2800000, guid: 6b694433cf7a08740b3213fa9e5b11d0, type: 3}
+    shouldBeLinear: 0
+    shouldBeNormalMap: 0
+  - texture: {fileID: 2800000, guid: 11224b4d4e1dbae41a57d51915a211e5, type: 3}
+    shouldBeLinear: 1
+    shouldBeNormalMap: 0
+  - texture: {fileID: 2800000, guid: 871410b2a52492e4ea42ab660abed616, type: 3}
+    shouldBeLinear: 1
+    shouldBeNormalMap: 1
+  - texture: {fileID: 2800000, guid: 916ba3760707a294991e571b4cbdbf1b, type: 3}
+    shouldBeLinear: 0
+    shouldBeNormalMap: 0
+  - texture: {fileID: 2800000, guid: cc8ea50e7c65f90458f00b465287165d, type: 3}
+    shouldBeLinear: 1
+    shouldBeNormalMap: 0
+  - texture: {fileID: 2800000, guid: 523fe3c6853c5884c997f1f84a3777af, type: 3}
+    shouldBeLinear: 0
+    shouldBeNormalMap: 0
+  _mainAssetIdentifier: scenes/Sketchfab_Scene
+  _importPlugins: []
