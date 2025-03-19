@@ -4,6 +4,7 @@ using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using LogType = Fusion.LogType;
 
 namespace Connection
 {
@@ -14,9 +15,12 @@ namespace Connection
         [SerializeField] private GameMode _gameMode = GameMode.Shared;
         [SerializeField] private string _room = "OP";
         [SerializeField] private bool _connectOnStart = true;
+        [SerializeField] private LogType logLevel = LogType.Error;
         
         private void Awake()
         {
+            Log.LogLevel = logLevel;
+
             if(_runner == null) _runner = GetComponent<NetworkRunner>();
             _runner.ProvideInput = true;
         }
@@ -30,8 +34,9 @@ namespace Connection
                 GameMode = _gameMode,
                 SessionName = _room,
                 Scene = CurrentSceneInfo(), 
-                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
             };
+
                 
             var result = await _runner.StartGame(startGameArgs);
             if (!result.Ok)
