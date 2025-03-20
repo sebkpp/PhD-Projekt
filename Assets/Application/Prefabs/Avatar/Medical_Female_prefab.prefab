@@ -4018,6 +4018,7 @@ GameObject:
   - component: {fileID: 4934020508577705222}
   - component: {fileID: 7384170428881521186}
   - component: {fileID: 5270562086689727957}
+  - component: {fileID: 2800519002426821812}
   m_Layer: 0
   m_Name: Medical_Female_prefab
   m_TagString: Untagged
@@ -4088,7 +4089,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8899142378235143791}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b2d8418b0b9634b1892b0268dd9c2743, type: 3}
   m_Name: 
@@ -4270,6 +4271,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 5270562086689727957}
+  - {fileID: 2800519002426821812}
 --- !u!114 &5270562086689727957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4286,6 +4288,22 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
+--- !u!114 &2800519002426821812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8899142378235143791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90a869f11b034f8ba307b2ac3fa2167c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  avatarPosition: {fileID: 2736260615905248700}
+  avatarHead: {fileID: 8774651448557357159}
+  avatarLeftHand: {fileID: 7304874287404254753}
+  avatarRightHand: {fileID: 7792860253072432072}
 --- !u!1 &8945663155876116783
 GameObject:
   m_ObjectHideFlags: 0
