@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using Application.Scripts.Avatar_rigging;
 using Fusion;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Managers
 {
@@ -12,6 +14,8 @@ namespace Managers
 
         [SerializeField] private NetworkObject _avatarPrefabMale;
         [SerializeField] private NetworkObject _avatarPrefabFemale;
+
+        [SerializeField] private UnityEvent<AvatarLookup> avatarSpawned;
         
         private Dictionary<PlayerRef, NetworkObject> _spawnedAvatars = new Dictionary<PlayerRef, NetworkObject>();
 
@@ -36,6 +40,8 @@ namespace Managers
                    networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
                    _spawnedAvatars.Add(player, networkPlayerObject);
                    Debug.Log($"<color=green>[ConnectionManager] Spawned MALE avatar for player {player.PlayerId}</color>");
+                   
+                   avatarSpawned?.Invoke(networkPlayerObject.GetComponent<AvatarLookup>());
             }
 
             else if (playerCount == 2 && player == Runner.LocalPlayer)
@@ -45,6 +51,8 @@ namespace Managers
                 networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
                 _spawnedAvatars.Add(player, networkPlayerObject); 
                 Debug.Log($"<color=green>[ConnectionManager] Spawned FEMALE avatar for player {player.PlayerId}</color>");
+                
+                avatarSpawned?.Invoke(networkPlayerObject.GetComponent<AvatarLookup>());
             }
                 
             Debug.Log($"Spawned local avatar for player {player.PlayerId}");
