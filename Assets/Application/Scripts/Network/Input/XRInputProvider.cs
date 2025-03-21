@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Application.Scripts.Avatar_rigging;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
@@ -21,12 +22,12 @@ namespace Application.Scripts.Network.Input
     {
         [Header("XR References")]
         [SerializeField] private Transform xrRig;
+        [SerializeField] private Offsets rigOffsets;
         [SerializeField] private Transform headset;
         [SerializeField] private Offsets headOffsets;
-        [SerializeField] private Transform leftHand;
-        [SerializeField] private Offsets leftHandOffsets;
-        [SerializeField] private Transform rightHand;
-        [SerializeField] private Offsets rightHandOffsets;
+
+        [SerializeField] private HandTrackingData leftHand;
+        [SerializeField] private HandTrackingData rightHand;
 
         void OnEnable()
         {
@@ -51,14 +52,50 @@ namespace Application.Scripts.Network.Input
                 HeadsetPosition = ProcessPosition(headset, headOffsets.trackingPositionOffset),
                 HeadsetRotation = ProcessRotation(headset, headOffsets.trackingRotationOffset),
                 
-                LeftHandPosition = ProcessPosition(leftHand, leftHandOffsets.trackingPositionOffset),
-                LeftHandRotation = ProcessRotation(leftHand, leftHandOffsets.trackingRotationOffset),
-                
-                RightHandPosition = ProcessPosition(rightHand, rightHandOffsets.trackingPositionOffset),
-                RightHandRotation = ProcessRotation(rightHand, rightHandOffsets.trackingRotationOffset)
+                LeftHand = GetHandState(leftHand),
+                RightHand = GetHandState(rightHand)
             };
 
             input.Set(xrInputState);
+        }
+
+        private HandState GetHandState(HandTrackingData hand)
+        {
+            HandState state = new HandState
+            {
+                WristPosition = ProcessPosition(hand.wristSource, hand.offsetPosition),
+                WristRotation = ProcessRotation(hand.wristSource, hand.offsetRotation),
+                
+                Thumb = GetFingerState(hand.thumb),
+                Index = GetFingerState(hand.index),
+                Middle = GetFingerState(hand.middle),
+                Ring = GetFingerState(hand.ring),
+                Pinky = GetFingerState(hand.pinky)
+            };
+
+            return state;
+        }
+
+        private FingerState GetFingerState(FingerTrackingData finger)
+        {
+            FingerState state = new FingerState()
+            {
+                Proximal = GetPhalanxState(finger.proximal),
+                Intermediate = GetPhalanxState(finger.intermediate),
+                Distal = GetPhalanxState(finger.distal)
+            };
+
+            return state;
+        }
+
+        private PhalanxState GetPhalanxState(PhalanxTrackingData phalanx)
+        {
+            PhalanxState state = new PhalanxState()
+            {
+                Position = ProcessPosition(phalanx.source, phalanx.offsetPosition),
+                Rotation = ProcessRotation(phalanx.source, phalanx.offsetRotation)
+            };
+            return state;
         }
 
         private Vector3 ProcessPosition(Transform t, Vector3 position)
