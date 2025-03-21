@@ -32,6 +32,9 @@ public class VRFingerMap
     }
 }
 
+/// <summary>
+/// Deprecateed
+/// </summary>
 public class IKTargetFollowVRRig : MonoBehaviour
 {
     [Range(0, 1)] public float turnSmoothness = 0.1f;
