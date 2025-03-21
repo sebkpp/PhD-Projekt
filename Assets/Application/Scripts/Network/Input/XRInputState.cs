@@ -17,11 +17,10 @@ namespace Application.Scripts.Network.Input
         public Quaternion HeadsetRotation { get; set; }
 
         // Left Hand
-        public Vector3 LeftHandPosition { get; set; }
-        public Quaternion LeftHandRotation { get; set; }
+        public HandState LeftHand { get; set; }
 
         // Right Hand
-        public Vector3 RightHandPosition { get; set; }
-        public Quaternion RightHandRotation { get; set; }
+        public HandState RightHand { get; set; }
+
     }
 }
