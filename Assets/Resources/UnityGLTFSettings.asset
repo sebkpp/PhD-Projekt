@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8188474855944356674
+--- !u!114 &-8242977300222933172
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,58 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5066402b4fbd41e79ab3d7023cca96c5, type: 3}
-  m_Name: MaterialVariantsPlugin
+  m_Script: {fileID: 11500000, guid: 9571021a85f04ddfb74e8aa5aad9cc5a, type: 3}
+  m_Name: UnlitMaterialsExport
   m_EditorClassIdentifier: 
---- !u!114 &-7444061282681497396
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2239c10507484fb78bb19067a66500f2, type: 3}
-  m_Name: LodsImport
-  m_EditorClassIdentifier: 
---- !u!114 &-6357508956596080507
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d48839dd2db84f9f94ec4e3bb77e9f9e, type: 3}
-  m_Name: LightsPunctualImport
-  m_EditorClassIdentifier: 
---- !u!114 &-6238964118680925428
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 473c2b5b3de547139304b32beee641e9, type: 3}
-  m_Name: AnimationPointerImport
-  m_EditorClassIdentifier: 
---- !u!114 &-5278944515437794195
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3579a4c311b8427f81a0c1a29e9acfe8, type: 3}
-  m_Name: LightsPunctualExport
-  m_EditorClassIdentifier: 
---- !u!114 &-4857777736425390288
+  enabled: 1
+--- !u!114 &-8040649286254799596
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -72,7 +25,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dd4c08c7d6d71f4ca7d83fb653d4f9b, type: 3}
   m_Name: TextMeshGameObjectExport
   m_EditorClassIdentifier: 
---- !u!114 &-4795784057912261674
+  enabled: 1
+--- !u!114 &-7050405499524394651
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -81,34 +35,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 969cbb3ac6864c2f9e49e468eef2744c, type: 3}
-  m_Name: Ktx2Import
+  m_Script: {fileID: 11500000, guid: 473c2b5b3de547139304b32beee641e9, type: 3}
+  m_Name: AnimationPointerImport
   m_EditorClassIdentifier: 
---- !u!114 &-4549496759236269008
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 837601ceb763400cadb3575e55885670, type: 3}
-  m_Name: MeshoptImport
-  m_EditorClassIdentifier: 
---- !u!114 &-2523399708656248355
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6d87ebf60834245a388cd150253839d, type: 3}
-  m_Name: AnimationPointerExport
-  m_EditorClassIdentifier: 
---- !u!114 &-978444939377965860
+  enabled: 1
+--- !u!114 &-6650024143073689186
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -120,7 +51,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e63c00ddf0924f0c8bd05f7f16935dfe, type: 3}
   m_Name: LodsExport
   m_EditorClassIdentifier: 
---- !u!114 &-207717997308199623
+  enabled: 1
+--- !u!114 &-5596585340708755947
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,9 +61,96 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c85d7bc6d6ea44f46b33f0a3a2e09283, type: 3}
-  m_Name: BakeParticleSystem
+  m_Script: {fileID: 11500000, guid: 60bb1ecd8af04e0e864c773a2aaf6263, type: 3}
+  m_Name: TextureTransformImport
   m_EditorClassIdentifier: 
+  enabled: 1
+--- !u!114 &-5474120348128350295
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5066402b4fbd41e79ab3d7023cca96c5, type: 3}
+  m_Name: MaterialVariantsPlugin
+  m_EditorClassIdentifier: 
+  enabled: 1
+--- !u!114 &-5418119649765073896
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d48839dd2db84f9f94ec4e3bb77e9f9e, type: 3}
+  m_Name: LightsPunctualImport
+  m_EditorClassIdentifier: 
+  enabled: 1
+--- !u!114 &-4280372768360243515
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dca6a7cdc544a17b19918041bc59d14, type: 3}
+  m_Name: DracoImport
+  m_EditorClassIdentifier: 
+  enabled: 1
+--- !u!114 &-3181682826652952321
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 056f401eae1a4f76b6f580ebf76127a9, type: 3}
+  m_Name: GPUInstancingImport
+  m_EditorClassIdentifier: 
+  enabled: 1
+--- !u!114 &-983658856789074638
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5152940c6ada2f3449baca5def38ea64, type: 3}
+  m_Name: MaterialExtensionsExport
+  m_EditorClassIdentifier: 
+  enabled: 1
+  KHR_materials_ior: 1
+  KHR_materials_transmission: 1
+  KHR_materials_volume: 1
+  KHR_materials_iridescence: 1
+  KHR_materials_specular: 1
+  KHR_materials_clearcoat: 1
+  KHR_materials_emissive_strength: 1
+  KHR_materials_sheen: 1
+--- !u!114 &-708859362453597284
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3579a4c311b8427f81a0c1a29e9acfe8, type: 3}
+  m_Name: LightsPunctualExport
+  m_EditorClassIdentifier: 
+  enabled: 1
 --- !u!114 &1
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,28 +163,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d9a5969691dba845877d0a52b6d9397, type: 3}
   m_Name: UnityGLTFSettings
   m_EditorClassIdentifier: 
+  shaderStrippingSettings:
+    stripPassesFromAllShaders: 0
+    stripPasses: 0
   ImportPlugins:
-  - {fileID: -4795784057912261674}
-  - {fileID: 1163865777325217491}
-  - {fileID: -4549496759236269008}
-  - {fileID: -7444061282681497396}
-  - {fileID: 6113173386541252912}
-  - {fileID: 2696095291618921317}
-  - {fileID: 3562309259312862233}
-  - {fileID: -6238964118680925428}
-  - {fileID: 4208628423192760270}
-  - {fileID: -6357508956596080507}
+  - {fileID: -5418119649765073896}
+  - {fileID: 7354931591554079324}
+  - {fileID: 8165715841456310108}
+  - {fileID: -4280372768360243515}
+  - {fileID: 4565083505432629272}
+  - {fileID: -3181682826652952321}
+  - {fileID: 2229392587929954387}
+  - {fileID: 416954911963470188}
+  - {fileID: -5596585340708755947}
+  - {fileID: -7050405499524394651}
   ExportPlugins:
-  - {fileID: 789841657458185917}
-  - {fileID: -2523399708656248355}
-  - {fileID: -978444939377965860}
-  - {fileID: -5278944515437794195}
-  - {fileID: 3676311445858443147}
-  - {fileID: 7655177199284848162}
-  - {fileID: -4857777736425390288}
-  - {fileID: 9099872823037037376}
-  - {fileID: -207717997308199623}
-  - {fileID: -8188474855944356674}
+  - {fileID: -983658856789074638}
+  - {fileID: -8242977300222933172}
+  - {fileID: 4188771021015532885}
+  - {fileID: 8947301126678773628}
+  - {fileID: -708859362453597284}
+  - {fileID: -6650024143073689186}
+  - {fileID: -8040649286254799596}
+  - {fileID: 4629606334823741677}
+  - {fileID: 1164292992392463988}
+  - {fileID: -5474120348128350295}
   exportNames: 1
   exportFullPath: 0
   requireExtensions: 0
@@ -182,38 +204,7 @@ MonoBehaviour:
   blendShapeExportSparseAccessors: 1
   exportVertexColors: 1
   UseCaching: 1
---- !u!114 &789841657458185917
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5152940c6ada2f3449baca5def38ea64, type: 3}
-  m_Name: MaterialExtensionsExport
-  m_EditorClassIdentifier: 
-  KHR_materials_ior: 1
-  KHR_materials_transmission: 1
-  KHR_materials_volume: 1
-  KHR_materials_iridescence: 1
-  KHR_materials_specular: 1
-  KHR_materials_clearcoat: 1
-  KHR_materials_emissive_strength: 1
---- !u!114 &1163865777325217491
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60bb1ecd8af04e0e864c773a2aaf6263, type: 3}
-  m_Name: TextureTransformImport
-  m_EditorClassIdentifier: 
---- !u!114 &2696095291618921317
+--- !u!114 &416954911963470188
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -225,7 +216,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d3bb2aeeab442db8c587d6e67450acc, type: 3}
   m_Name: UnlitMaterialsImport
   m_EditorClassIdentifier: 
---- !u!114 &3562309259312862233
+  enabled: 1
+--- !u!114 &1164292992392463988
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -234,10 +226,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7dca6a7cdc544a17b19918041bc59d14, type: 3}
-  m_Name: DracoImport
+  m_Script: {fileID: 11500000, guid: c85d7bc6d6ea44f46b33f0a3a2e09283, type: 3}
+  m_Name: BakeParticleSystem
   m_EditorClassIdentifier: 
---- !u!114 &3676311445858443147
+  enabled: 0
+--- !u!114 &2229392587929954387
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -246,10 +239,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9571021a85f04ddfb74e8aa5aad9cc5a, type: 3}
-  m_Name: UnlitMaterialsExport
+  m_Script: {fileID: 11500000, guid: 2239c10507484fb78bb19067a66500f2, type: 3}
+  m_Name: LodsImport
   m_EditorClassIdentifier: 
---- !u!114 &4208628423192760270
+  enabled: 1
+--- !u!114 &4188771021015532885
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -258,10 +252,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 056f401eae1a4f76b6f580ebf76127a9, type: 3}
-  m_Name: GPUInstancingImport
+  m_Script: {fileID: 11500000, guid: b6d87ebf60834245a388cd150253839d, type: 3}
+  m_Name: AnimationPointerExport
   m_EditorClassIdentifier: 
---- !u!114 &6113173386541252912
+  enabled: 0
+--- !u!114 &4565083505432629272
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -270,30 +265,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d19ac0d23e84c248f196d1afbe9b9d0, type: 3}
-  m_Name: MaterialExtensionsImport
+  m_Script: {fileID: 11500000, guid: 969cbb3ac6864c2f9e49e468eef2744c, type: 3}
+  m_Name: Ktx2Import
   m_EditorClassIdentifier: 
-  KHR_materials_ior: 1
-  KHR_materials_transmission: 1
-  KHR_materials_volume: 1
-  KHR_materials_iridescence: 1
-  KHR_materials_specular: 1
-  KHR_materials_clearcoat: 1
-  KHR_materials_pbrSpecularGlossiness: 1
-  KHR_materials_emissive_strength: 1
---- !u!114 &7655177199284848162
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 984138db70144b97b48597182a21b46c, type: 3}
-  m_Name: TextureTransformExport
-  m_EditorClassIdentifier: 
---- !u!114 &9099872823037037376
+  enabled: 1
+--- !u!114 &4629606334823741677
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -305,3 +281,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d9fe28b7eb945fd891714c55c74f44b, type: 3}
   m_Name: CanvasExport
   m_EditorClassIdentifier: 
+  enabled: 0
+--- !u!114 &7354931591554079324
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d19ac0d23e84c248f196d1afbe9b9d0, type: 3}
+  m_Name: MaterialExtensionsImport
+  m_EditorClassIdentifier: 
+  enabled: 1
+  KHR_materials_ior: 1
+  KHR_materials_transmission: 1
+  KHR_materials_volume: 1
+  KHR_materials_iridescence: 1
+  KHR_materials_specular: 1
+  KHR_materials_clearcoat: 1
+  KHR_materials_sheen: 1
+  KHR_materials_pbrSpecularGlossiness: 1
+  KHR_materials_emissive_strength: 1
+--- !u!114 &8165715841456310108
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 837601ceb763400cadb3575e55885670, type: 3}
+  m_Name: MeshoptImport
+  m_EditorClassIdentifier: 
+  enabled: 1
+--- !u!114 &8947301126678773628
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 984138db70144b97b48597182a21b46c, type: 3}
+  m_Name: TextureTransformExport
+  m_EditorClassIdentifier: 
+  enabled: 1
