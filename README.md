@@ -1,44 +1,125 @@
-# projekt_ws24
-Projektstudium 2 (PS) - Entwicklung einer immersiven VR-Simulation zur Optimierung chirurgischer Abläufe
+# IKG-Projektstudium - Entwicklung einer immersiven VR-Simulation zur Optimierung chirurgischer Abläufe
 
+Dies ist das Repository für das Projektstudium **"Entwicklung einer immersiven VR-Simulation zur Optimierung chirurgischer Abläufe"** im Studiengang IKG.
 
-## Install
-clone repository via: 
-HTTPS: https://gitlab.rz.htw-berlin.de/s0583646/projekt_ws24.git 
-SSH: git@gitlab.rz.htw-berlin.de:s0583646/projekt_ws24.git
+Das Repository beinhaltet ein **Unity-Projekt** mit einer immersiven **Multiplayer-VR-Anwendung**. Die Anwendung simuliert ein chirurgisches Szenario, in dem zwei Spieler virtuelle Operationsinstrumente greifen können. Ziel ist es, Strategien für multisensorisches Feedback beim Greifen zu entwickeln, die die Übergabe der Operationsinstrumente unterstützen.
 
-We use
-Rider for writing scripts in C# and integration with Unity: https://www.jetbrains.com/rider/
-Unity Editor version 6000.0.24f1
+---
+## Setup
 
-App-ID zum starten von Photon-Fusion 5c77e000-f752-43ad-996a-25c8149edcf6
-Link zur Präsentation: https://docs.google.com/presentation/d/18H9MO7WaeibtrPGkoeIOe2Euw6h_182z3YXetdKaGrA/edit#slide=id.g2af481c8749_0_33
+### Benötigte Software
+Zur Einrichtung und Entwicklung des Setups muss folgende Software installiert werden:
 
-## Add your files
+> **Hinweis:** Die Entwicklung wurde auf **Windows** durchgeführt. Einige Software-Komponenten, wie **Meta Quest Link**, sind nur für Windows verfügbar.
+
+- **Unity**
+  - Unity Hub: [Download](https://unity.com/unity-hub)
+  - Unity Editor Version **6000.0.42f1** (inklusive **Android Build Support**): [Download](https://unity.com/releases/editor/archive)
+- **IDE** (Wahlweise):
+  - JetBrains Rider: [Download](https://www.jetbrains.com/rider/download/#section=windows)  
+    oder
+  - Visual Studio
+- **Git** + **Git LFS**
+- **Meta Quest Link**: [Download](https://www.meta.com/de-de/help/quest/1517439565442928/)
+- **Meta Quest Developer Hub**: [Download](https://developers.meta.com/horizon/downloads/package/oculus-developer-hub-win/)
+
+---
+
+### Abhängigkeiten (Dependencies)
+
+#### UPM-Packages (Unity Package Manager)
+Diese Pakete wurden über den Unity Package Manager (UPM) installiert:
+
+- **OpenXR** - Ermöglicht die Nutzung von OpenXR für plattformübergreifende VR-Entwicklung. [Dokumentation](https://docs.unity3d.com/Packages/com.unity.xr.openxr@1.14/manual/index.html)
+- **XR Interaction Toolkit** - Bietet Interaktionssysteme für VR, z. B. Greifen von Objekten und UI-Interaktionen. [Dokumentation](https://docs.unity3d.com/Packages/com.unity.xr.interaction.toolkit@3.1/manual/index.html)
+- **XR Hands** - Unterstützt Handtracking für natürliche Interaktionen in VR. [Dokumentation](https://docs.unity3d.com/Packages/com.unity.xr.hands@1.5/manual/index.html)
+- **Animation Rigging** - Ermöglicht Animierung und inverse Kinematik (IK) für die Avatare. [Dokumentation](https://docs.unity3d.com/Packages/com.unity.animation.rigging@1.3/manual/index.html)
+- **Khronos GLTF Unity Importer** - Ermöglicht das Laden und Verwenden von GLTF-3D-Modellen in Unity. [GitHub](https://github.com/KhronosGroup/UnityGLTF)
+- **ParrelSync** - Erlaubt paralleles Testen von Multiplayer-Funktionen in Unity. [GitHub](https://github.com/VeriorPies/ParrelSync)
+
+#### Plugins (Unity Asset Store / Externe Quellen)
+Diese Plugins stammen aus dem Unity Asset Store oder externen Quellen:
+
+- **Photon Fusion 2** - Netzwerkframework für Unity. [Dokumentation](https://doc.photonengine.com/fusion/current/fusion-intro)
+- **Gleechi Virtual Grasp SDK** - Ermöglicht natürliches Greifen von Objekten mit physikalisch basierten Handinteraktionen. [Website](https://www.virtualgrasp.com)
+
+#### 3D-Assets
+Diese 3D-Modelle werden in der Anwendung verwendet:
+
+- **Microsoft Rocketbox Avatare** - Enthält 3D-Avatarmodelle. [GitHub](https://github.com/microsoft/Microsoft-Rocketbox)
+- **Operationsraum 3D-Modell** - Verwendetes 3D-Modell eines Operationsraums. [Sketchfab](https://sketchfab.com/3d-models/operating-room-4248fba251a5482ca501d23919c5b8c6)
+
+---
+
+## Installation
+
+**Repository klonen:**
+
+```sh
+# HTTPS
+https://gitlab.rz.htw-berlin.de/s0583646/projekt_ws24.git
+
+# SSH
+git@gitlab.rz.htw-berlin.de:s0583646/projekt_ws24.git
 ```
-cd existing_repo
-git remote add origin https://gitlab.rz.htw-berlin.de/s0583646/projekt_ws24.git
-git branch -M main
-git push -uf origin main
+
+**Projekt in Unity öffnen:**
+
+1. Das geklonte Repository im Unity Hub öffnen.
+2. Das erstmalige Laden des Projekts kann einige Zeit in Anspruch nehmen.
+3. Beim Öffnen erscheinen mehrere Popups, die das Projekt auf die neue **OpenXR-Version** umstellen. Diese mit **"Ja"** bestätigen.
+4. Nach dem Laden des Projekts erscheint ein **Setup-Fenster für Photon Fusion**.
+  - Stelle sicher, dass die **App-ID** korrekt eingetragen ist: `5c77e000-f752-43ad-996a-25c8149edcf6`
+
+**Hauptszene:**
+
+Die Hauptszene befindet sich unter:
+
+```
+Application/Scenes/operational room.unity
 ```
 
-## Collaborate with your team
+---
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+## Projektstruktur
 
-## Test and Deploy
+Die Ordnerstruktur des Unity-Projekts ist wie folgt aufgebaut:
 
-Use the built-in continuous integration in GitLab.
+```
+- Assets
+  - Application (Alle Komponenten der Anwendung)
+    - Models (3D-Modelle)
+    - Prefabs (Verwendete Prefabs)
+    - Scenes (3D-Szenen)
+    - Scripts (Eigene Skripte)
+  - com.gleechi.unity.virtualgrasp (Plugin für Objektgriff)
+  - Photon (Multiplayer-Komponenten)
+  - Plugins (Externe Plugins)
+  - Resources (Diverse Plugin-Einstellungen)
+  - Samples (Beispieldateien aus Plugins)
+  - Settings (Rendering-Einstellungen)
+  - TextMesh Pro (UI-Komponenten)
+  - VG_Grasps (Mesh-Bibliotheken für das Greifen)
+  - XR (XR-Setup und Loader)
+  - XRI (XR-Interaktionen)
+- Packages (Enthält die `manifest.json`, welche alle Plugins referenziert)
+- ProjectSettings (Projekt-Einstellungen, nur im Unity-Editor bearbeiten)
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+---
 
-***
+## Deployment auf Meta Quest
 
+**To-Do** *(Hier sollen in Zukunft Anweisungen zum Erstellen und Bereitstellen der Anwendung auf Meta Quest hinzugefügt werden.)*
+
+---
+
+## Troubleshooting
+
+to-be-added
+
+---
+
+## Weitere Ressourcen
+
+**Link zur Präsentation:** [Google Slides](https://docs.google.com/presentation/d/18H9MO7WaeibtrPGkoeIOe2Euw6h_182z3YXetdKaGrA/edit#slide=id.g2af481c8749_0_33)
