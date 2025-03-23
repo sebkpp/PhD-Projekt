@@ -87,14 +87,14 @@ Die Ordnerstruktur des Unity-Projekts ist wie folgt aufgebaut:
 
 ```
 - Assets
-  - Application (Alle Komponenten der Anwendung)
+  - Application (Alle Komponenten der Anwendung - Hier finden die wesentlichen Entwicklungen statt)
     - Models (3D-Modelle)
     - Prefabs (Verwendete Prefabs)
     - Scenes (3D-Szenen)
     - Scripts (Eigene Skripte)
   - com.gleechi.unity.virtualgrasp (Plugin für Objektgriff)
-  - Photon (Multiplayer-Komponenten)
-  - Plugins (Externe Plugins)
+  - Photon (Multiplayer-Framework)
+  - Plugins (Diverse Plugins)
   - Resources (Diverse Plugin-Einstellungen)
   - Samples (Beispieldateien aus Plugins)
   - Settings (Rendering-Einstellungen)
@@ -102,7 +102,7 @@ Die Ordnerstruktur des Unity-Projekts ist wie folgt aufgebaut:
   - VG_Grasps (Mesh-Bibliotheken für das Greifen)
   - XR (XR-Setup und Loader)
   - XRI (XR-Interaktionen)
-- Packages (Enthält die `manifest.json`, welche alle Plugins referenziert)
+- Packages (Enthält die `manifest.json`, welche alle Plugins referenziert, die über UPM hinzugefügt wurden)
 - ProjectSettings (Projekt-Einstellungen, nur im Unity-Editor bearbeiten)
 ```
 
