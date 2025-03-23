@@ -25,7 +25,7 @@ Zur Einrichtung und Entwicklung des Setups muss folgende Software installiert we
 
 ---
 
-### Abhängigkeiten (Dependencies)
+### Abhängigkeiten (Dependencies) - Sind bereits im Projekt enthalten und müssen nicht extra installiert werden.
 
 #### UPM-Packages (Unity Package Manager)
 Diese Pakete wurden über den Unity Package Manager (UPM) installiert:
