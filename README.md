@@ -105,6 +105,10 @@ Die Ordnerstruktur des Unity-Projekts ist wie folgt aufgebaut:
 - Packages (Enthält die `manifest.json`, welche alle Plugins referenziert, die über UPM hinzugefügt wurden)
 - ProjectSettings (Projekt-Einstellungen, nur im Unity-Editor bearbeiten)
 ```
+---
+## Workflow Beschreibung und Regeln
+
+**To-Do** *(Hier soll festgelegt werden wie die Entwicklungen organisiert werden und welche Punkte und Abläufe beim Arbeiten mit Git & Co zu beachten sind.)
 
 ---
 
@@ -116,7 +120,7 @@ Die Ordnerstruktur des Unity-Projekts ist wie folgt aufgebaut:
 
 ## Troubleshooting
 
-to-be-added
+**to-be-added**
 
 ---
 
