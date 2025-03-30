@@ -2086,6 +2086,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 882468401061219225}
+  - component: {fileID: 8751284336593945481}
+  - component: {fileID: 7399922950300294644}
   m_Layer: 0
   m_Name: lifthand ik_target
   m_TagString: Untagged
@@ -2113,6 +2115,58 @@ Transform:
   - {fileID: 6219858937290718495}
   m_Father: {fileID: 6051486106534466039}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8751284336593945481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2903326460370379167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
+--- !u!114 &7399922950300294644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2903326460370379167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb36265e205b41c4b94e943c80c78b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  networkTransform: {fileID: 0}
+  side: 2
+  handTrackingData:
+    wrist: {fileID: 882468401061219225}
+    thumb:
+      proximal: {fileID: 157344577477826406}
+      intermediate: {fileID: 401533925992659297}
+      distal: {fileID: 6661822514112560711}
+    index:
+      proximal: {fileID: 5977599131794907240}
+      intermediate: {fileID: 4669966269809419541}
+      distal: {fileID: 8123127661405206908}
+    middle:
+      proximal: {fileID: 3541333945290502619}
+      intermediate: {fileID: 6225072144402160130}
+      distal: {fileID: 3416069184441299543}
+    ring:
+      proximal: {fileID: 1328251918274148292}
+      intermediate: {fileID: 6703389705838408219}
+      distal: {fileID: 1648729682734160628}
+    pinky:
+      proximal: {fileID: 369920251817645808}
+      intermediate: {fileID: 8734058903168209512}
+      distal: {fileID: 1091118622828187053}
 --- !u!1 &2970737187293231274
 GameObject:
   m_ObjectHideFlags: 0
@@ -3003,6 +3057,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7508929864709645355}
+  - component: {fileID: 3573450678966665937}
+  - component: {fileID: 6038100394693718983}
   m_Layer: 0
   m_Name: righthand ik_target
   m_TagString: Untagged
@@ -3030,6 +3086,58 @@ Transform:
   - {fileID: 8099136414141386344}
   m_Father: {fileID: 4683182509507263651}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3573450678966665937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3994630503247773869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
+--- !u!114 &6038100394693718983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3994630503247773869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb36265e205b41c4b94e943c80c78b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  networkTransform: {fileID: 0}
+  side: 3
+  handTrackingData:
+    wrist: {fileID: 7508929864709645355}
+    thumb:
+      proximal: {fileID: 7754773801571081808}
+      intermediate: {fileID: 3247985618884179367}
+      distal: {fileID: 2180449611859941517}
+    index:
+      proximal: {fileID: 5699453002477920334}
+      intermediate: {fileID: 781098791275240585}
+      distal: {fileID: 8632321593337542573}
+    middle:
+      proximal: {fileID: 1650504579580849429}
+      intermediate: {fileID: 4890750118389919561}
+      distal: {fileID: 4757194231893399942}
+    ring:
+      proximal: {fileID: 5900097965939878553}
+      intermediate: {fileID: 7542485748829216317}
+      distal: {fileID: 1885325621317865532}
+    pinky:
+      proximal: {fileID: 9123472437988179134}
+      intermediate: {fileID: 2594228219526382308}
+      distal: {fileID: 5145598962054912445}
 --- !u!1 &3997902331041542738
 GameObject:
   m_ObjectHideFlags: 0
@@ -3185,6 +3293,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 150504796385793971}
+  - component: {fileID: 1872663762410843005}
+  - component: {fileID: 971276446679163098}
   m_Layer: 0
   m_Name: head target
   m_TagString: Untagged
@@ -3207,6 +3317,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1802004643479963640}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1872663762410843005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4047212515033397076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7429ef75ff4bfbb25fc1ea4be77f34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trackingData:
+    source: {fileID: 150504796385793971}
+    offsetPosition: {x: 0, y: 0, z: 0}
+    offsetRotation: {x: 0, y: 0, z: 0}
+  networkTransform: {fileID: 0}
+--- !u!114 &971276446679163098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4047212515033397076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!1 &4093618186661530843
 GameObject:
   m_ObjectHideFlags: 0
@@ -4042,8 +4185,8 @@ GameObject:
   - component: {fileID: 4911223059605754870}
   - component: {fileID: 6840968868610239094}
   - component: {fileID: 2453443287984234288}
-  - component: {fileID: 737265131614680799}
   - component: {fileID: 2706497170491004317}
+  - component: {fileID: 8240395312464918815}
   m_Layer: 0
   m_Name: Medical_Male_04 preFab
   m_TagString: Untagged
@@ -4224,7 +4367,13 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 2453443287984234288}
-  - {fileID: 737265131614680799}
+  - {fileID: 8240395312464918815}
+  - {fileID: 1872663762410843005}
+  - {fileID: 971276446679163098}
+  - {fileID: 3573450678966665937}
+  - {fileID: 6038100394693718983}
+  - {fileID: 8751284336593945481}
+  - {fileID: 7399922950300294644}
 --- !u!114 &2453443287984234288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4241,64 +4390,6 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
---- !u!114 &737265131614680799
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5376535062259483571}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90a869f11b034f8ba307b2ac3fa2167c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  avatarPosition: {fileID: 5243068790051318351}
-  avatarHead: {fileID: 150504796385793971}
-  avatarLeftHand:
-    wrist: {fileID: 882468401061219225}
-    thumb:
-      proximal: {fileID: 157344577477826406}
-      intermediate: {fileID: 401533925992659297}
-      distal: {fileID: 6661822514112560711}
-    index:
-      proximal: {fileID: 5977599131794907240}
-      intermediate: {fileID: 4669966269809419541}
-      distal: {fileID: 8123127661405206908}
-    middle:
-      proximal: {fileID: 3541333945290502619}
-      intermediate: {fileID: 6225072144402160130}
-      distal: {fileID: 3416069184441299543}
-    ring:
-      proximal: {fileID: 1328251918274148292}
-      intermediate: {fileID: 6703389705838408219}
-      distal: {fileID: 1648729682734160628}
-    pinky:
-      proximal: {fileID: 369920251817645808}
-      intermediate: {fileID: 8734058903168209512}
-      distal: {fileID: 1091118622828187053}
-  avatarRightHand:
-    wrist: {fileID: 7508929864709645355}
-    thumb:
-      proximal: {fileID: 7754773801571081808}
-      intermediate: {fileID: 3247985618884179367}
-      distal: {fileID: 2180449611859941517}
-    index:
-      proximal: {fileID: 5699453002477920334}
-      intermediate: {fileID: 781098791275240585}
-      distal: {fileID: 8632321593337542573}
-    middle:
-      proximal: {fileID: 1650504579580849429}
-      intermediate: {fileID: 4890750118389919561}
-      distal: {fileID: 4757194231893399942}
-    ring:
-      proximal: {fileID: 5900097965939878553}
-      intermediate: {fileID: 7542485748829216317}
-      distal: {fileID: 1885325621317865532}
-    pinky:
-      proximal: {fileID: 9123472437988179134}
-      intermediate: {fileID: 2594228219526382308}
-      distal: {fileID: 5145598962054912445}
 --- !u!114 &2706497170491004317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4315,6 +4406,23 @@ MonoBehaviour:
   avatarHead: {fileID: 7969115323233021414}
   avatarMiddleEye: {fileID: 3903193110147909932}
   avatarFeet: {fileID: 8203353613952219105}
+--- !u!114 &8240395312464918815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5376535062259483571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f42d14ae764798ae50319050de10dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hardwareRig: {fileID: 0}
+  leftHand: {fileID: 7399922950300294644}
+  rightHand: {fileID: 6038100394693718983}
+  headset: {fileID: 1872663762410843005}
+  networkTransform: {fileID: 0}
 --- !u!1 &5552433174901797273
 GameObject:
   m_ObjectHideFlags: 0
