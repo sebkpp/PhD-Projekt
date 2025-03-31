@@ -7,7 +7,7 @@ namespace Application.Scripts.Network.Input
     /// <summary>
     /// Saves an Input-State. contains Position/Rotation of PlayerArea, Head, Left and Right Hand
     /// </summary>
-    public struct XRInputState :  IXRInputState<TransformState, HandState>
+    public struct XRInputState
     {
         // Player Area, e.g., for teleportation
         public TransformState PlayArea { get; set; }
@@ -15,6 +15,9 @@ namespace Application.Scripts.Network.Input
         // Head
         public TransformState Head { get; set; }
 
+        public TransformState LeftHandWrist { get; set; }
+        public TransformState RightHandWrist { get; set; }
+        
         // Left Hand
         public HandState LeftHand { get; set; }
 
