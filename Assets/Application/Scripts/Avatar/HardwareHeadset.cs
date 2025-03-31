@@ -8,8 +8,7 @@ namespace Application.Scripts.Avatar
     {
         //public Fader fader;
         public NetworkTransform networkTransform;
-        [FormerlySerializedAs("TrackingData")] public TrackingData trackingData;
-
+        
         private void Awake()
         {
             //if (fader == null) fader = GetComponentInChildren<Fader>();
