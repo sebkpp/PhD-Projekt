@@ -1,0 +1,145 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4a3451747ff41b1abe4fae6a4dd62ce, type: 3}
+  m_Name: AvatarConfig
+  m_EditorClassIdentifier: 
+  head:
+    position: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+  leftHand:
+    wrist:
+      position: {x: 0, y: 0, z: -0.0125}
+      rotation: {x: 0, y: 270, z: 270}
+    thumb:
+      fingerUp: 1
+      fingerForward: 5
+      proximal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+      intermediate:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+      distal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+    index:
+      fingerUp: 1
+      fingerForward: 5
+      proximal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+      intermediate:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+      distal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+    middle:
+      fingerUp: 1
+      fingerForward: 5
+      proximal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+      intermediate:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+      distal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+    ring:
+      fingerUp: 1
+      fingerForward: 5
+      proximal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+      intermediate:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+      distal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+    pinky:
+      fingerUp: 1
+      fingerForward: 5
+      proximal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+      intermediate:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+      distal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 0, z: 90}
+  rightHand:
+    wrist:
+      position: {x: 0, y: 0, z: 0.0125}
+      rotation: {x: 0, y: 270, z: 270}
+    thumb:
+      fingerUp: 0
+      fingerForward: 4
+      proximal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+      intermediate:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+      distal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+    index:
+      fingerUp: 0
+      fingerForward: 4
+      proximal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+      intermediate:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+      distal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+    middle:
+      fingerUp: 0
+      fingerForward: 4
+      proximal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+      intermediate:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+      distal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+    ring:
+      fingerUp: 0
+      fingerForward: 4
+      proximal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+      intermediate:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+      distal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+    pinky:
+      fingerUp: 0
+      fingerForward: 4
+      proximal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+      intermediate:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
+      distal:
+        position: {x: 0, y: 0, z: 0}
+        rotation: {x: 180, y: 180, z: 90}
