@@ -1,9 +1,8 @@
 ﻿using System;
+using Application.Scripts.Avatar.Utils;
 using Application.Scripts.Interaction;
 using Application.Scripts.Network.Input;
-using Application.Scripts.Utils.Extensions;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Application.Scripts.Avatar
 {
@@ -21,19 +20,19 @@ namespace Application.Scripts.Avatar
         {
             FingerState state = new FingerState()
             {
-                Proximal = proximal.GetLocalState(),
-                Intermediate = intermediate.GetLocalState(),
-                Distal = distal.GetLocalState()
+                Proximal = proximal.GetState(),
+                Intermediate = intermediate.GetState(),
+                Distal = distal.GetState()
             };
-
+            
             return state;
         }
 
-        public void SetFingerState(FingerState state)
+        public void SetFingerState(FingerState state, FingerOffsets offsets)
         {
-            proximal.SetLocalState(state.Proximal);
-            intermediate.SetLocalState(state.Intermediate);
-            distal.SetLocalState(state.Distal);
+            proximal.SetState(state.Proximal, offsets.proximal);
+            intermediate.SetState(state.Intermediate, offsets.intermediate);
+            distal.SetState(state.Distal, offsets.distal);
         }
     }
     
@@ -43,8 +42,6 @@ namespace Application.Scripts.Avatar
     [Serializable]
     public class HandTrackingData
     {
-        public TrackingData wrist;
-        
         public FingerTrackingData thumb;
         public FingerTrackingData index;
         public FingerTrackingData middle;
@@ -52,30 +49,27 @@ namespace Application.Scripts.Avatar
         public FingerTrackingData pinky;
         
         
-        public HandState GetHandState()
+        public HandState GetHandPose()
         {
             HandState state = new HandState
             {
-                Wrist = wrist.GetState(),
                 Thumb = thumb.GetFingerState(),
                 Index = index.GetFingerState(),
                 Middle = middle.GetFingerState(),
                 Ring = ring.GetFingerState(),
                 Pinky = pinky.GetFingerState()
             };
-
+            
             return state;
         }
 
-        public void SetHandState(HandState handState)
+        public void SetHandPose(HandState handState, HandOffsets handOffsets)
         {
-            wrist.SetState(handState.Wrist);
-            
-            thumb.SetFingerState(handState.Thumb);
-            index.SetFingerState(handState.Index);
-            middle.SetFingerState(handState.Middle);
-            ring.SetFingerState(handState.Ring);
-            pinky.SetFingerState(handState.Pinky);
+            thumb.SetFingerState(handState.Thumb, handOffsets.thumb);
+            index.SetFingerState(handState.Index, handOffsets.index);
+            middle.SetFingerState(handState.Middle, handOffsets.middle);
+            ring.SetFingerState(handState.Ring, handOffsets.ring);
+            pinky.SetFingerState(handState.Pinky, handOffsets.pinky);
         }
     }
     
@@ -83,40 +77,52 @@ namespace Application.Scripts.Avatar
     public class TrackingData
     {
         public Transform source;
-        public Vector3 offsetPosition;
-        public Vector3 offsetRotation;
         
         public TransformState GetState()
         {
             TransformState state = new TransformState()
             {
-                Position = source.ApplyOffset(offsetPosition),
-                Rotation = source.ApplyOffsetRotation(offsetRotation)
+                Position = source.position,
+                Rotation = source.rotation
             };
             
             return state;
         }
-
+        
         public TransformState GetLocalState()
         {
             TransformState state = new TransformState()
             {
-                Position = source.localPosition,
-                Rotation = source.ApplyOffsetRotation(offsetRotation)
+                Position = source.position,
+                Rotation = source.rotation
             };
-
+            
+            // state.Position += offset.position;
+            // state.Rotation *= Quaternion.Euler(offset.rotation);
+            //
+            // TransformState stateLocal = new TransformState()
+            // {
+            //     Position = source.InverseTransformPoint(state.Position),
+            //     Rotation = Quaternion.Inverse(source.rotation) * state.Rotation
+            // };
+            
             return state;
         }
 
-        public void SetState(TransformState state)
+        public void SetState(TransformState state, TrackingOffsets offset)
         {
+            state.Position += offset.position;
+            state.Rotation *= Quaternion.Euler(offset.rotation);
+            
             source.SetPositionAndRotation(state.Position, state.Rotation);
         }
-
+        
         public void SetLocalState(TransformState state)
         {
-            source.localPosition = state.Position;
-            source.localRotation = state.Rotation;
+            //Quaternion offsetRotation = Quaternion.Euler(offset.rotation) * offsetAxis;
+            source.position = state.Position;
+            source.rotation = state.Rotation;
+            //source.SetPositionAndRotation(state.Position, state.Rotation);
         }
     }
 }

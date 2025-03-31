@@ -9,8 +9,6 @@ namespace Application.Scripts.Network.Input
     {
         public const int EXECUTION_ORDER = NetworkRig.EXECUTION_ORDER + 10;
         
-        [FormerlySerializedAs("HeadTrackingData")] public TrackingData trackingData;
-
         [HideInInspector]
         public NetworkTransform networkTransform;
 

@@ -2637,73 +2637,41 @@ MonoBehaviour:
   HandTrackingData:
     wrist:
       source: {fileID: 762674172}
-      offsetPosition: {x: -0.000125, y: 0, z: 0}
-      offsetRotation: {x: 0, y: 270, z: 270}
     thumb:
       proximal:
         source: {fileID: 1121619605}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
       intermediate:
         source: {fileID: 469380472}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
       distal:
         source: {fileID: 1564251933}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
     index:
       proximal:
         source: {fileID: 924917942}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
       intermediate:
         source: {fileID: 1412338302}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
       distal:
         source: {fileID: 339198999}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
     middle:
       proximal:
         source: {fileID: 596122778}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
       intermediate:
         source: {fileID: 1882590689}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
       distal:
         source: {fileID: 1429413714}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
     ring:
       proximal:
         source: {fileID: 1003618226}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
       intermediate:
         source: {fileID: 770271927}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
       distal:
         source: {fileID: 1739743907}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
     pinky:
       proximal:
         source: {fileID: 1060997662}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
       intermediate:
         source: {fileID: 195412144}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
       distal:
         source: {fileID: 1845472125}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
 --- !u!114 &3748156343201663857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2722,73 +2690,41 @@ MonoBehaviour:
   HandTrackingData:
     wrist:
       source: {fileID: 1353595286}
-      offsetPosition: {x: 0.000125, y: 0, z: 0}
-      offsetRotation: {x: 0, y: 270, z: 270}
     thumb:
       proximal:
         source: {fileID: 1822386544}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
       intermediate:
         source: {fileID: 996591885}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
       distal:
         source: {fileID: 133680877}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
     index:
       proximal:
         source: {fileID: 833020000}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
       intermediate:
         source: {fileID: 1959829468}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
       distal:
         source: {fileID: 1687164345}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
     middle:
       proximal:
         source: {fileID: 1822761693}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
       intermediate:
         source: {fileID: 1059454648}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
       distal:
         source: {fileID: 712702189}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
     ring:
       proximal:
         source: {fileID: 398048781}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
       intermediate:
         source: {fileID: 16415598}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
       distal:
         source: {fileID: 223997284}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
     pinky:
       proximal:
         source: {fileID: 1859625112}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
       intermediate:
         source: {fileID: 885268958}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
       distal:
         source: {fileID: 1731600198}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
 --- !u!1001 &3902065286228683521
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3043,10 +2979,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkTransform: {fileID: 0}
-  trackingData:
-    source: {fileID: 6546258583766642647}
-    offsetPosition: {x: 0, y: 0, z: 0}
-    offsetRotation: {x: 0, y: 90, z: 0}
 --- !u!4 &6546258584443470836 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8494956185013562006, guid: b7a92ba11a1c07041a5f83786d0005d2, type: 3}
@@ -3069,10 +3001,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f0d8729ea1a0c245aba78edb051f1ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playArea:
-    source: {fileID: 6546258584443470836}
-    offsetPosition: {x: 0, y: 0, z: 0}
-    offsetRotation: {x: 0, y: 0, z: 0}
   leftHand: {fileID: 3748156343201663857}
   rightHand: {fileID: 3748156343201663856}
   headset: {fileID: 6546258583766642651}
