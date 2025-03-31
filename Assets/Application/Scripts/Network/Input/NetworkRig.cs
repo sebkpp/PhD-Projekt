@@ -1,9 +1,13 @@
-﻿using Application.Scripts.Avatar;
+﻿using System;
+using Application.Scripts.Avatar;
+using Application.Scripts.Avatar.Utils;
+using Application.Scripts.Utils.Extensions;
 using Fusion;
 using UnityEngine;
 
 namespace Application.Scripts.Network.Input
 {
+    [RequireComponent(typeof(AvatarConfigReference))]
     public class NetworkRig : NetworkBehaviour
     {
         public const int EXECUTION_ORDER = 100;
@@ -16,9 +20,19 @@ namespace Application.Scripts.Network.Input
         [HideInInspector]
         public NetworkTransform networkTransform;
         
+        
+        private AvatarConfig _avatarConfig;
+        public AvatarConfig AvatarConfig => _avatarConfig;
+        
         protected virtual void Awake()
         {
             networkTransform = GetComponent<NetworkTransform>();
+            _avatarConfig = GetComponent<AvatarConfigReference>().Config;
+
+            if (_avatarConfig == null)
+            {
+                Debug.LogWarning($"{nameof(NetworkRig)} on {gameObject.name} has no AvatarConfig assigned!", this);
+            }
         }
 
         // As we are in shared topology, having the StateAuthority means we are the local user
@@ -44,7 +58,7 @@ namespace Application.Scripts.Network.Input
             {
                 XRInputState rigState = hardwareRig.RigState;
                 ApplyLocalStateToRigParts(rigState);
-                ApplyLocalStateToHandPoses(rigState);
+                //ApplyLocalStateToHandPoses(rigState);
             }
         }
 
@@ -53,16 +67,34 @@ namespace Application.Scripts.Network.Input
             transform.position = rigState.PlayArea.Position;
             transform.rotation = rigState.PlayArea.Rotation;
             
-            headset.trackingData.SetState(rigState.Head);
+            headset.transform.SetTransformState(rigState.Head);
             
-            leftHand.handTrackingData.wrist.SetPositionAndRotation(rigState.LeftHand.Wrist.Position, rigState.LeftHand.Wrist.Rotation);
-            rightHand.handTrackingData.wrist.SetPositionAndRotation(rigState.RightHand.Wrist.Position, rigState.RightHand.Wrist.Rotation);
+            // Left/Right Hand
+            Transform cachedNetworkLeftHand = leftHand.transform;
+            
+            Vector3 worldOffset = cachedNetworkLeftHand.rotation * _avatarConfig.LeftHand.wrist.position;
+            cachedNetworkLeftHand.position = rigState.LeftHandWrist.Position + worldOffset;
+            cachedNetworkLeftHand.rotation = rigState.LeftHandWrist.Rotation * Quaternion.Euler(_avatarConfig.LeftHand.wrist.rotation);
+
+            Transform cachedNetworkRightHand = rightHand.transform;
+            
+            worldOffset = cachedNetworkRightHand.rotation * _avatarConfig.RightHand.wrist.position;
+            cachedNetworkRightHand.position = rigState.RightHandWrist.Position + worldOffset;
+            cachedNetworkRightHand.rotation = rigState.RightHandWrist.Rotation * Quaternion.Euler(_avatarConfig.RightHand.wrist.rotation);
+            
+            leftHand.handTrackingData.SetHandPose(rigState.LeftHand, _avatarConfig.LeftHand);
+            rightHand.handTrackingData.SetHandPose(rigState.RightHand, _avatarConfig.RightHand);
         }
         
         protected virtual void ApplyLocalStateToHandPoses(XRInputState rigState)
         {
-            leftHand.HandState = (HandStateNetworked) rigState.LeftHand;
-            rightHand.HandState = (HandStateNetworked) rigState.RightHand;
+            XRInputState state = rigState;
+
+            //state.LeftHand.ApplyHandPoseOffset(_avatarConfig.LeftHand);
+            
+            leftHand.HandState = (HandStateNetworked) state.LeftHand;
+            rightHand.HandState = (HandStateNetworked) state.RightHand;
+
             // we update the hand pose info. It will trigger on network hands OnHandCommandChange on all clients, and update the hand representation accordingly
             //leftHand.HandCommand = rigState.leftHandCommand;
             //rightHand.HandCommand = rigState.rightHandCommand;
