@@ -26,8 +26,8 @@ namespace Application.Scripts.Avatar.Utils
     [Serializable]
     public struct FingerOffsets
     {
-        [SerializeField] private Axis fingerUp;
         [SerializeField] private Axis fingerForward;
+        [SerializeField] private Axis fingerUp;
         
         public Quaternion OffsetAxis => Quaternion.Inverse(Quaternion.LookRotation(fingerForward.ConvertToVector3(), fingerUp.ConvertToVector3()));
 
