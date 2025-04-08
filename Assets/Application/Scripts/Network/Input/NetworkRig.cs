@@ -1,6 +1,7 @@
-﻿using System;
-using Application.Scripts.Avatar;
+﻿using Application.Scripts.Avatar;
 using Application.Scripts.Avatar.Utils;
+using Application.Scripts.Interaction.States;
+using Application.Scripts.Network.Input.States;
 using Application.Scripts.Utils.Extensions;
 using Fusion;
 using UnityEngine;
@@ -58,7 +59,6 @@ namespace Application.Scripts.Network.Input
             {
                 XRInputState rigState = hardwareRig.RigState;
                 ApplyLocalStateToRigParts(rigState);
-                //ApplyLocalStateToHandPoses(rigState);
             }
         }
 
@@ -69,35 +69,8 @@ namespace Application.Scripts.Network.Input
             
             headset.transform.SetTransformState(rigState.Head);
             
-            // Left/Right Hand
-            Transform cachedNetworkLeftHand = leftHand.transform;
-            
-            Vector3 worldOffset = cachedNetworkLeftHand.rotation * _avatarConfig.LeftHand.wrist.position;
-            cachedNetworkLeftHand.position = rigState.LeftHandWrist.Position + worldOffset;
-            cachedNetworkLeftHand.rotation = rigState.LeftHandWrist.Rotation * Quaternion.Euler(_avatarConfig.LeftHand.wrist.rotation);
-
-            Transform cachedNetworkRightHand = rightHand.transform;
-            
-            worldOffset = cachedNetworkRightHand.rotation * _avatarConfig.RightHand.wrist.position;
-            cachedNetworkRightHand.position = rigState.RightHandWrist.Position + worldOffset;
-            cachedNetworkRightHand.rotation = rigState.RightHandWrist.Rotation * Quaternion.Euler(_avatarConfig.RightHand.wrist.rotation);
-            
-            leftHand.handTrackingData.SetHandPose(rigState.LeftHand, _avatarConfig.LeftHand);
-            rightHand.handTrackingData.SetHandPose(rigState.RightHand, _avatarConfig.RightHand);
-        }
-        
-        protected virtual void ApplyLocalStateToHandPoses(XRInputState rigState)
-        {
-            XRInputState state = rigState;
-
-            //state.LeftHand.ApplyHandPoseOffset(_avatarConfig.LeftHand);
-            
-            leftHand.HandState = (HandStateNetworked) state.LeftHand;
-            rightHand.HandState = (HandStateNetworked) state.RightHand;
-
-            // we update the hand pose info. It will trigger on network hands OnHandCommandChange on all clients, and update the hand representation accordingly
-            //leftHand.HandCommand = rigState.leftHandCommand;
-            //rightHand.HandCommand = rigState.rightHandCommand;
+            leftHand.HandState = (HandStateNetworked) rigState.LeftHand;
+            rightHand.HandState = (HandStateNetworked) rigState.RightHand;
         }
 
         public override void Render()
