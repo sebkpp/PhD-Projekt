@@ -1,8 +1,8 @@
 ﻿using System;
-using Application.Scripts.Network.Input;
+using Application.Scripts.Interaction.States;
 using UnityEngine;
 
-namespace Application.Scripts.Avatar_rigging
+namespace Application.Scripts.Avatar
 {
     /// <summary>
     /// Stores the transforms for a avatars finger phalanx
@@ -26,7 +26,7 @@ namespace Application.Scripts.Avatar_rigging
     }
     
     /// <summary>
-    /// Stores the transform for a avatar hand
+    /// Stores the transform for a avatar hand, Deprecated and not used
     /// </summary>
     [Serializable]
     public class HandRig
