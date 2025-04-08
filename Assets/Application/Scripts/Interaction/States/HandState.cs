@@ -1,9 +1,7 @@
 ﻿using Application.Scripts.Avatar.Utils;
-using Application.Scripts.Interaction;
 using UnityEngine;
-using UnityEngine.XR;
 
-namespace Application.Scripts.Network.Input
+namespace Application.Scripts.Interaction.States
 {
     public struct FingerState
     {
@@ -14,6 +12,7 @@ namespace Application.Scripts.Network.Input
         public FingerState ApplyFingerPoseOffset(FingerOffsets offset)
         {
             Quaternion axis = offset.OffsetAxis;
+            
             return new FingerState
             {
                 Proximal = Proximal.ApplyTransformOffset(offset.proximal, axis),

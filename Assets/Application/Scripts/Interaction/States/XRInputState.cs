@@ -1,8 +1,4 @@
-﻿using Application.Scripts.Interaction;
-using Fusion;
-using UnityEngine;
-
-namespace Application.Scripts.Network.Input
+﻿namespace Application.Scripts.Interaction.States
 {
     /// <summary>
     /// Saves an Input-State. contains Position/Rotation of PlayerArea, Head, Left and Right Hand
@@ -14,9 +10,6 @@ namespace Application.Scripts.Network.Input
         
         // Head
         public TransformState Head { get; set; }
-
-        public TransformState LeftHandWrist { get; set; }
-        public TransformState RightHandWrist { get; set; }
         
         // Left Hand
         public HandState LeftHand { get; set; }

@@ -1,7 +1,8 @@
 ﻿using Application.Scripts.Interaction;
+using Application.Scripts.Interaction.States;
 using Fusion;
 
-namespace Application.Scripts.Network.Input
+namespace Application.Scripts.Network.Input.States
 {
     public struct FingerStateNetworked : INetworkStruct
     {
@@ -32,6 +33,8 @@ namespace Application.Scripts.Network.Input
     
     public struct HandStateNetworked : INetworkStruct
     {
+        public TransformStateNetworked Wrist;
+        
         public FingerStateNetworked Thumb;
         public FingerStateNetworked Index;
         public FingerStateNetworked Middle;
@@ -46,6 +49,8 @@ namespace Application.Scripts.Network.Input
         {
             return new HandState
             {
+                Wrist = new TransformState{ Position = networked.Wrist.Position, Rotation = networked.Wrist.Rotation},
+                
                 Thumb = networked.Thumb.ToFingerState(),
                 Index = networked.Index.ToFingerState(),
                 Middle = networked.Middle.ToFingerState(),
@@ -58,6 +63,8 @@ namespace Application.Scripts.Network.Input
         {
             return new HandStateNetworked
             {
+                Wrist = new TransformStateNetworked{ Position = hand.Wrist.Position, Rotation = hand.Wrist.Rotation},
+                
                 Thumb = FingerStateNetworked.FromFingerState(hand.Thumb),
                 Index = FingerStateNetworked.FromFingerState(hand.Index),
                 Middle = FingerStateNetworked.FromFingerState(hand.Middle),
