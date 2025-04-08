@@ -1,7 +1,6 @@
-﻿using Application.Scripts.Interaction;
-using Fusion;
+﻿using Fusion;
 
-namespace Application.Scripts.Network.Input
+namespace Application.Scripts.Network.Input.States
 {
     public struct XRInputNetworked : INetworkStruct
     {
