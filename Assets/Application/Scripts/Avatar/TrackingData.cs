@@ -1,7 +1,7 @@
 ﻿using System;
 using Application.Scripts.Avatar.Utils;
 using Application.Scripts.Interaction;
-using Application.Scripts.Network.Input;
+using Application.Scripts.Interaction.States;
 using UnityEngine;
 
 namespace Application.Scripts.Avatar
@@ -30,9 +30,11 @@ namespace Application.Scripts.Avatar
 
         public void SetFingerState(FingerState state, FingerOffsets offsets)
         {
-            proximal.SetState(state.Proximal, offsets.proximal);
-            intermediate.SetState(state.Intermediate, offsets.intermediate);
-            distal.SetState(state.Distal, offsets.distal);
+            Quaternion fingerOffsetAxis = offsets.OffsetAxis;
+            
+            proximal.SetState(state.Proximal, offsets.proximal, fingerOffsetAxis);
+            intermediate.SetState(state.Intermediate, offsets.intermediate, fingerOffsetAxis);
+            distal.SetState(state.Distal, offsets.distal, fingerOffsetAxis);
         }
     }
     
@@ -42,6 +44,8 @@ namespace Application.Scripts.Avatar
     [Serializable]
     public class HandTrackingData
     {
+        public TrackingData wrist;
+        
         public FingerTrackingData thumb;
         public FingerTrackingData index;
         public FingerTrackingData middle;
@@ -53,6 +57,8 @@ namespace Application.Scripts.Avatar
         {
             HandState state = new HandState
             {
+                Wrist = wrist.GetState(),
+                
                 Thumb = thumb.GetFingerState(),
                 Index = index.GetFingerState(),
                 Middle = middle.GetFingerState(),
@@ -65,6 +71,8 @@ namespace Application.Scripts.Avatar
 
         public void SetHandPose(HandState handState, HandOffsets handOffsets)
         {
+            wrist.SetState(handState.Wrist, handOffsets.wrist);
+            
             thumb.SetFingerState(handState.Thumb, handOffsets.thumb);
             index.SetFingerState(handState.Index, handOffsets.index);
             middle.SetFingerState(handState.Middle, handOffsets.middle);
@@ -88,26 +96,6 @@ namespace Application.Scripts.Avatar
             
             return state;
         }
-        
-        public TransformState GetLocalState()
-        {
-            TransformState state = new TransformState()
-            {
-                Position = source.position,
-                Rotation = source.rotation
-            };
-            
-            // state.Position += offset.position;
-            // state.Rotation *= Quaternion.Euler(offset.rotation);
-            //
-            // TransformState stateLocal = new TransformState()
-            // {
-            //     Position = source.InverseTransformPoint(state.Position),
-            //     Rotation = Quaternion.Inverse(source.rotation) * state.Rotation
-            // };
-            
-            return state;
-        }
 
         public void SetState(TransformState state, TrackingOffsets offset)
         {
@@ -117,12 +105,18 @@ namespace Application.Scripts.Avatar
             source.SetPositionAndRotation(state.Position, state.Rotation);
         }
         
-        public void SetLocalState(TransformState state)
+        public void SetState(TransformState state, TrackingOffsets offset, Quaternion offsetAxis)
         {
-            //Quaternion offsetRotation = Quaternion.Euler(offset.rotation) * offsetAxis;
-            source.position = state.Position;
-            source.rotation = state.Rotation;
-            //source.SetPositionAndRotation(state.Position, state.Rotation);
+            Vector3 localTargetPosition = source.parent.InverseTransformPoint(state.Position) + offset.position;
+            Quaternion offsetRotation = state.Rotation * Quaternion.Euler(offset.rotation) * offsetAxis;
+            
+            //Debug.Log($"{state.Rotation.eulerAngles} * {offset.rotation} * {offsetAxis.eulerAngles} = {offsetRotation.eulerAngles}");
+            
+            source.SetPositionAndRotation(
+                source.parent.TransformPoint(localTargetPosition), 
+                offsetRotation);
         }
+        
+        
     }
 }
