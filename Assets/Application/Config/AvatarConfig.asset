@@ -20,126 +20,126 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: -0.0125}
       rotation: {x: 0, y: 270, z: 270}
     thumb:
-      fingerUp: 1
-      fingerForward: 5
+      fingerForward: 1
+      fingerUp: 5
       proximal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       intermediate:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       distal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
     index:
-      fingerUp: 1
-      fingerForward: 5
+      fingerForward: 1
+      fingerUp: 5
       proximal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       intermediate:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       distal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
     middle:
-      fingerUp: 1
-      fingerForward: 5
+      fingerForward: 1
+      fingerUp: 5
       proximal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       intermediate:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       distal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
     ring:
-      fingerUp: 1
-      fingerForward: 5
+      fingerForward: 1
+      fingerUp: 5
       proximal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       intermediate:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       distal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
     pinky:
-      fingerUp: 1
-      fingerForward: 5
+      fingerForward: 1
+      fingerUp: 5
       proximal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       intermediate:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       distal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 0, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
   rightHand:
     wrist:
       position: {x: 0, y: 0, z: 0.0125}
       rotation: {x: 0, y: 270, z: 270}
     thumb:
-      fingerUp: 0
-      fingerForward: 4
+      fingerForward: 0
+      fingerUp: 4
       proximal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       intermediate:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       distal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
     index:
-      fingerUp: 0
-      fingerForward: 4
+      fingerForward: 0
+      fingerUp: 4
       proximal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       intermediate:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       distal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
     middle:
-      fingerUp: 0
-      fingerForward: 4
+      fingerForward: 0
+      fingerUp: 4
       proximal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       intermediate:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       distal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
     ring:
-      fingerUp: 0
-      fingerForward: 4
+      fingerForward: 0
+      fingerUp: 4
       proximal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       intermediate:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       distal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
     pinky:
-      fingerUp: 0
-      fingerForward: 4
+      fingerForward: 0
+      fingerUp: 4
       proximal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       intermediate:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
       distal:
         position: {x: 0, y: 0, z: 0}
-        rotation: {x: 180, y: 180, z: 90}
+        rotation: {x: 0, y: 0, z: 0}
