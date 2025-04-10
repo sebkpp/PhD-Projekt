@@ -57,10 +57,10 @@ Diese 3D-Modelle werden in der Anwendung verwendet:
 
 ```sh
 # HTTPS
-https://gitlab.rz.htw-berlin.de/s0583646/projekt_ws24.git
+https://gitlab.rz.htw-berlin.de/keppler/projekt_ws24.git
 
 # SSH
-git@gitlab.rz.htw-berlin.de:s0583646/projekt_ws24.git
+git@gitlab.rz.htw-berlin.de:keppler/projekt_ws24.git
 ```
 
 **Projekt in Unity öffnen:**
