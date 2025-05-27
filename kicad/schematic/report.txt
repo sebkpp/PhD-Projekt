@@ -1,0 +1,43 @@
+Annotated R as R4.
+Annotated Motor_DC as M4.
+Annotated Motor_DC as M5.
+Annotated AO3400A as Q1.
+Annotated AO3400A as Q2.
+Annotated AO3400A as Q3.
+Annotated AO3400A as Q4.
+Annotated AO3400A as Q5.
+Annotated R as R1.
+Annotated R as R2.
+Annotated R as R3.
+Annotated Motor_DC as M3.
+Annotated R as R5.
+Annotated R as R6.
+Annotated R as R7.
+Annotated R as R8.
+Annotated R as R9.
+Annotated R as R10.
+Annotated  as U1.
+Annotated  as U2.
+Annotation complete.
+Annotated C as C4.
+Annotated GND as #PWR02.
+Annotated GND as #PWR03.
+Annotated GND as #PWR04.
+Annotated GND as #PWR05.
+Annotated GND as #PWR06.
+Annotated GND as #PWR07.
+Annotated Battery_Cell as BT1.
+Annotated C as C1.
+Annotated C as C2.
+Annotated C as C3.
+Annotated GND as #PWR01.
+Annotated C as C5.
+Annotated SS14 as D1.
+Annotated SS14 as D2.
+Annotated SS14 as D3.
+Annotated SS14 as D4.
+Annotated SS14 as D5.
+Annotated  as ESP32_S3_ZERO1.
+Annotated Motor_DC as M1.
+Annotated Motor_DC as M2.
+Annotation complete.
