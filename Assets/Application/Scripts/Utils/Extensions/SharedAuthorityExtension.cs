@@ -29,7 +29,7 @@ namespace Application.Scripts.Utils.Extensions
             }
             while (!o.HasStateAuthority && (Time.time - waitStartTime) < maxWaitTime)
             {
-                await AsyncTask.Delay(1);
+                await Task.Delay(1);
             }
             return o.HasStateAuthority;
         }

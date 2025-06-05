@@ -131,6 +131,8 @@ GameObject:
   - component: {fileID: 1578124310562688244}
   - component: {fileID: 5970785012352950349}
   - component: {fileID: 3043348680655557855}
+  - component: {fileID: -8223621609234525910}
+  - component: {fileID: -8779164945235369826}
   m_Layer: 0
   m_Name: Forceps
   m_TagString: Untagged
@@ -200,6 +202,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 3043348680655557855}
+  - {fileID: -8779164945235369826}
 --- !u!114 &3043348680655557855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +225,63 @@ MonoBehaviour:
     Position: 0.01
     Rotation: 0.01
     Scale: 0.01
+--- !u!114 &-8223621609234525910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3610965304385764297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad73a129e40842c7b5f9a244b2d3a1dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localPositionOffset: {x: 0, y: 0, z: 0}
+  localRotationOffset: {x: 0, y: 0, z: 0, w: 0}
+  currentGrabber: {fileID: 0}
+  expectedIsKinematic: 1
+  networkGrabbable: {fileID: 0}
+  rb: {fileID: 0}
+  applyVelocityOnRelease: 0
+  onWillGrab:
+    m_PersistentCalls:
+      m_Calls: []
+  onUngrab:
+    m_PersistentCalls:
+      m_Calls: []
+  onGrab:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &-8779164945235369826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3610965304385764297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 235d381a2a7912a41bedf44298220d69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  networkTransform: {fileID: 0}
+  networkRigidbody: {fileID: 0}
+  _InitialIsKinematicState:
+    _value: 0
+  _CurrentGrabber: {fileID: 0}
+  _LocalPositionOffset: {x: 0, y: 0, z: 0}
+  _LocalRotationOffset: {x: 0, y: 0, z: 0, w: 0}
+  onDidUngrab:
+    m_PersistentCalls:
+      m_Calls: []
+  onDidGrab:
+    m_PersistentCalls:
+      m_Calls: []
+  extrapolateWhileTakingAuthority: 1
+  isTakingAuthority: 0
+  grabbable: {fileID: 0}
+  deepDebug: 0
 --- !u!1 &5667091653256978947
 GameObject:
   m_ObjectHideFlags: 0
