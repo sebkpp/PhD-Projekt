@@ -35,6 +35,8 @@ namespace Managers
             
             if (playerCount == 1 && player == Runner.LocalPlayer)
             {
+                if (_avatarPrefabMale == null) return;
+
                    Vector3 spawnPosition = _spawnPoint_P1 != null ? _spawnPoint_P1.position : Vector3.up * 2; Quaternion spawnRotation = _spawnPoint_P1 != null ? _spawnPoint_P1.rotation : Quaternion.identity;
                    NetworkObject networkPlayerObject = Runner.Spawn(_avatarPrefabMale, spawnPosition, spawnRotation, player);
                    networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
@@ -46,6 +48,8 @@ namespace Managers
 
             else if (playerCount == 2 && player == Runner.LocalPlayer)
             {
+                if (_avatarPrefabFemale == null) return;
+                
                 Vector3 spawnPosition = _spawnPoint_P2 != null ? _spawnPoint_P2.position : Vector3.up * 2; Quaternion spawnRotation = _spawnPoint_P2 != null ? _spawnPoint_P2.rotation : Quaternion.identity;
                 NetworkObject networkPlayerObject = Runner.Spawn(_avatarPrefabFemale, spawnPosition, spawnRotation, player);
                 networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
