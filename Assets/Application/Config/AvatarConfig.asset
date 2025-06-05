@@ -20,8 +20,8 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: -0.0125}
       rotation: {x: 0, y: 270, z: 270}
     thumb:
-      fingerForward: 1
-      fingerUp: 5
+      fingerForward: 5
+      fingerUp: 1
       proximal:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
@@ -32,8 +32,8 @@ MonoBehaviour:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
     index:
-      fingerForward: 1
-      fingerUp: 5
+      fingerForward: 5
+      fingerUp: 1
       proximal:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
@@ -44,8 +44,8 @@ MonoBehaviour:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
     middle:
-      fingerForward: 1
-      fingerUp: 5
+      fingerForward: 5
+      fingerUp: 1
       proximal:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
@@ -56,8 +56,8 @@ MonoBehaviour:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
     ring:
-      fingerForward: 1
-      fingerUp: 5
+      fingerForward: 5
+      fingerUp: 1
       proximal:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
@@ -68,8 +68,8 @@ MonoBehaviour:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
     pinky:
-      fingerForward: 1
-      fingerUp: 5
+      fingerForward: 5
+      fingerUp: 1
       proximal:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
@@ -84,8 +84,8 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 0.0125}
       rotation: {x: 0, y: 270, z: 270}
     thumb:
-      fingerForward: 0
-      fingerUp: 4
+      fingerForward: 4
+      fingerUp: 1
       proximal:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
@@ -96,8 +96,8 @@ MonoBehaviour:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
     index:
-      fingerForward: 0
-      fingerUp: 4
+      fingerForward: 4
+      fingerUp: 1
       proximal:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
@@ -108,8 +108,8 @@ MonoBehaviour:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
     middle:
-      fingerForward: 0
-      fingerUp: 4
+      fingerForward: 4
+      fingerUp: 1
       proximal:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
@@ -120,8 +120,8 @@ MonoBehaviour:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
     ring:
-      fingerForward: 0
-      fingerUp: 4
+      fingerForward: 4
+      fingerUp: 1
       proximal:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
@@ -132,8 +132,8 @@ MonoBehaviour:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
     pinky:
-      fingerForward: 0
-      fingerUp: 4
+      fingerForward: 4
+      fingerUp: 1
       proximal:
         position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}

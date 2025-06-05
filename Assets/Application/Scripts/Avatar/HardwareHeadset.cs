@@ -1,6 +1,5 @@
 ﻿using Fusion;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Application.Scripts.Avatar
 {
