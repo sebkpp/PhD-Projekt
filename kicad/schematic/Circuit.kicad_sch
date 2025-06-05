@@ -1196,6 +1196,106 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "SonicSensor:SensorConnecter"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "JST-PH2"
+				(at 6.858 -1.016 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SensorConnecter_0_1"
+				(rectangle
+					(start -2.54 2.54)
+					(end 2.54 -2.54)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "SensorConnecter_1_1"
+				(pin input line
+					(at -5.08 1.27 0)
+					(length 2.54)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -5.08 -1.27 0)
+					(length 2.54)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Switch:SW_Push"
 			(pin_numbers
 				(hide yes)
@@ -2671,12 +2771,6 @@
 		)
 	)
 	(junction
-		(at 148.59 88.9)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "05e9f246-b1cf-425a-8982-31a8ba948e69")
-	)
-	(junction
 		(at 236.22 53.34)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2845,12 +2939,6 @@
 		(uuid "5903f2a6-5a6d-42cb-80b6-f33f557855a9")
 	)
 	(junction
-		(at 146.05 88.9)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "6074c495-e16d-43e8-b770-a639db073186")
-	)
-	(junction
 		(at 269.24 106.68)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2879,6 +2967,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "668b73cc-df75-4116-9640-79a7aec499a6")
+	)
+	(junction
+		(at 140.97 95.25)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "704513d1-0645-4d29-bdaa-d14cc77a516f")
 	)
 	(junction
 		(at 278.13 124.46)
@@ -3109,6 +3203,12 @@
 		(uuid "e7073008-c2f0-45d2-a958-bbff42911274")
 	)
 	(junction
+		(at 153.67 99.06)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e7f06b56-1fb9-4298-9dfa-bd8cc005070e")
+	)
+	(junction
 		(at 278.13 101.6)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3310,6 +3410,16 @@
 	)
 	(wire
 		(pts
+			(xy 153.67 102.87) (xy 130.81 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "15ea2bb8-d002-4359-9858-1fe9e57a749d")
+	)
+	(wire
+		(pts
 			(xy 278.13 62.23) (xy 278.13 64.77)
 		)
 		(stroke
@@ -3330,7 +3440,7 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 90.17) (xy 140.97 99.06)
+			(xy 140.97 90.17) (xy 140.97 95.25)
 		)
 		(stroke
 			(width 0)
@@ -3590,16 +3700,6 @@
 	)
 	(wire
 		(pts
-			(xy 146.05 86.36) (xy 146.05 88.9)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "34ec4e5b-c4fc-48a9-826c-82f7de85192f")
-	)
-	(wire
-		(pts
 			(xy 269.24 160.02) (xy 269.24 162.56)
 		)
 		(stroke
@@ -3687,6 +3787,16 @@
 			(type default)
 		)
 		(uuid "42033533-cf37-477f-a853-dec97311ee05")
+	)
+	(wire
+		(pts
+			(xy 153.67 99.06) (xy 153.67 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "45c5ff99-a5b9-4a4f-a776-54553d3cfb95")
 	)
 	(wire
 		(pts
@@ -3840,16 +3950,6 @@
 	)
 	(wire
 		(pts
-			(xy 148.59 88.9) (xy 148.59 90.17)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5501a8ca-0b0d-466c-82a5-c525ce0cf8df")
-	)
-	(wire
-		(pts
 			(xy 119.38 105.41) (xy 119.38 109.22)
 		)
 		(stroke
@@ -3990,6 +4090,16 @@
 	)
 	(wire
 		(pts
+			(xy 140.97 95.25) (xy 140.97 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6b42a904-115a-448e-9273-c21d6fe172ff")
+	)
+	(wire
+		(pts
 			(xy 179.07 119.38) (xy 179.07 182.88)
 		)
 		(stroke
@@ -4030,7 +4140,7 @@
 	)
 	(wire
 		(pts
-			(xy 146.05 88.9) (xy 146.05 90.17)
+			(xy 146.05 86.36) (xy 146.05 90.17)
 		)
 		(stroke
 			(width 0)
@@ -4210,7 +4320,7 @@
 	)
 	(wire
 		(pts
-			(xy 148.59 86.36) (xy 148.59 88.9)
+			(xy 148.59 86.36) (xy 148.59 90.17)
 		)
 		(stroke
 			(width 0)
@@ -4337,6 +4447,16 @@
 			(type default)
 		)
 		(uuid "a651eee6-b77f-46e0-8468-098d17bf8ea4")
+	)
+	(wire
+		(pts
+			(xy 130.81 95.25) (xy 140.97 95.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a6755f9a-8350-4a9a-87e8-1933d279b953")
 	)
 	(wire
 		(pts
@@ -4767,6 +4887,16 @@
 			(type default)
 		)
 		(uuid "d279ce6b-ea7f-4d94-bb10-b363f07d3247")
+	)
+	(wire
+		(pts
+			(xy 130.81 97.79) (xy 130.81 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d2cb3ba9-8065-4859-87e6-5b0d28540570")
 	)
 	(wire
 		(pts
@@ -6327,73 +6457,6 @@
 		)
 	)
 	(symbol
-		(lib_id "waveshare_esp32_s3_mini_zero:blank_pad_1")
-		(at 153.67 88.9 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "385fd8f0-b4e7-4abe-ba94-c347f042241c")
-		(property "Reference" "BAT-1"
-			(at 157.48 88.2649 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 157.48 90.17 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "ESP_global:blank pad"
-			(at 153.67 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 153.67 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 153.67 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "ff104b82-fc8a-453e-b58e-099ab678af10")
-		)
-		(instances
-			(project "Circuit"
-				(path "/b1011026-c160-485a-bf1a-9bf26ac94018"
-					(reference "BAT-1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 269.24 130.81 180)
 		(unit 1)
@@ -6735,6 +6798,74 @@
 			(project "Circuit"
 				(path "/b1011026-c160-485a-bf1a-9bf26ac94018"
 					(reference "M6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "SonicSensor:SensorConnecter")
+		(at 125.73 96.52 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "44592fa4-9a24-40b6-8736-9aaa5d806d89")
+		(property "Reference" "U3"
+			(at 125.73 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "JST-PH2"
+			(at 125.73 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_EH_S2B-EH_1x02_P2.50mm_Horizontal"
+			(at 125.73 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 125.73 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 125.73 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "b18e04f8-70a4-49c4-9ce0-336f18b4be4e")
+		)
+		(pin "1"
+			(uuid "e26694a0-c96c-4864-89a3-9b6ea3ec0715")
+		)
+		(instances
+			(project ""
+				(path "/b1011026-c160-485a-bf1a-9bf26ac94018"
+					(reference "U3")
 					(unit 1)
 				)
 			)
@@ -8578,71 +8709,6 @@
 			(project "Circuit"
 				(path "/b1011026-c160-485a-bf1a-9bf26ac94018"
 					(reference "M8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "waveshare_esp32_s3_mini_zero:blank_pad_1")
-		(at 140.97 88.9 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "a3171c4b-cb0e-43e8-b8c4-782fec50ad0b")
-		(property "Reference" "BAT+1"
-			(at 140.97 83.82 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 140.97 86.36 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "ESP_global:blank pad"
-			(at 140.97 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 140.97 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 140.97 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "30d6b34a-a66e-4c57-a375-67d8df18e20c")
-		)
-		(instances
-			(project "Circuit"
-				(path "/b1011026-c160-485a-bf1a-9bf26ac94018"
-					(reference "BAT+1")
 					(unit 1)
 				)
 			)
