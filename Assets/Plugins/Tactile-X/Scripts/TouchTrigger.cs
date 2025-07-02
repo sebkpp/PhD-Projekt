@@ -1,6 +1,6 @@
-using System.Net.Configuration;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using UnityEngine;
 
 public class TouchTrigger : MonoBehaviour
@@ -11,7 +11,7 @@ public class TouchTrigger : MonoBehaviour
         {
             string mappedName = MapFingerName(gameObject.name);
             string msg = ExtractFingerID(mappedName) + "1";
-            SendMessageToBLE(msg);
+            ThreadPool.QueueUserWorkItem(state => SendMessageToBLE(msg));
         }
     }
 
@@ -21,7 +21,7 @@ public class TouchTrigger : MonoBehaviour
         {
             string mappedName = MapFingerName(gameObject.name);
             string msg = ExtractFingerID(mappedName) + "0";
-            SendMessageToBLE(msg);
+            ThreadPool.QueueUserWorkItem(state => SendMessageToBLE(msg));
         }
     }
 
@@ -40,7 +40,11 @@ public class TouchTrigger : MonoBehaviour
 
     string ExtractFingerID(string name)
     {
-        return name.Substring(name.LastIndexOf('_') + 1);
+        // Extrahiert die Ziffer aus "FingerX"
+        int underscoreIndex = name.LastIndexOf('_');
+        return (underscoreIndex >= 0 && underscoreIndex < name.Length - 1)
+            ? name.Substring(underscoreIndex + 1)
+            : "X";
     }
 
     void SendMessageToBLE(string message)
