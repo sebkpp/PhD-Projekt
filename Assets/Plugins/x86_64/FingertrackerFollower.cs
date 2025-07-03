@@ -9,7 +9,6 @@ public class FingertrackerFollower : MonoBehaviour
 
         if (tragetFinger != null)
         {
-            Debug.Log("sind");
             transform.position = tragetFinger.position;
             transform.rotation = tragetFinger.rotation;
         }
