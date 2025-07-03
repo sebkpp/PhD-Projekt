@@ -46,7 +46,7 @@ public class TouchTriggerBLE : MonoBehaviour
 
             default: return originalName;
         }
-        }
+    }
     string ExtractFingerID(string name)
     {
         // Extrahiert die Zahl hinter dem letzten Unterstrich
