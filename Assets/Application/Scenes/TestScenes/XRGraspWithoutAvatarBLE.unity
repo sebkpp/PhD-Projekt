@@ -119,6 +119,26 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &50278629 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4412381737450587510, guid: a5a95e5e187f3664c8f0efb446e449be, type: 3}
+  m_PrefabInstance: {fileID: 8485497134466554607}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &50278637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50278629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 554806663, guid: 9e5402f1f36575640bf97c05c7333478, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_interactionType: 3
+  m_throwVelocityScale: 2
+  m_throwAngularVelocityScale: 1
 --- !u!1 &54124069 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 947819537348882755, guid: d7dfb1fd8c1d38a47bc9490470d37aa7, type: 3}
@@ -1061,7 +1081,6 @@ GameObject:
   - component: {fileID: 837351440}
   - component: {fileID: 837351439}
   - component: {fileID: 837351442}
-  - component: {fileID: 837351441}
   m_Layer: 0
   m_Name: BLEController_Right
   m_TagString: Untagged
@@ -1096,28 +1115,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &837351441
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 837351438}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9610c73cfd009e640a357d9d5aa87214, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  useDirectUUIDs: 0
-  directServiceUUID: 
-  directCharacteristicUUID: 
-  deviceName: esp32_left
-  enableDebugLogging: 1
-  serviceScanDelay: 2
-  retryIfNoServiceFound: 1
-  acceptAnyCharacteristic: 1
-  sendOnConnect: 1
-  autoMessage: Finger3on
 --- !u!114 &837351442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1139,7 +1136,7 @@ MonoBehaviour:
   retryIfNoServiceFound: 1
   acceptAnyCharacteristic: 1
   sendOnConnect: 1
-  autoMessage: Finger7on
+  autoMessage: Finger6:100
 --- !u!1001 &900679248
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4221,7 +4218,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4412381737450587510, guid: a5a95e5e187f3664c8f0efb446e449be, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 50278637}
   m_SourcePrefab: {fileID: 100100000, guid: a5a95e5e187f3664c8f0efb446e449be, type: 3}
 --- !u!4 &8827506200331442186 stripped
 Transform:
