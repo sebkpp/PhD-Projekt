@@ -83,16 +83,7 @@ namespace Application.Scripts.Interaction
             Grabbable releasedObject = graspInfo.m_selectedObject.gameObject.GetComponentInParent<Grabbable>();
             
             Debug.Log($"<color=#ADD8E6>[Grasp:Local]</color>Try to release object {releasedObject.gameObject.name} with {gameObject.name}");
-            if (releasedObject.networkGrabbable)
-            {
-                // Transform networkedObjectTransform = releasedObject.networkGrabbable.transform;
-                //
-                // _unGrabPosition = networkedObjectTransform.position;
-                // _unGrabRotation = networkedObjectTransform.rotation;
-                // _unGrabVelocity = releasedObject.Velocity;
-                // _unGrabAngularVelocity = releasedObject.AngularVelocity;
-            }
-
+            
             Ungrab(grabbedObject);
         }
 
