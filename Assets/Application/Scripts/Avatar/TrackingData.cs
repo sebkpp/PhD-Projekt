@@ -99,22 +99,28 @@ namespace Application.Scripts.Avatar
 
         public void SetState(TransformState state, TrackingOffsets offset)
         {
-            state.Position += offset.position;
-            state.Rotation *= Quaternion.Euler(offset.rotation);
-            
-            source.SetPositionAndRotation(state.Position, state.Rotation);
+            Quaternion offsetRotation = Quaternion.Euler(offset.rotation);
+            Vector3 offsetWorldPos = state.Position + (state.Rotation * (offsetRotation * offset.position));
+            Quaternion offsetWorldRot = state.Rotation * offsetRotation;
+
+            Vector3 localPos = source.parent.InverseTransformPoint(offsetWorldPos);
+     
+            source.SetPositionAndRotation(source.parent.TransformPoint(localPos), offsetWorldRot);
         }
         
         public void SetState(TransformState state, TrackingOffsets offset, Quaternion offsetAxis)
         {
-            Vector3 localTargetPosition = source.parent.InverseTransformPoint(state.Position) + offset.position;
-            Quaternion offsetRotation = state.Rotation * Quaternion.Euler(offset.rotation) * offsetAxis;
-            
-            //Debug.Log($"{state.Rotation.eulerAngles} * {offset.rotation} * {offsetAxis.eulerAngles} = {offsetRotation.eulerAngles}");
+            Quaternion offsetRotation = Quaternion.Euler(offset.rotation);
+            // Position is actually ignored if Multi-Parential Position Constrain is deactivated,
+            // activating it results in Finger-streching
+            Vector3 offsetWorldPos = state.Position + (state.Rotation * (offsetRotation * offset.position));
+            Quaternion offsetWorldRot = state.Rotation * offsetRotation * offsetAxis;
+
+            Vector3 localTargetPosition = source.parent.InverseTransformPoint(offsetWorldPos);
             
             source.SetPositionAndRotation(
                 source.parent.TransformPoint(localTargetPosition), 
-                offsetRotation);
+                offsetWorldRot);
         }
         
         
