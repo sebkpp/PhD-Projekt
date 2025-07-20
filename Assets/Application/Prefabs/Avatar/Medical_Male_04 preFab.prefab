@@ -2166,6 +2166,7 @@ MonoBehaviour:
         source: {fileID: 8734058903168209512}
       distal:
         source: {fileID: 1091118622828187053}
+  avatarHand: {fileID: 3248672053985722531}
 --- !u!114 &4169361589591782106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3149,6 +3150,7 @@ MonoBehaviour:
         source: {fileID: 2594228219526382308}
       distal:
         source: {fileID: 5145598962054912445}
+  avatarHand: {fileID: 6508330001759272946}
 --- !u!114 &4203300788782467845
 MonoBehaviour:
   m_ObjectHideFlags: 0

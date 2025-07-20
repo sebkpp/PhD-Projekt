@@ -14,6 +14,7 @@ namespace Application.Scripts.Network.Input
         [SerializeField] private RigPart side;
         [SerializeField] public HandTrackingData handTrackingData;
 
+        [SerializeField] private Transform avatarHand;
         [Networked] public HandStateNetworked HandState { get; set; }
         
         private NetworkRig _rig;
@@ -21,7 +22,8 @@ namespace Application.Scripts.Network.Input
         private HandOffsets _offsetsConfig;
 
         public bool IsLocalNetworkRig => _rig.IsLocalNetworkRig;
-
+        public Transform AvatarHand => avatarHand;
+        
         public HardwareHand LocalHardwareHand => IsLocalNetworkRig ? (side == RigPart.LeftController ? _rig?.hardwareRig?.leftHand : _rig?.hardwareRig?.rightHand)
             : null;
         private void Awake()
