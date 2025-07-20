@@ -1,4 +1,5 @@
-﻿using Application.Scripts.Interaction;
+﻿using System;
+using Application.Scripts.Interaction;
 using Application.Scripts.Network.Interactable;
 using Application.Scripts.Utils.Extensions;
 using UnityEngine;
@@ -13,7 +14,6 @@ namespace Application.Scripts.InteractableObject
         public Grabber currentGrabber;
         public bool expectedIsKinematic = true;
         
-        [HideInInspector]
         public NetworkedGrabbable networkGrabbable;
         [HideInInspector]
         public Rigidbody rb;
@@ -104,27 +104,38 @@ namespace Application.Scripts.InteractableObject
             }
         }
 
-        // protected virtual void Update()
-        // {
-        //     TrackVelocity();
-        //
-        //     if (networkGrabbable == null || networkGrabbable.Object == null)
-        //     {
-        //         // We handle the following if we are not online (online, the Follow will be called by the NetworkGrabbable during FUN and Render)
-        //         if (currentGrabber != null)
-        //         {
-        //             Follow(followedTransform: currentGrabber.transform, localPositionOffset, localRotationOffset);
-        //         }
-        //     }
-        // }
+        protected virtual void Update()
+        {
+            TrackVelocity();
         
+            if (networkGrabbable == null || networkGrabbable.Object == null)
+            {
+                // We handle the following if we are not online (online, the Follow will be called by the NetworkGrabbable during FUN and Render)
+                if (currentGrabber != null)
+                {
+                    Follow(followedTransform: currentGrabber.transform, localPositionOffset, localRotationOffset);
+                }
+            }
+        }
+
+        public void OnDrawGizmos()
+        {
+            if (currentGrabber)
+            {
+                Gizmos.color = Color.blue;
+                Vector3 worldPos = currentGrabber.networkGrabber.hand.AvatarHand.TransformPoint(localPositionOffset);
+                Debug.Log($"Local: {currentGrabber.networkGrabber.hand.AvatarHand.position.ToString("F5")}");
+                Gizmos.DrawSphere(worldPos, 0.05f);
+            }
+        }
+
         public virtual void Grab(Grabber newGrabber, Transform grabPointTransform = null)
         {
             if (onWillGrab != null) onWillGrab.Invoke(newGrabber);
 
             // Find grabbable position/rotation in grabber referential
-            localPositionOffset = newGrabber.transform.InverseTransformPoint(transform.position);
-            localRotationOffset = Quaternion.Inverse(newGrabber.transform.rotation) * transform.rotation;
+            localPositionOffset = newGrabber.networkGrabber.hand.AvatarHand.InverseTransformPoint(transform.position);
+            localRotationOffset = Quaternion.Inverse(newGrabber.networkGrabber.hand.AvatarHand.rotation) * transform.rotation;
 
             currentGrabber = newGrabber;
             Debug.Log("Grabbed");

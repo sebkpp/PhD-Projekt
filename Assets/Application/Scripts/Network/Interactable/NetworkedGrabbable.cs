@@ -80,17 +80,32 @@ namespace Application.Scripts.Network.Interactable
             {
                 if (previousGrabber)
                 {
+                    //Debug.Log("Previous");
                     grabbable.UnlockObjectPhysics();
                 }
                 if (currentGrabber)
                 {
+                    //Debug.Log("Current");
                     grabbable.LockObjectPhysics();
                 }
             }
-
+            
             if (!IsGrabbed) return;
+            
+            //Debug.Log(LocalPositionOffset);
             // Follow grabber, adding position/rotation offsets
-            grabbable.Follow(followedTransform: CurrentGrabber.transform, LocalPositionOffset, LocalRotationOffset);
+            grabbable.Follow(followedTransform: CurrentGrabber.hand.AvatarHand, LocalPositionOffset, LocalRotationOffset);
+        }
+        
+        public void OnDrawGizmos()
+        {
+            if (CurrentGrabber != null)
+            {
+                Gizmos.color = Color.green;
+                Vector3 worldPos = CurrentGrabber.hand.AvatarHand.TransformPoint(LocalPositionOffset);
+                Debug.Log($"Networked: {CurrentGrabber.hand.AvatarHand.position.ToString("F5")}");
+                Gizmos.DrawSphere(worldPos, 0.05f);
+            }
         }
 
         public override void Render()
@@ -108,7 +123,7 @@ namespace Application.Scripts.Network.Interactable
                     if (onDidGrab != null) onDidGrab.Invoke(currentGrabber);
                 }
             }
-
+            
             if (isTakingAuthority && extrapolateWhileTakingAuthority)
             {
                 // If we are currently taking the authority on the object due to a grab, the network info are still not set
@@ -116,13 +131,13 @@ namespace Application.Scripts.Network.Interactable
                 ExtrapolateWhileTakingAuthority();
                 return;
             }
-
+            
             // No need to extrapolate if the object is not grabbed.
             // We do not extrapolate for proxies (might be relevant in some cases, but then the grabbing itself should be properly extrapolated, to avoid grabbing visually before the hand interpolation has reached the grabbing position)
             if (!IsGrabbed || Object.HasStateAuthority == false) return;
-
+            
             // Extrapolation: Make visual representation follow grabber, adding position/rotation offsets
-            var follwedGrabberRoot = CurrentGrabber.hand != null ? CurrentGrabber.hand.gameObject : CurrentGrabber.gameObject;
+            var follwedGrabberRoot = CurrentGrabber.hand.AvatarHand != null ? CurrentGrabber.hand.AvatarHand.gameObject : CurrentGrabber.gameObject;
             grabbable.Follow(followedTransform: follwedGrabberRoot.transform, LocalPositionOffset, LocalRotationOffset);
         }
         
@@ -159,7 +174,7 @@ namespace Application.Scripts.Network.Interactable
         }
         #endregion
         
-        bool TryDetectGrabberChange(ChangeDetector changeDetector, out NetworkedGrabber previousGrabber, out NetworkedGrabber currentGrabber)
+        private bool TryDetectGrabberChange(ChangeDetector changeDetector, out NetworkedGrabber previousGrabber, out NetworkedGrabber currentGrabber)
         {
             previousGrabber = null;
             currentGrabber = null;
