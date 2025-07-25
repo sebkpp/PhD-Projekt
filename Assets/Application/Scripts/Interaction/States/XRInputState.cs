@@ -16,6 +16,5 @@
 
         // Right Hand
         public HandState RightHand { get; set; }
-
     }
 }
