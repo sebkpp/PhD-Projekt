@@ -8,38 +8,85 @@ using UnityEngine.Events;
 
 namespace Application.Scripts.Network.Interactable
 {
+    /// <summary>
+    /// Manages the networked state of a grabbable object, synchronizing grab status, position, rotation, and Rigidbody state across the network using Fusion.
+    /// Handles authority transfer and extrapolation while grabbing.
+    /// </summary>
     public class NetworkedGrabbable : NetworkBehaviour
     {
+        /// <summary>
+        /// Reference to the NetworkTransform component for position synchronization.
+        /// </summary>
         [HideInInspector]
         public NetworkTransform networkTransform;
+        
+        /// <summary>
+        /// Reference to the NetworkRigidbody3D component for physics synchronization.
+        /// </summary>
         public NetworkRigidbody3D networkRigidbody;
+        
+        /// <summary>
+        /// Initial kinematic state of the object's Rigidbody saved for late joiners.
+        /// </summary>
         [Networked]
         public NetworkBool InitialIsKinematicState { get; set; }
+        
+        /// <summary>
+        /// The current networked grabber holding this object.
+        /// </summary>
         [Networked]
         public NetworkedGrabber CurrentGrabber { get; set; }
+        
+        /// <summary>
+        /// Position offset relative to the grabber's hand when grabbed.
+        /// </summary>
         [Networked]
         public Vector3 LocalPositionOffset { get; set; }
+        
+        /// <summary>
+        /// Rotation offset relative to the grabber's hand when grabbed.
+        /// </summary>
         [Networked]
         public Quaternion LocalRotationOffset { get; set; }
 
+        /// <summary>
+        /// Returns true if this object is currently grabbed by a grabber and network object is valid.
+        /// </summary>
         public virtual bool IsGrabbed => Object != null && CurrentGrabber != null; // We make sure that we are online before accessing [Networked] var
 
 
+        /// <summary>
+        /// Event invoked on all clients when this object is released/ungrabbed.
+        /// </summary>
         [Header("Events")]
         public UnityEvent onDidUngrab = new UnityEvent();
+        
+        /// <summary>
+        /// Event invoked on all clients when this object is grabbed, passing the new NetworkedGrabber.
+        /// </summary>
         public UnityEvent<NetworkedGrabber> onDidGrab = new UnityEvent<NetworkedGrabber>();
 
+        /// <summary>
+        /// If true, extrapolate the object's position and rotation visually while waiting for authority transfer.
+        /// </summary>
         [Header("Advanced options")]
         public bool extrapolateWhileTakingAuthority = true;
-        public bool isTakingAuthority = false;
+        
+        /// <summary>
+        /// Indicates whether this instance is currently requesting state authority.
+        /// </summary>
+        public bool isTakingAuthority;
 
         [HideInInspector]
         public Grabbable grabbable;
-        ChangeDetector funChangeDetector;
-        ChangeDetector renderChangeDetector;
+
+        private ChangeDetector _funChangeDetector;
+        private ChangeDetector _renderChangeDetector;
         
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Awake()
+        /// <summary>
+        /// Called when the component awakes. Initializes references and adds a Grabbable component if missing.
+        /// </summary>
+        private void Awake()
         {
             networkTransform = GetComponent<NetworkTransform>();
             networkRigidbody = GetComponent<NetworkRigidbody3D>();
@@ -51,6 +98,10 @@ namespace Application.Scripts.Network.Interactable
             }
         }
         
+        /// <summary>
+        /// Called when the object is spawned on the network.
+        /// Saves initial Rigidbody kinematic state and initializes change detectors.
+        /// </summary>
         public override void Spawned()
         {
             base.Spawned();
@@ -65,10 +116,14 @@ namespace Application.Scripts.Network.Interactable
             // We store the default kinematic state, while it is not affected by NetworkRigidbody logic
             grabbable.expectedIsKinematic = InitialIsKinematicState;
 
-            funChangeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
-            renderChangeDetector = GetChangeDetector(ChangeDetector.Source.SnapshotFrom);
+            _funChangeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+            _renderChangeDetector = GetChangeDetector(ChangeDetector.Source.SnapshotFrom);
         }
 
+        /// <summary>
+        /// Network update loop where grabbing logic and physics locking/unlocking are handled by the state authority.
+        /// Also updates the grabbed object's position and rotation following the grabber.
+        /// </summary>
         public override void FixedUpdateNetwork()
         {
             if (isTakingAuthority == false && CurrentGrabber && CurrentGrabber.Object.StateAuthority != Object.StateAuthority)
@@ -76,27 +131,29 @@ namespace Application.Scripts.Network.Interactable
                 CurrentGrabber = null;
             }
             // Check if the grabber changed
-            if (TryDetectGrabberChange(funChangeDetector, out var previousGrabber, out var currentGrabber))
+            if (TryDetectGrabberChange(_funChangeDetector, out var previousGrabber, out var currentGrabber))
             {
                 if (previousGrabber)
                 {
-                    //Debug.Log("Previous");
                     grabbable.UnlockObjectPhysics();
                 }
                 if (currentGrabber)
                 {
-                    //Debug.Log("Current");
                     grabbable.LockObjectPhysics();
                 }
             }
             
             if (!IsGrabbed) return;
             
-            //Debug.Log(LocalPositionOffset);
             // Follow grabber, adding position/rotation offsets
-            grabbable.Follow(followedTransform: CurrentGrabber.hand.AvatarHand, LocalPositionOffset, LocalRotationOffset);
+            if (CurrentGrabber != null)
+                grabbable.Follow(followedTransform: CurrentGrabber.hand.AvatarHand, LocalPositionOffset,
+                    LocalRotationOffset);
         }
         
+        /// <summary>
+        /// Draws gizmos in the editor to visualize the grab point.
+        /// </summary>
         public void OnDrawGizmos()
         {
             if (CurrentGrabber != null)
@@ -108,11 +165,15 @@ namespace Application.Scripts.Network.Interactable
             }
         }
 
+        /// <summary>
+        /// Client-side render update called for all clients.
+        /// Triggers grab/ungrab events on grabber changes and handles visual extrapolation while waiting for authority.
+        /// </summary>
         public override void Render()
         {
             // Check if the grabber changed, to trigger callbacks only (actual grabbing logic in handled in FUN for the state authority)
             // Those callbacks can't be called in FUN, as FUN is not called on proxies, while render is called for everybody
-            if (TryDetectGrabberChange(renderChangeDetector, out var previousGrabber, out var currentGrabber))
+            if (TryDetectGrabberChange(_renderChangeDetector, out var previousGrabber, out var currentGrabber))
             {
                 if (previousGrabber)
                 {
@@ -142,7 +203,12 @@ namespace Application.Scripts.Network.Interactable
         }
         
         #region Interface for local Grabbable (when the local user grab/ungrab this object)
-        [SerializeField] bool deepDebug = false;
+        [SerializeField] bool deepDebug;
+        
+        /// <summary>
+        /// Called locally when this object is ungrabbed by the local player.
+        /// Resets the current grabber reference.
+        /// </summary>
         public virtual void LocalUngrab()
         {
             if(deepDebug) Debug.LogError("NG.LocalUngrab");
@@ -152,6 +218,10 @@ namespace Application.Scripts.Network.Interactable
             }
         }
         
+        /// <summary>
+        /// Called locally to initiate a grab on this object.
+        /// Requests state authority asynchronously and sets networked grab variables once authority is granted.
+        /// </summary>
         public async virtual void LocalGrab()
         {
             // Ask and wait to receive the stateAuthority to move the object
@@ -174,6 +244,13 @@ namespace Application.Scripts.Network.Interactable
         }
         #endregion
         
+        /// <summary>
+        /// Detects changes on the CurrentGrabber networked variable and returns previous and current values.
+        /// </summary>
+        /// <param name="changeDetector">ChangeDetector to use for detection.</param>
+        /// <param name="previousGrabber">Output previous grabber.</param>
+        /// <param name="currentGrabber">Output current grabber.</param>
+        /// <returns>True if CurrentGrabber changed, otherwise false.</returns>
         private bool TryDetectGrabberChange(ChangeDetector changeDetector, out NetworkedGrabber previousGrabber, out NetworkedGrabber currentGrabber)
         {
             previousGrabber = null;
@@ -191,6 +268,9 @@ namespace Application.Scripts.Network.Interactable
             return false;
         }
         
+        /// <summary>
+        /// Visually extrapolates the object's position and rotation based on the grabber while waiting for state authority transfer.
+        /// </summary>
         protected virtual void ExtrapolateWhileTakingAuthority()
         {
             // No need to extrapolate if the object is not really grabbed

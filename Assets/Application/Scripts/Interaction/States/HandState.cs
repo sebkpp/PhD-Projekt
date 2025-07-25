@@ -1,50 +1,61 @@
-﻿using Application.Scripts.Avatar.Utils;
-using UnityEngine;
-
-namespace Application.Scripts.Interaction.States
+﻿namespace Application.Scripts.Interaction.States
 {
+    /// <summary>
+    /// Represents the transform states of a single finger,
+    /// including its proximal, intermediate, and distal joints.
+    /// </summary>
     public struct FingerState
     {
-        public TransformState Proximal { get; set; }
-        public TransformState Intermediate { get; set; }
-        public TransformState Distal { get; set; }
+        /// <summary>
+        /// The transform state of the proximal (base) joint of the finger.
+        /// </summary>
+        public TransformState Proximal;
         
-        public FingerState ApplyFingerPoseOffset(FingerOffsets offset)
-        {
-            Quaternion axis = offset.OffsetAxis;
-            
-            return new FingerState
-            {
-                Proximal = Proximal.ApplyTransformOffset(offset.proximal, axis),
-                Intermediate = Intermediate.ApplyTransformOffset(offset.intermediate, axis),
-                Distal = Distal.ApplyTransformOffset(offset.distal, axis)
-            };
-        }
+        /// <summary>
+        /// The transform state of the intermediate (middle) joint of the finger.
+        /// </summary>
+        public TransformState Intermediate;
+        
+        /// <summary>
+        /// The transform state of the distal (tip) joint of the finger.
+        /// </summary>
+        public TransformState Distal;
     }
     
+    /// <summary>
+    /// Represents the hand pose,
+    /// including wrist and all five fingers (thumb, index, middle, ring, pinky).
+    /// </summary>
     public struct HandState
     {
-        public TransformState Wrist { get; set; }
+        /// <summary>
+        /// The transform state of the wrist.
+        /// </summary>
+        public TransformState Wrist;
+
+        /// <summary>
+        /// The transform states for the thumb finger.
+        /// </summary>
+        public FingerState Thumb;
         
-        public FingerState Thumb { get; set; }
-        public FingerState Index { get; set; }
-        public FingerState Middle { get; set; }
-        public FingerState Ring { get; set; }
-        public FingerState Pinky { get; set; }
+        /// <summary>
+        /// The transform states for the index finger.
+        /// </summary>
+        public FingerState Index;
         
+        /// <summary>
+        /// The transform states for the middle finger.
+        /// </summary>
+        public FingerState Middle;
         
-        public HandState ApplyHandPoseOffset(HandOffsets handOffsets)
-        {
-            return new HandState
-            {
-                Wrist = Wrist.ApplyTransformOffset(handOffsets.wrist, Quaternion.identity),
-                
-                Thumb = Thumb.ApplyFingerPoseOffset(handOffsets.thumb),
-                Index = Index.ApplyFingerPoseOffset(handOffsets.index),
-                Middle = Middle.ApplyFingerPoseOffset(handOffsets.middle),
-                Ring = Ring.ApplyFingerPoseOffset(handOffsets.ring),
-                Pinky = Pinky.ApplyFingerPoseOffset(handOffsets.pinky)
-            };
-        }
+        /// <summary>
+        /// The transform states for the ring finger.
+        /// </summary>
+        public FingerState Ring;
+        
+        /// <summary>
+        /// The transform states for the pinky finger.
+        /// </summary>
+        public FingerState Pinky;
     }
 }
