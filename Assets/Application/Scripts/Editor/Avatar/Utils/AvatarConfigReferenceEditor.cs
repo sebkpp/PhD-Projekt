@@ -3,9 +3,17 @@ using UnityEditor;
 
 namespace Application.Scripts.Editor.Avatar.Utils
 {
+    /// <summary>
+    /// Custom inspector for the <see cref="AvatarConfigReference"/> component.
+    /// Displays additional details of the assigned <see cref="AvatarConfig"/> directly in the Inspector.
+    /// </summary>
     [CustomEditor(typeof(AvatarConfigReference))]
     public class AvatarConfigReferenceEditor : UnityEditor.Editor
     {
+        /// <summary>
+        /// Draws the custom inspector UI.
+        /// If an <see cref="AvatarConfig"/> is assigned, its serialized properties are shown below the default inspector.
+        /// </summary>
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();

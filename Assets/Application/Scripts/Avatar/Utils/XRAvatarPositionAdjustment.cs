@@ -1,4 +1,3 @@
-using Application.Scripts.Avatar_rigging;
 using UnityEngine;
 using UnityEngine.Events;
 
