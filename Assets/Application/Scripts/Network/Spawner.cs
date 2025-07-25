@@ -1,19 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
-using Application.Scripts.Avatar_rigging;
+using Application.Scripts.Avatar;
 using Fusion;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
-namespace Managers
+namespace Application.Scripts.Network
 {
     public class Spawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
     {
-        [SerializeField] private Transform _spawnPoint_P1;
-        [SerializeField] private Transform _spawnPoint_P2;
+        [FormerlySerializedAs("_spawnPoint_P1")] [SerializeField] private Transform spawnPointP1;
+        [FormerlySerializedAs("_spawnPoint_P2")] [SerializeField] private Transform spawnPointP2;
 
-        [SerializeField] private NetworkObject _avatarPrefabMale;
-        [SerializeField] private NetworkObject _avatarPrefabFemale;
+        [FormerlySerializedAs("_avatarPrefabMale")] [SerializeField] private NetworkObject avatarPrefabMale;
+        [FormerlySerializedAs("_avatarPrefabFemale")] [SerializeField] private NetworkObject avatarPrefabFemale;
 
         [SerializeField] private UnityEvent<AvatarLookup> avatarSpawned;
         
@@ -35,10 +36,10 @@ namespace Managers
             
             if (playerCount == 1 && player == Runner.LocalPlayer)
             {
-                if (_avatarPrefabMale == null) return;
+                if (avatarPrefabMale == null) return;
 
-                   Vector3 spawnPosition = _spawnPoint_P1 != null ? _spawnPoint_P1.position : Vector3.up * 2; Quaternion spawnRotation = _spawnPoint_P1 != null ? _spawnPoint_P1.rotation : Quaternion.identity;
-                   NetworkObject networkPlayerObject = Runner.Spawn(_avatarPrefabMale, spawnPosition, spawnRotation, player);
+                   Vector3 spawnPosition = spawnPointP1 != null ? spawnPointP1.position : Vector3.up * 2; Quaternion spawnRotation = spawnPointP1 != null ? spawnPointP1.rotation : Quaternion.identity;
+                   NetworkObject networkPlayerObject = Runner.Spawn(avatarPrefabMale, spawnPosition, spawnRotation, player);
                    networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
                    _spawnedAvatars.Add(player, networkPlayerObject);
                    Debug.Log($"<color=green>[ConnectionManager] Spawned MALE avatar for player {player.PlayerId}</color>");
@@ -48,10 +49,10 @@ namespace Managers
 
             else if (playerCount == 2 && player == Runner.LocalPlayer)
             {
-                if (_avatarPrefabFemale == null) return;
+                if (avatarPrefabFemale == null) return;
                 
-                Vector3 spawnPosition = _spawnPoint_P2 != null ? _spawnPoint_P2.position : Vector3.up * 2; Quaternion spawnRotation = _spawnPoint_P2 != null ? _spawnPoint_P2.rotation : Quaternion.identity;
-                NetworkObject networkPlayerObject = Runner.Spawn(_avatarPrefabFemale, spawnPosition, spawnRotation, player);
+                Vector3 spawnPosition = spawnPointP2 != null ? spawnPointP2.position : Vector3.up * 2; Quaternion spawnRotation = spawnPointP2 != null ? spawnPointP2.rotation : Quaternion.identity;
+                NetworkObject networkPlayerObject = Runner.Spawn(avatarPrefabFemale, spawnPosition, spawnRotation, player);
                 networkPlayerObject.gameObject.name = $"VRavatar_{player.PlayerId}";
                 _spawnedAvatars.Add(player, networkPlayerObject); 
                 Debug.Log($"<color=green>[ConnectionManager] Spawned FEMALE avatar for player {player.PlayerId}</color>");

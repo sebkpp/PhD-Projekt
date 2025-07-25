@@ -1,22 +1,30 @@
-﻿using Application.Scripts.Avatar.Utils;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Application.Scripts.Interaction
+namespace Application.Scripts.Interaction.States
 {
-    public struct TransformState : ITransformState
+    /// <summary>
+    /// Represents a simplified transform state containing position and rotation.
+    /// Useful for serializing or transferring transform data without directly referencing Unity's Transform component.
+    /// </summary>
+    public struct TransformState
     {
-        public Vector3 Position { get; set; }
-        public Quaternion Rotation { get; set; }
+        /// <summary>
+        /// The position of the transform in world or local space.
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        /// The rotation of the transform in world or local space.
+        /// </summary>
+        public Quaternion Rotation;
         
-        public TransformState ApplyTransformOffset(TrackingOffsets offset, Quaternion offsetAxis)
+        /// <summary>
+        /// Returns a string representation of the transform state including position and Euler angles.
+        /// </summary>
+        /// <returns>A formatted string with position and rotation values.</returns>
+        public override string ToString()
         {
-            Quaternion rotationOffset = Quaternion.Euler(offset.rotation) * offsetAxis;
-            
-            return new TransformState
-            {
-                Position = Position + offset.position,
-                Rotation = Rotation * Quaternion.Inverse(rotationOffset)
-            };
+            return $"Position: {Position}, Rotation: {Rotation.eulerAngles}";
         }
     }
 }
