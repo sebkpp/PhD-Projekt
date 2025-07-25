@@ -1,6 +1,7 @@
 ﻿using System;
 using Application.Scripts.Avatar.Utils;
 using Application.Scripts.Interaction;
+using Application.Scripts.Interaction.States;
 using UnityEngine;
 
 namespace Application.Scripts.Utils.Extensions
