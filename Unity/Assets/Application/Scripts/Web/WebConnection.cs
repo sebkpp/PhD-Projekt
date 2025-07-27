@@ -1,44 +1,44 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Application.Scripts.Web
 {
+    [System.Serializable]
+    class PlayerInfo { public string player_id; }
     public class WebConnection : MonoBehaviour
     {
-        [Header("URL zum Testserver (z. B. https://webhook.site/xyz...)")]
-        public string serverUrl = "https://yourserver.com/api/test";
-        
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        public string playerId = "Player123";
+        public string joinUrl = "http://192.168.0.10:5000/join";
+        public string heartbeatUrl = "http://192.168.0.10:5000/heartbeat";
+
         void Start()
         {
-            SendTestData();
+            StartCoroutine(SendPlayerEvent(joinUrl, "joined"));
+            InvokeRepeating(nameof(SendHeartbeat), 5f, 5f); // alle 5 Sekunden
         }
 
-        public void SendTestData()
+        void SendHeartbeat()
         {
-            StartCoroutine(PostTestData());
+            StartCoroutine(SendPlayerEvent(heartbeatUrl, "heartbeat"));
         }
 
-        IEnumerator PostTestData()
+        IEnumerator SendPlayerEvent(string url, string action)
         {
-            WWWForm form = new WWWForm();
-            form.AddField("playerId", "TestPlayer123");
-            form.AddField("status", "connected");
-            form.AddField("timestamp", System.DateTime.UtcNow.ToString("o"));
+            var json = JsonUtility.ToJson(new PlayerInfo { player_id = playerId });
+            var request = new UnityWebRequest(url, "POST");
+            byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
+            request.uploadHandler = new UploadHandlerRaw(body);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
 
-            using UnityWebRequest www = UnityWebRequest.Post(serverUrl, form);
-            yield return www.SendWebRequest();
+            yield return request.SendWebRequest();
 
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError("Fehler beim Senden: " + www.error);
-            }
+            if (request.result == UnityWebRequest.Result.Success)
+                Debug.Log($"📤 Spieler {action}: {playerId}");
             else
-            {
-                Debug.Log("Erfolgreich gesendet!");
-                Debug.Log("Antwort: " + www.downloadHandler.text);
-            }
+                Debug.LogWarning($"❌ Fehler bei {action}: {request.error}");
         }
     }
 }

@@ -148,7 +148,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3c00a9618348ce4cbffdaf03319a850, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverUrl: https://webhook.site/b3ca74a6-9cba-4cd1-92c8-4acb7d7a20dd
+  playerId: Player123
+  joinUrl: http://127.0.0.1:5000/join
+  heartbeatUrl: http://127.0.0.1:5000/heartbeat
 --- !u!4 &1775377697
 Transform:
   m_ObjectHideFlags: 0
