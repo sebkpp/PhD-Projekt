@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+
+@theme {
+  --color-mint-500: oklch(0.72 0.11 178);
+
+  --color-background: #111827; /* Dunkelgrau/Blau als Hintergrund */
+  --color-foreground: #F9FAFB; /* Helles Grau für Text */
+  --color-border: #374151;     /* Etwas helleres Grau für Ränder */
+  --color-accent: #10B981;     /* Smaragdgrün für positive Zustände */
+  --color-danger: #EF4444;     /* Rot für negative Zustände */
+
+  --border-radius-md: 0.75rem; /* 12px */
+  --border-width-md: 1px;
+
+  /*--spacing-sm: 0.5rem;   /* 8px */
+  /*--spacing-md: 1rem;     /* 16px */
+  /*--spacing-lg: 1.5rem;   /* 24px */
+}
+
+
+body {
+@apply bg-[--color-background] text-[--color-foreground];
+}
