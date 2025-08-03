@@ -1,44 +1,64 @@
-﻿export default function ParticipantConfigBox({ configs, setConfigs, disabled }) {
-    const handleChange = (id, field, value) => {
-        if (disabled) return; // Verhindert Änderungen, wenn deaktiviert
-        setConfigs(prev => ({
-            ...prev,
-            [id]: {
-                ...prev[id],
-                [field]: value
-            }
-        }));
-    };
+﻿import { useEffect, useState } from 'react'
 
-    const stimulusOptions = {
-        vis: [
-            { value: 'vis_inner', label: 'Visuell – Inner Hand' },
-            { value: 'vis_color', label: 'Visuell – Finger Color' }
-        ],
-        aud: [
-            { value: 'aud_high', label: 'Auditiv – Hoch' },
-            { value: 'aud_pulse', label: 'Auditiv – Puls' }
-        ],
-        tak: [
-            { value: 'tak_vibe', label: 'Taktil – Vibration' },
-            { value: 'tak_pulse', label: 'Taktil – Pulsfrequenz' }
-        ]
-    };
+export default function ParticipantConfigBox({ configs, setConfigs, disabled, validationErrors }) {
+    const [stimulusOptions, setStimulusOptions] = useState({ vis: [], aud: [], tak: [] });
+    const [avatarOptions, setAvatarOptions] = useState([]);
+
+    const handleChange = (id, field, value) => {
+        if (disabled) return
+        setConfigs(id, field, value)
+    }
+
+    const hasError = (id, field) =>
+        validationErrors?.some(
+            (e) => e.probandId === id && e.field === field
+        )
+
+    useEffect(() => {
+        fetch('/api/stimuli')
+            .then(res => res.json())
+            .then(data => {
+                const grouped = { vis: [], aud: [], tak: [] }
+
+                const typeMap = {
+                    visual: 'vis',
+                    auditory: 'aud',
+                    tactile: 'tak'
+                }
+
+                data.forEach(s => {
+                    const typeKey = typeMap[s.type]
+                    if (typeKey) {
+                        grouped[typeKey].push({ value: s.id, label: s.name })
+                    }
+                })
+
+                setStimulusOptions(grouped)
+            })
+
+        fetch('/api/avatar-visibility')
+            .then(res => res.json())
+            .then(data => {
+                setAvatarOptions(data.map(opt => ({ value: opt.id, label: opt.label })))
+            })
+    }, []);
 
     return (
-        <div className={`border border-border rounded-xl p-6 ${disabled ? 'opacity-50' : ''}`}>
+        <div className={`${disabled ? 'opacity-50' : ''}`}>
             <h2 className="text-xl font-semibold mb-4">Probanden-Konfiguration</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[1, 2].map(id => {
                     const config = configs[id] || {};
                     return (
-                        <div key={id} className="border border-border rounded-lg p-4 bg-background">
-                            <h3 className="text-accent font-semibold mb-2">Proband {id}</h3>
+                        <div key={id} className="rounded-2xl border border-border bg-gray-800 p-6 shadow-md hover:shadow-lg transition-all">
+                            <h3 className="text-lg font-semibold text-foreground mb-4 border-b border-border pb-1">Proband {id}</h3>
                             {/* Stimuli aktiv */}
                             <div className="mb-2 text-sm">
                                 <label className="block font-medium mb-1">Aktive Stimuli:</label>
-                                <div className="flex gap-4">
-                                    {['vis', 'aud', 'tak'].map(type => (
+                                <div
+                                    className={`flex gap-4 border rounded px-2 py-1 ${
+                                        hasError(id, 'stimuli') ? 'border-red-500 bg-red-950' : 'border-transparent'
+                                    }`}>                                    {['vis', 'aud', 'tak'].map(type => (
                                         <label key={type} className="flex items-center gap-1">
                                             <input
                                                 type="checkbox"
@@ -61,14 +81,16 @@
                                 <label className="block font-medium mb-1">Avatarsichtbarkeit:</label>
                                 <select
                                     disabled={disabled}
-                                    className="bg-gray-700 border border-border rounded px-2 py-1 w-full"
+                                    className={`bg-gray-700 border rounded px-2 py-1 w-full ${
+                                        hasError(id, 'avatar') ? 'border-red-500' : 'border-border'
+                                    }`}
                                     value={config.avatar || ''}
                                     onChange={(e) => handleChange(id, 'avatar', e.target.value)}
                                 >
                                     <option value="">Bitte wählen</option>
-                                    <option value="hands">Nur Hände</option>
-                                    <option value="head">Hände + Kopf</option>
-                                    <option value="full">Ganze Figur</option>
+                                    {avatarOptions.map(opt => (
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
                                 </select>
                             </div>
                             {['vis', 'aud', 'tak'].map(type =>
@@ -81,15 +103,16 @@
                                             </label>
                                             <select
                                                 disabled={disabled}
-                                                className="bg-gray-700 border border-border rounded px-2 py-1 w-full"
+                                                className={`bg-gray-700 border rounded px-2 py-1 w-full ${
+                                                    hasError(id, `stimuli.${type}`) ? 'border-red-500' : 'border-border'
+                                                }`}
                                                 value={config.selectedStimuli?.[type] || ''}
                                                 onChange={(e) =>
                                                     handleChange(id, 'selectedStimuli', {
                                                         ...config.selectedStimuli,
                                                         [type]: e.target.value
                                                     })
-                                                }
-                                            >
+                                                }>
                                                 <option value="">Bitte wählen</option>
                                                 {stimulusOptions[type].map((option) => (
                                                     <option key={option.value} value={option.value}>
