@@ -1,0 +1,14 @@
+[
+  {
+    "name": "hands",
+    "label": "Nur Hände"
+  },
+  {
+    "name": "head",
+    "label": "Kopf + Hände"
+  },
+  {
+    "name": "full",
+    "label": "Ganze Figur"
+  }
+]
