@@ -9,12 +9,13 @@ export default defineConfig({
     tailwindcss(),
   ],
   server: {
+    host: true,
     proxy: {
-      '/players': 'http://localhost:5000',
-      '/join': 'http://localhost:5000',
-      '/leave': 'http://localhost:5000',
-      '/heartbeat': 'http://localhost:5000',
-      // weitere Endpunkte nach Bedarf
+      '/api': {
+        target: 'http://localhost:5000', // oder 127.0.0.1
+        changeOrigin: true,
+        secure: false
+      }
     }
   }
 })

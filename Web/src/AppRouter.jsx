@@ -2,6 +2,11 @@
 import Layout from './layout/Layout.jsx'
 import ConfigPage from './pages/ConfigPage.jsx'
 import TrialOverview from "./pages/TrialOverview.jsx";
+import NasaTLX from "./questionaire/nasaTLX.jsx";
+import QuestionnaireLanding from "./questionaire/QuestionnaireLanding.jsx";
+import NewExperimentPage from './pages/ExperimentLandingPage.jsx'
+import ParticipantQuestionnaire from "./questionaire/participant-questionnaire.jsx";
+import ParticipantWaiting from "./questionaire/QuestionnaireWaiting.jsx";
 
 export default function AppRouter() {
     const players = {
@@ -17,11 +22,15 @@ export default function AppRouter() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Layout players={players} playerSlots={playerSlots} />}>
-                    <Route index element={<ConfigPage />} />
-                    <Route path="konfiguration" element={<ConfigPage />} />
-                    <Route path="trial" element={<TrialOverview />} />
+                <Route path="/" element={<NewExperimentPage />} />
+
+                <Route element={<Layout players={players} playerSlots={playerSlots} />}>
+                    <Route path="/experiment/:experimentId/configure" element={<ConfigPage />} />
+                    <Route path="/experiment/:experimentId/overview" element={<TrialOverview />} />
                 </Route>
+                <Route path="/participant/start" element={<QuestionnaireLanding />} />
+                <Route path="/participant/demography" element={<ParticipantQuestionnaire />}/>
+                <Route path="/participant/waiting" element={<ParticipantWaiting />} />
             </Routes>
         </BrowserRouter>
     )
