@@ -4,6 +4,8 @@ import ReadinessBox from '../components/ReadinessBox.jsx'
 import TrialControls from '../components/TrialControls.jsx'
 import HandoverTable from "../components/HandoverTable.jsx";
 import CurrentStimuliBox from "../components/CurrentStimuli.jsx";
+import QuestionnaireQrGroup from '../components/QuestionnaireQRCodeGroup.jsx'
+
 import {useState} from "react";
 
 function TrialOverview() {
@@ -63,9 +65,14 @@ function TrialOverview() {
             <TrialControls players={playersReady} onStart={handleStartTrial} onEnd={handleEndTrial} trialRunning={trialRunning}/>
             <ReadinessBox players={playersReady} />
             <CurrentStimuliBox stimuli={configs} />
+
+
+
             <div className="row-span-1">
                 <HandoverTable handovers={handovers} />
             </div>
+
+            <QuestionnaireQrGroup userIds={[104, 105]} trialId={3} />
         </div>
     )
 }
