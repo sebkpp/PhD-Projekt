@@ -1,0 +1,23 @@
+﻿{
+  "trialId": 3,
+  "condition": "visual_vs_audio",
+  "avatarVisibility": "handsOnly",
+  "stimulusTypes": ["visual", "audio"],
+  "stimulusOptions": {
+    "visual": ["GlowBall", "PulsingSphere", "FloatingArrow"],
+    "audio": ["Ding", "Pop", "Chime"],
+    "tactile": ["VibrationShort", "PulseLong"]
+  },
+  "stimulusAssignment": {
+    "104": {
+      "visual": "GlowBall",
+      "audio": "Ding",
+      "tactile": null
+    },
+    "105": {
+      "visual": "PulsingSphere",
+      "audio": null,
+      "tactile": null
+    }
+  }
+}
