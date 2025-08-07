@@ -1,57 +1,44 @@
 ﻿from flask import Blueprint, request, jsonify
-from datetime import datetime
-from .participant_status import set_submitted, is_submitted
-from db_conn import get_db
-import threading
+from Backend.services.participant_service import (
+    register_participant,
+    submit_participant_to_slot,
+    get_submission_status
+)
+from Backend.services.connection_service import (
+    update_heartbeat,
+    get_connection_status,
+    player_joined
+)
+from Backend.db_session import SessionLocal
 
-participant_bp = Blueprint('participant', __name__)
-
-# Globale Spieler-Datenstruktur (Shared State)
-connected_participants = {}  # Format: {participant_id: last_seen_utc}
-lock = threading.Lock()
-
-TIMEOUT_SECONDS = 10
+participant_bp = Blueprint('participant', __name__, url_prefix='/api/participants')
 
 @participant_bp.route("/join", methods=["POST"])
 def player_join():
     data = request.get_json()
     player_id = data.get("player_id")
-    if not player_id:
-        return jsonify({"status": "error", "message": "Missing player_id"}), 400
+    if not player_joined(player_id):
+        return jsonify({"status": "error", "message": "Ungültige player_id"}), 400
 
-    now = datetime.utcnow()
-    with lock:
-        connected_participants[player_id] = now
-
-    print(f"✅ Spieler verbunden: {player_id}")
     return jsonify({"status": "joined", "player_id": player_id})
 
 
 @participant_bp.route("/heartbeat", methods=["POST"])
 def player_heartbeat():
-    data = request.get_json()
-    player_id = data.get("player_id")
-    if not player_id:
-        return jsonify({"status": "error", "message": "Missing player_id"}), 400
-
-    now = datetime.utcnow()
-    with lock:
-        connected_participants[player_id] = now
-
+    player_id = request.json.get("player_id")
+    if not update_heartbeat(player_id):
+        return jsonify({"status": "error", "message": "Ungültige player_id"}), 400
     return jsonify({"status": "heartbeat", "player_id": player_id})
 
+@participant_bp.route("/connection_status", methods=["GET"])
+def connection_status():
+    status = get_connection_status()
+    return jsonify(status)
 
-@participant_bp.route("/participants", methods=["GET"])
-def list_players():
-    with lock:
-        return jsonify({
-            pid: ts.isoformat() for pid, ts in connected_participants.items()
-        })
 
-@participant_bp.route('/participants', methods=['POST'])
-def register_participant():
+@participant_bp.route('/', methods=['POST'], strict_slashes=False)
+def register_participant_route():
     data = request.get_json()
-
     age = data.get("age")
     gender = data.get("gender")
     handedness = data.get("handedness")
@@ -59,35 +46,37 @@ def register_participant():
     if not age or not gender or not handedness:
         return jsonify({"error": "Unvollständige Daten"}), 400
 
-    conn = get_db()
-    cur = conn.cursor()
+    db = SessionLocal()
+    try:
+        participant = register_participant(db, age, gender, handedness)
+        db.commit()
+        return jsonify({"participant_id": participant.participant_id}), 201
+    except Exception as e:
+        db.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close()
 
-    # Teilnehmer anlegen
-    cur.execute("""
-        INSERT INTO participant (age, gender, handedness)
-        VALUES (%s, %s, %s)
-        RETURNING participant_id
-    """, (age, gender, handedness))
-
-    participant_id = cur.fetchone()["participant_id"]
-
-    conn.commit()
-    conn.close()
-
-    return jsonify({"participant_id": participant_id}), 201
-
-@participant_bp.route('/participants/submit', methods=['POST'])
+@participant_bp.route("/submit", methods=["POST"])
 def set_submit_status():
     data = request.get_json()
-    slot = data.get('slot')
-    participant_id = data.get('participant_id')
-    if slot is None:
-        return jsonify({"error": "Missing slot"}), 400
+    experiment_id = data.get("experiment_id")
+    slot = data.get("slot")
+    participant_id = data.get("participant_id")
 
-    set_submitted(slot, participant_id)
-    return jsonify({"status": "ok"}), 200
+    try:
+        submit_participant_to_slot(experiment_id, slot, participant_id)
+        return jsonify({"status": "ok"}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
 
-@participant_bp.route('/participants/status/<int:slot>', methods=['GET'])
+
+@participant_bp.route("/status/<int:slot>", methods=["GET"])
 def get_submit_status(slot):
-    status = is_submitted(slot)
-    return jsonify(status), 200
+    experiment_id = request.args.get("experiment_id")
+
+    try:
+        status = get_submission_status(experiment_id, slot)
+        return jsonify(status), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400

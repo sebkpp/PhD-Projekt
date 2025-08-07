@@ -1,17 +1,13 @@
 ﻿from flask import Blueprint, jsonify
-from db_conn import get_db
+from Backend.services.avatar_visibility_service import get_all_avatar_visibility
 
 avatar_bp = Blueprint('avatar_visibility', __name__)
 
-@avatar_bp.route('/api/avatar-visibility', methods=['GET'])
+@avatar_bp.route('/avatar-visibility', methods=['GET'])
 def get_avatar_visibility():
-    conn = get_db()
-    cur = conn.cursor()
-
-    cur.execute("SELECT avatar_visibility_id, avatar_visibility_name, label FROM avatar_visibility")
-    rows = cur.fetchall()
-
-    return jsonify([
-        {"id": row["avatar_visibility_id"], "name": row["avatar_visibility_name"], "label": row["label"]}
-        for row in rows
-    ])
+    try:
+        data = get_all_avatar_visibility()
+        return jsonify(data), 200
+    except Exception as e:
+        print("Fehler beim Laden der Avatar-Visibility:", e)
+        return jsonify({"error": "Interner Serverfehler"}), 500
