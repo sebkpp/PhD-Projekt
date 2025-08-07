@@ -1,16 +1,21 @@
 import { usePhase } from '../components/PhaseProvider.jsx'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams  } from 'react-router-dom'
 import ReadinessBox from '../components/ReadinessBox.jsx'
 import TrialControls from '../components/TrialControls.jsx'
 import HandoverTable from "../components/HandoverTable.jsx";
 import CurrentStimuliBox from "../components/CurrentStimuli.jsx";
-import QuestionnaireQrGroup from '../components/QuestionnaireQRCodeGroup.jsx'
+import QuestionnaireQrGroup from '../features/configuration/components/QuestionnaireQRCodeGroup.jsx'
 
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 function TrialOverview() {
+    const { experimentId } = useParams()
     const { setCurrentPhase } = usePhase()
     const navigate = useNavigate()
+
+    const [stimulusMap, setStimulusMap] = useState({})
+
+    const [trialConfigs, setTrialConfigs] = useState(null)
     const [trialRunning, setTrialRunning] = useState(false);
 
     const playersReady = {
@@ -18,18 +23,30 @@ function TrialOverview() {
         2: { ready: false }
     }
 
-    const configs = {
-        1: {
-            stimuli: { vis: true, aud: false },
-            avatar: 'hands',
-            selectedStimuli: { vis: 'vis_color' }
-        },
-        2: {
-            stimuli: { vis: true, aud: true },
-            avatar: 'full',
-            selectedStimuli: { vis: 'vis_inner', aud: 'aud_high' }
-        }
-    }
+    useEffect(() => {
+        fetch(`/api/experiments/${experimentId}/trials`)
+            .then(res => res.json())
+            .then(data => {
+                const latestTrial = data[data.length - 1]
+                setTrialConfigs(latestTrial.participants)
+            })
+            .catch(err => {
+                console.error("Fehler beim Laden der Trial-Daten:", err)
+            })
+    }, [experimentId])
+
+    useEffect(() => {
+        fetch('/api/stimuli')
+            .then(res => res.json())
+            .then(data => {
+                const map = {}
+                data.forEach(stim => {
+                    map[stim.id] = stim.name
+                })
+                setStimulusMap(map)
+            })
+            .catch(err => console.error("Fehler beim Laden der Stimuli:", err))
+    }, [])
 
     const handleStartTrial = () => {
         setCurrentPhase('Trial läuft')
@@ -60,13 +77,28 @@ function TrialOverview() {
         }
     ])
 
+    const formatStimuli = (configs) => {
+        const formatted = {}
+
+        for (const [participantId, config] of Object.entries(configs)) {
+            const selected = config.selectedStimuli || {}
+
+            formatted[participantId] = {
+                vis: stimulusMap[selected.vis] || '—',
+                aud: stimulusMap[selected.aud] || '—',
+                tak: stimulusMap[selected.tak] || '—'
+            }
+        }
+
+        return formatted
+    }
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-min">
             <TrialControls players={playersReady} onStart={handleStartTrial} onEnd={handleEndTrial} trialRunning={trialRunning}/>
             <ReadinessBox players={playersReady} />
-            <CurrentStimuliBox stimuli={configs} />
 
-
+            {trialConfigs && <CurrentStimuliBox stimuli={formatStimuli(trialConfigs)} />}
 
             <div className="row-span-1">
                 <HandoverTable handovers={handovers} />

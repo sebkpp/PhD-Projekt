@@ -1,5 +1,5 @@
 ﻿from flask import Blueprint, request, jsonify
-from db_conn import get_db
+from Backend.db_conn import get_db
 
 questionnaire_bp = Blueprint('questionnaire', __name__)
 
