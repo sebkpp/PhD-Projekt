@@ -1,25 +1,34 @@
 ﻿from flask import Blueprint, request, jsonify
-from db_conn import get_db
+from Backend.models.experiment import Experiment
+from Backend.utils.validation import validate_experiment_data
+from Backend.db_session import SessionLocal
 
 experiment_bp = Blueprint('experiment', __name__)
 
-@experiment_bp.route('/experiments', methods=['POST'])
+@experiment_bp.route('/', methods=['POST'], strict_slashes=False)
 def create_experiment():
     data = request.get_json()
-    name = data.get('name')
-    description = data.get('description')
-    researcher = data.get('researcher')
+    if not data:
+        return jsonify({"error": "Ungültige JSON-Daten."}), 400
 
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO experiment (name, description, researcher)
-        VALUES (%s, %s, %s)
-        RETURNING experiment_id;
-    """, (name, description, researcher))
-    experiment_id = cur.fetchone()[0]
-    conn.commit()
-    cur.close()
-    conn.close()
+    errors = validate_experiment_data(data)
+    if errors:
+        return jsonify({"errors": errors}), 400
 
-    return jsonify({ "experimentId": experiment_id }), 201
+    session = SessionLocal()
+    try:
+        experiment = Experiment(
+            name=data["name"],
+            description=data.get("description"),
+            researcher=data.get("researcher")
+        )
+        session.add(experiment)
+        session.commit()
+        session.refresh(experiment)
+        return jsonify({"experiment_id": experiment.experiment_id}), 201
+    except Exception as e:
+        session.rollback()
+        print("Fehler beim Anlegen eines Experiments:", e)
+        return jsonify({"error": "Interner Serverfehler"}), 500
+    finally:
+        session.close()
