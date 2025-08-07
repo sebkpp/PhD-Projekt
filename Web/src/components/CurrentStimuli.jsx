@@ -1,7 +1,7 @@
 ﻿export default function CurrentStimuliBox({ stimuli }) {
     return (
         <div className="border border-border rounded-xl p-6">
-            <h2 className="text-xl font-semibold mb-4">🎛 Aktuelle Stimuli</h2>
+            <h2 className="text-xl font-semibold mb-4">Aktuelle Stimuli</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Object.entries(stimuli).map(([id, stim]) => (
