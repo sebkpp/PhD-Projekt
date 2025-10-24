@@ -2,7 +2,7 @@
 import { useNavigate } from 'react-router-dom'
 import { createParticipant, submitParticipant } from './participantQuestionnaireService'
 
-export function useParticipantQuestionnaire(experimentId, slot) {
+export function useParticipantQuestionnaire(studyId, experimentId, trial_id, slot) {
     const [age, setAge] = useState('')
     const [gender, setGender] = useState('')
     const [handedness, setHandedness] = useState('')
@@ -46,7 +46,7 @@ export function useParticipantQuestionnaire(experimentId, slot) {
             })
 
             setSubmitted(true)
-            navigate(`/participant/waiting?experiment=${experimentId}&slot=${slot}&participant=${participantData.participant_id}`)
+            navigate(`/study/${studyId}/experiment/${experimentId}/questionnaire?slot=${slot}&participant=${participantData.participant_id}&trial=${trial_id}`)
         } catch (e) {
             setError(e.message || 'Fehler beim Absenden. Bitte erneut versuchen.')
         } finally {

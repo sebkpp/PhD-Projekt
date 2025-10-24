@@ -1,5 +1,7 @@
 ﻿import ParticipantConfigBox from './components/ParticipantConfigurationBox.jsx'
-import QuestionnaireQRCodeGroup from './components/QuestionnaireQRCodeGroup.jsx'
+import QuestionnaireQRCodeGroup from '../overview/components/QRCode/ParticipantStartQRCodeGroup.jsx'
+import QuestionnaireSelector from '@/features/questionnaire/components/questionnaireSelector/QuestionnaireSelector.jsx';
+import { useState } from 'react';
 
 export default function ConfigurationForm({
                                               trialConfigs,
@@ -12,8 +14,10 @@ export default function ConfigurationForm({
                                               bothConnected,
                                               MAX_TRIALS,
                                               setTrialConfigs,
-                                              loading, experiment_id
+                                              loading, experiment_id,
+                                              selectedQuestionnaires, setSelectedQuestionnaires
                                           }) {
+
     return (
         <div>
             <h1 className="text-2xl font-bold mb-6">Versuchs-Konfiguration</h1>
@@ -88,6 +92,14 @@ export default function ConfigurationForm({
                         validationErrors={validationErrors.filter(e => e.trialIndex === activeIndex)}
                     />
                 </div>
+            </div>
+
+            <div className="my-6">
+                <h2 className="text-xl font-semibold mb-2 text-white">Fragebögen für die Probanden</h2>
+                <QuestionnaireSelector
+                    selectedQuestionnaires={selectedQuestionnaires}
+                    setSelectedQuestionnaires={setSelectedQuestionnaires}
+                />
             </div>
 
             <div className="flex gap-8 items-center mt-4">
