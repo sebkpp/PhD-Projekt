@@ -1,32 +1,19 @@
-﻿from Backend.models.trial import Trial, TrialParticipantItem
-from Backend.models.stimulus import StimulusCombinationItem, Stimulus, StimulusType
-from Backend.services.stimuli_service import get_stimulus_type_map, ensure_stimulus_combination
+﻿from Backend.db.experiment.experiment_repository import ExperimentRepository
+from Backend.db.questionnaires.questionnaire_respository import QuestionnaireRepository
+from Backend.db.study.study_repository import StudyRepository
+from Backend.db.trial.trial import TrialRepository
+from Backend.models import Trial
+from Backend.services.participant_service import get_participants_by_experiment
 
 
-def save_trials(session, experiment_id, trials):
-    stimulus_type_map = get_stimulus_type_map(session)
+def save_trials(session, experiment_id, trials, selected_questionnaires):
+    trial_repo = TrialRepository(session)
 
     for trial_data in trials:
+
+        # save trial to database
         trial_number = trial_data["trial_number"]
-        trial = Trial(experiment_id=experiment_id, trial_number=trial_number)
-        session.add(trial)
-        session.flush()
-
-        for _, config in trial_data["participants"].items():
-            avatar_id = config["avatar"]
-            participant_id = config["participant_id"]
-            selected_stimuli_ids = list(config.get("selectedStimuli", {}).values())
-
-            stimulus_combination = None
-            if selected_stimuli_ids:
-                stimulus_combination = ensure_stimulus_combination(session, selected_stimuli_ids, stimulus_type_map)
-
-            session.add(TrialParticipantItem(
-                trial_id=trial.trial_id,
-                participant_id=int(participant_id),
-                avatar_visibility_id=avatar_id,
-                stimulus_combination_id=stimulus_combination.stimulus_combination_id if stimulus_combination else None
-            ))
+        trial = trial_repo.create(experiment_id, trial_number)
 
     return {
         "status": "ok",
@@ -35,52 +22,69 @@ def save_trials(session, experiment_id, trials):
 
 
 def get_trials_for_experiment(session, experiment_id):
-    # Hole alle relevanten Trial-Informationen samt Stimuli
-    rows = session.query(
-        Trial.trial_id,
-        Trial.trial_number,
-        TrialParticipantItem.participant_id,
-        TrialParticipantItem.avatar_visibility_id,
-        Stimulus.stimulus_id,
-        StimulusType.type_name
-    ).join(TrialParticipantItem, Trial.trial_id == TrialParticipantItem.trial_id
-           ).outerjoin(StimulusCombinationItem,
-                       TrialParticipantItem.stimulus_combination_id == StimulusCombinationItem.stimulus_combination_id
-                       ).outerjoin(Stimulus,
-                                   StimulusCombinationItem.stimulus_id == Stimulus.stimulus_id
-                                   ).outerjoin(StimulusType,
-                                               Stimulus.stimulus_type_id == StimulusType.stimulus_type_id
-                                               ).filter(
-        Trial.experiment_id == experiment_id
-    ).order_by(Trial.trial_number, TrialParticipantItem.participant_id).all()
+    t_repo = TrialRepository(session)
+    print(f"Getting trials for experiment {experiment_id}")
 
-    # Transformieren
-    trial_map = {}
+    trials = t_repo.get_by_experiment_id(experiment_id)
+    return [trial.to_dict() for trial in trials]
 
-    for row in rows:
-        trial_id = row.trial_id
-        trial_number = row.trial_number
-        participant_id = row.participant_id
-        avatar = row.avatar_visibility_id
-        stimulus_id = row.stimulus_id
-        type_name = row.type_name
+def get_trial(session, trial_id: int) -> Trial:
+    t_repo = TrialRepository(session)
+    trial = t_repo.get_by_id(trial_id)
+    return trial
 
-        if trial_id not in trial_map:
-            trial_map[trial_id] = {
-                "trial_id": trial_id,
-                "trial_number": trial_number,
-                "participants": {}
-            }
+def send_start_signal_to_unity(trial_id):
+    print(f"Startsignal für Trial {trial_id} an Unity gesendet")
 
-        if participant_id not in trial_map[trial_id]["participants"]:
-            trial_map[trial_id]["participants"][participant_id] = {
-                "participant_id": participant_id,
-                "avatar": avatar,
-                "selectedStimuli": {}
-            }
 
-        if type_name and stimulus_id:
-            type_code = type_name.lower()[:3]  # z. B. visual → vis
-            trial_map[trial_id]["participants"][participant_id]["selectedStimuli"][type_code] = stimulus_id
+def send_stop_signal_to_unity(trial_id):
+    # Beispiel: UDP, MQTT, WebSocket, Dateisystem-Signal o. ä.
+    print(f"Stopping trial {trial_id} and notifying Unity.")
 
-    return list(trial_map.values())
+def start_trial(session, trial_id: int):
+    trial_repo = TrialRepository(session)
+    trial = trial_repo.get_by_id(trial_id)
+    if not trial:
+        raise ValueError("Trial nicht gefunden")
+    experiment_repo = ExperimentRepository(session)
+    experiment = experiment_repo.get_by_id(trial.experiment_id)
+    if experiment and experiment.started_at is None:
+        experiment_repo.set_started_at(experiment)
+
+    study_repo = StudyRepository(session)
+    study = study_repo.get_by_id(experiment.study_id)
+    if study and study.started_at is None:
+        study_repo.set_started_at(study)
+
+def finish_trial(session, trial_id: int):
+    t_repo = TrialRepository(session)
+    t_repo.set_trial_finished(trial_id)
+
+    trial = t_repo.get_by_id(trial_id)
+
+    experiment_id = trial.experiment_id
+    all_trials = t_repo.get_by_experiment_id(experiment_id)
+    all_finished = all(t.is_finished for t in all_trials)
+
+    if all_finished:
+        experiment_repo = ExperimentRepository(session)
+        experiment = experiment_repo.get_by_id(experiment_id)
+        if experiment and experiment.completed_at is None:
+            experiment_repo.set_completed_at(experiment)
+
+def save_experiment_questionnaires(session, experiment_id, selected_questionnaires):
+    e_repo = ExperimentRepository(session)
+    experiment = e_repo.get_by_id(experiment_id)
+    if experiment:
+        q_repo = QuestionnaireRepository(session)
+        questionnaires = q_repo.get_questionnaires_by_list_of_ids(selected_questionnaires)
+        experiment.questionnaires = questionnaires
+        session.commit()
+
+
+def get_participants_for_trial(session, trial_id):
+    t_repo = TrialRepository(session)
+    trial = t_repo.get_by_id(trial_id)
+    if not trial:
+        return []
+    return get_participants_by_experiment(session, trial.experiment_id)

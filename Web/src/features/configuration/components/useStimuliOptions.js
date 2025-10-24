@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from 'react'
-import { fetchStimuliOptions } from './stimuliOptionService'
+import { fetchStimuliOptions } from '../../experiment/services/stimuliOptionService.js'
 
 export function useStimulusOptions() {
     const [stimulusOptions, setStimulusOptions] = useState({ vis: [], aud: [], tak: [] })

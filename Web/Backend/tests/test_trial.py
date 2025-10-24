@@ -1,7 +1,7 @@
 ﻿import pytest
 from Backend.app import app
 from Backend.db_session import SessionLocal
-from Backend.models.trial import Trial, TrialParticipantItem
+from Backend.models.trial.trial import Trial, TrialParticipantItem
 from Backend.models.experiment import Experiment
 
 @pytest.fixture
@@ -123,3 +123,4 @@ def test_post_trials_invalid_stimulus_id(client, experiment):
     res = client.post(f'/api/experiments/{experiment.experiment_id}/trials', json=payload)
     assert res.status_code == 500
     assert "error" in res.get_json()
+

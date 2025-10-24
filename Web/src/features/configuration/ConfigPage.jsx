@@ -5,7 +5,12 @@ import ConfigurationForm from './ConfigurationForm'
 
 export default function ConfigPage() {
     const { experimentId  } = useParams()
-    const { setCurrentPhase } = usePhase()
+    const { setCurrentPhase, setTotalTrials } = usePhase()
+
+
+    const handleSave = (configs) => {
+        setTotalTrials(configs.length) // z.B. beim Speichern
+    }
 
     // Alle Form-Logik & State wird vom Hook bereitgestellt
     const configFormProps = useConfigurationForm(experimentId, setCurrentPhase)

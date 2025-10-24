@@ -27,3 +27,11 @@ export async function submitParticipant({ slot, experiment_id, participant_id })
 
     return await res.json()
 }
+
+export async function getParticipantSubmissionStatus({ experiment_id, slot }) {
+    const response = await fetch(`/api/participants/status/${experiment_id}/${slot}`);
+    if (!response.ok) {
+        throw new Error('Fehler beim Abrufen des Status');
+    }
+    return await response.json();
+}
