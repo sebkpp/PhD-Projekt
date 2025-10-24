@@ -1,14 +1,21 @@
 ﻿import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './layout/Layout.jsx'
 import ConfigPage from './features/configuration/ConfigPage.jsx'
-import TrialOverview from "./pages/TrialOverview.jsx";
-import NasaTLX from "./questionaire/nasaTLX.jsx";
-import ExperimentLandingPage from './features/experiment/ExperimentLandingPage.jsx'
+import TrialOverview from "./features/overview/TrialOverview.jsx";
+import ExperimentOverview from './features/experiment/ExperimentOverview.jsx'
 
 import ParticipantLanding from './features/participant/landing/ParticipantLandingPage.jsx'
 import ParticipantQuestionnairePage from './features/participant/demography/ParticipantQuestionnairePage.jsx'
-import ParticipantWaiting from "./questionaire/QuestionnaireWaiting.jsx";
-import ParticipantJoinSimulator from './debug/ParticipantJoinSimulator.jsx'
+import ParticipantWaiting from "./features/questionnaire/QuestionnaireWaiting.jsx";
+import SimulatorController from './debug/SimulatorController.jsx'
+import QuestionnaireRouter from './features/questionnaire/QuestionnaireRouter'
+import QuestionnaireClosing from "./features/questionnaire/QuestionnaireCloseing.jsx";
+import StudyOverview from "./features/study/StudyOverview.jsx";
+import StudyConfigurationPage from "@/features/study/StudyConfigPage.jsx";
+import ExperimentConfigPage from "@/features/experiment/ExperimentConfigPage.jsx";
+import AnalysisPage from '@/features/Analysis/AnalysisPage.jsx'
+import StudyAnalysisPage from '@/features/Analysis/StudyAnalysisPage.jsx'
+import ExperimentAnalysisPage from '@/features/Analysis/ExperimentAnalysisPage.jsx'
 
 export default function AppRouter() {
     const playerSlots = [
@@ -17,21 +24,33 @@ export default function AppRouter() {
     ]
 
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<ExperimentLandingPage />} />
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<StudyOverview />} />
+                    <Route path="/study/configure" element={<StudyConfigurationPage />} />
+                    <Route path="/study/:studyId/experiments" element={<ExperimentOverview />} />
+                    <Route path="/study/:studyId/configure" element={<StudyConfigurationPage />} />
+                    <Route path="/study/:studyId/experiment/configure" element={<ExperimentConfigPage />} />
+                    <Route path="/study/:studyId/experiment/:experimentId/questionnaireForm" element={<QuestionnaireRouter />} />
+                    <Route path="/study/:studyId/experiment/:experimentId/questionnaireStart" element={<ParticipantLanding />} />
+                    <Route path="/study/:studyId/experiment/:experimentId/questionnaire" element={<ParticipantWaiting />} />
+                    <Route path="/study/:studyId/experiment/:experimentId/participantdemography" element={<ParticipantQuestionnairePage />} />
+                    <Route element={<Layout playerSlots={playerSlots} />}>
+                        <Route path="/study/:studyId/experiment/:experimentId/overview" element={<TrialOverview />} />
+                    </Route>
 
-                <Route element={<Layout playerSlots={playerSlots} />}>
+                    <Route path="/analysis" element={<AnalysisPage />} />
+                    <Route path="/study/:studyId/analysis" element={<StudyAnalysisPage />} />
+                    <Route path="/study/:studyId/experiment/:experimentId/analysis" element={<ExperimentAnalysisPage />} />
+
+                    <Route path="/participant/questionnaires" element={<QuestionnaireRouter />} />
+                    <Route path="/questionnaire/closing" element={<QuestionnaireClosing />} />
                     <Route path="/experiment/:experimentId/configure" element={<ConfigPage />} />
-                    <Route path="/experiment/:experimentId/overview" element={<TrialOverview />} />
-                </Route>
-                <Route path="/participant/start" element={<ParticipantLanding />} />
-                <Route path="/participant/demography" element={<ParticipantQuestionnairePage />}/>
-                <Route path="/participant/waiting" element={<ParticipantWaiting />} />
-                <Route path="/participant/nasatlx" element={<NasaTLX />} />
-                <Route path="/participant/join-simulator" element={<ParticipantJoinSimulator />} />
 
-            </Routes>
-        </BrowserRouter>
+                    <Route path="/simulator" element={<SimulatorController />} />
+                </Routes>
+            </BrowserRouter>
+        </div>
     )
 }

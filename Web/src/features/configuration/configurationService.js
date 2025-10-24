@@ -4,7 +4,7 @@
     return await res.json()
 }
 
-export async function submitTrialConfiguration(experimentId, trialConfigs, status) {
+export async function submitTrialConfiguration(experimentId, trialConfigs, status, selectedQuestionnaires = []) {
     const payload = {
         experiment_id: Number(experimentId),
         trials: trialConfigs.map((cfg, index) => ({
@@ -27,6 +27,10 @@ export async function submitTrialConfiguration(experimentId, trialConfigs, statu
                     )
                 }
             }
+        })),
+        questionnaires: selectedQuestionnaires.map((q, index) => ({
+            questionnaire_id: q.questionnaire_id,
+            order: index
         }))
     }
 
