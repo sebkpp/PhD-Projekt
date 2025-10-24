@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { fetchParticipantStatus, submitTrialConfiguration, getConnectionStatus  } from './configurationService'
 import { validateTrialConfigs } from './configurationValidation'
 const MAX_TRIALS = 10
+import { usePhase } from '../../components/PhaseProvider'
 
-export function useConfigurationForm(experimentId, setCurrentPhase) {
+export function useConfigurationForm(experimentId) {
     const navigate = useNavigate()
 
     const [trialConfigs, setTrialConfigs] = useState([
@@ -18,8 +19,11 @@ export function useConfigurationForm(experimentId, setCurrentPhase) {
         2: { submitted: false, participant_id: null }
     })
 
+    const [selectedQuestionnaires, setSelectedQuestionnaires] = useState([])
+
     const [connectionStatus, setConnectionStatus] = useState({ 1: false, 2: false })
     const bothConnected = connectionStatus["1"] && connectionStatus["2"]
+    const { setCurrentPhase, setTotalTrials } = usePhase()
 
     const handleChange = (participantId, field, value) => {
         const updated = [...trialConfigs]
@@ -43,7 +47,8 @@ export function useConfigurationForm(experimentId, setCurrentPhase) {
         setValidationErrors([])
 
         try {
-            await submitTrialConfiguration(experimentId, trialConfigs, status)
+            await submitTrialConfiguration(experimentId, trialConfigs, status, selectedQuestionnaires)
+            setTotalTrials(trialConfigs.length)
             setCurrentPhase('Warten auf Probanden')
             navigate(`/experiment/${experimentId}/overview`)
         } catch (e) {
@@ -99,6 +104,8 @@ export function useConfigurationForm(experimentId, setCurrentPhase) {
         handleNext,
         status,
         bothConnected,
-        MAX_TRIALS
+        MAX_TRIALS,
+        selectedQuestionnaires,
+        setSelectedQuestionnaires
     }
 }
