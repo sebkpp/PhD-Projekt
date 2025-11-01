@@ -314,6 +314,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8291135465677607017}
+  - component: {fileID: 2543517009208571692}
   m_Layer: 0
   m_Name: lifthand ik_target
   m_TagString: Untagged
@@ -341,6 +342,58 @@ Transform:
   - {fileID: 6220029204722761884}
   m_Father: {fileID: 4525009067034474207}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2543517009208571692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 615075976767263273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb36265e205b41c4b94e943c80c78b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Application.Scripts.Network.Input.NetworkHand
+  side: 0
+  handTrackingData:
+    wrist:
+      source: {fileID: 0}
+    thumb:
+      proximal:
+        source: {fileID: 0}
+      intermediate:
+        source: {fileID: 0}
+      distal:
+        source: {fileID: 0}
+    index:
+      proximal:
+        source: {fileID: 0}
+      intermediate:
+        source: {fileID: 0}
+      distal:
+        source: {fileID: 0}
+    middle:
+      proximal:
+        source: {fileID: 0}
+      intermediate:
+        source: {fileID: 0}
+      distal:
+        source: {fileID: 0}
+    ring:
+      proximal:
+        source: {fileID: 0}
+      intermediate:
+        source: {fileID: 0}
+      distal:
+        source: {fileID: 0}
+    pinky:
+      proximal:
+        source: {fileID: 0}
+      intermediate:
+        source: {fileID: 0}
+      distal:
+        source: {fileID: 0}
+  avatarHand: {fileID: 0}
 --- !u!1 &632158446948995665
 GameObject:
   m_ObjectHideFlags: 0
@@ -3581,6 +3634,8 @@ SkinnedMeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3604,6 +3659,7 @@ SkinnedMeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -3708,6 +3764,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8774651448557357159}
+  - component: {fileID: 3567531447532597679}
   m_Layer: 0
   m_Name: head target
   m_TagString: Untagged
@@ -3730,6 +3787,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 908233946926281620}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3567531447532597679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4682574444698236953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7429ef75ff4bfbb25fc1ea4be77f34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Application.Scripts.Network.Input.NetworkHeadset
+  networkTransform: {fileID: 0}
 --- !u!1 &4685525175556281336
 GameObject:
   m_ObjectHideFlags: 0
@@ -4371,6 +4441,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3270558580349116683}
+  - component: {fileID: 637774266399254804}
   m_Layer: 0
   m_Name: righthand ik_target
   m_TagString: Untagged
@@ -4398,6 +4469,58 @@ Transform:
   - {fileID: 2898747715372778194}
   m_Father: {fileID: 6153632920081773075}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &637774266399254804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5948859408677876146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb36265e205b41c4b94e943c80c78b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Application.Scripts.Network.Input.NetworkHand
+  side: 0
+  handTrackingData:
+    wrist:
+      source: {fileID: 0}
+    thumb:
+      proximal:
+        source: {fileID: 0}
+      intermediate:
+        source: {fileID: 0}
+      distal:
+        source: {fileID: 0}
+    index:
+      proximal:
+        source: {fileID: 0}
+      intermediate:
+        source: {fileID: 0}
+      distal:
+        source: {fileID: 0}
+    middle:
+      proximal:
+        source: {fileID: 0}
+      intermediate:
+        source: {fileID: 0}
+      distal:
+        source: {fileID: 0}
+    ring:
+      proximal:
+        source: {fileID: 0}
+      intermediate:
+        source: {fileID: 0}
+      distal:
+        source: {fileID: 0}
+    pinky:
+      proximal:
+        source: {fileID: 0}
+      intermediate:
+        source: {fileID: 0}
+      distal:
+        source: {fileID: 0}
+  avatarHand: {fileID: 0}
 --- !u!1 &6003744429255028323
 GameObject:
   m_ObjectHideFlags: 0
@@ -6884,8 +7007,9 @@ GameObject:
   - component: {fileID: 2682938147532689938}
   - component: {fileID: 7384170428881521186}
   - component: {fileID: 5270562086689727957}
-  - component: {fileID: 2800519002426821812}
   - component: {fileID: 6880502184876148680}
+  - component: {fileID: 905584276502340179}
+  - component: {fileID: 584513396259119851}
   m_Layer: 0
   m_Name: Medical_Female_prefab
   m_TagString: Untagged
@@ -7066,7 +7190,10 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 5270562086689727957}
-  - {fileID: 2800519002426821812}
+  - {fileID: 584513396259119851}
+  - {fileID: 3567531447532597679}
+  - {fileID: 637774266399254804}
+  - {fileID: 2543517009208571692}
 --- !u!114 &5270562086689727957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7083,64 +7210,6 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
---- !u!114 &2800519002426821812
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8899142378235143791}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90a869f11b034f8ba307b2ac3fa2167c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  avatarPosition: {fileID: 2736260615905248700}
-  avatarHead: {fileID: 8774651448557357159}
-  avatarLeftHand:
-    wrist: {fileID: 8291135465677607017}
-    thumb:
-      proximal: {fileID: 2521495992617725770}
-      intermediate: {fileID: 7361568986848019087}
-      distal: {fileID: 4715511432060814965}
-    index:
-      proximal: {fileID: 2793902233734598881}
-      intermediate: {fileID: 1217467745159767522}
-      distal: {fileID: 1534002271228325100}
-    middle:
-      proximal: {fileID: 5375462659965822786}
-      intermediate: {fileID: 4114708148893864561}
-      distal: {fileID: 5305971451362533654}
-    ring:
-      proximal: {fileID: 6977720745183924496}
-      intermediate: {fileID: 3007428761324461552}
-      distal: {fileID: 3750604637087205549}
-    pinky:
-      proximal: {fileID: 8148430810536991552}
-      intermediate: {fileID: 3028974169944856982}
-      distal: {fileID: 3030969818110145558}
-  avatarRightHand:
-    wrist: {fileID: 3270558580349116683}
-    thumb:
-      proximal: {fileID: 2226088146341084460}
-      intermediate: {fileID: 286399663313091943}
-      distal: {fileID: 5940991167710273718}
-    index:
-      proximal: {fileID: 472205224505004892}
-      intermediate: {fileID: 7943808245263057680}
-      distal: {fileID: 536866423960909363}
-    middle:
-      proximal: {fileID: 8685862960504513300}
-      intermediate: {fileID: 6720055555567140932}
-      distal: {fileID: 7989323382912278102}
-    ring:
-      proximal: {fileID: 913481773658840809}
-      intermediate: {fileID: 5853832657800416686}
-      distal: {fileID: 481894698977556226}
-    pinky:
-      proximal: {fileID: 7436208048968431587}
-      intermediate: {fileID: 5978057238571874946}
-      distal: {fileID: 4051933371900481973}
 --- !u!114 &6880502184876148680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7157,6 +7226,36 @@ MonoBehaviour:
   avatarHead: {fileID: 2208625600190103028}
   avatarMiddleEye: {fileID: 8149225612959768366}
   avatarFeet: {fileID: 8092945445779034160}
+--- !u!114 &905584276502340179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8899142378235143791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3a157fee49147f4b692c750ebfe5311, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Application.Scripts.Avatar.Utils.AvatarConfigReference
+  avatarConfig: {fileID: 11400000, guid: d21e650f2de5d5b4b94adcc128f26303, type: 2}
+--- !u!114 &584513396259119851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8899142378235143791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f42d14ae764798ae50319050de10dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Application.Scripts.Network.Input.NetworkRig
+  hardwareRig: {fileID: 0}
+  leftHand: {fileID: 2543517009208571692}
+  rightHand: {fileID: 637774266399254804}
+  headset: {fileID: 3567531447532597679}
+  networkTransform: {fileID: 0}
 --- !u!1 &8945663155876116783
 GameObject:
   m_ObjectHideFlags: 0
