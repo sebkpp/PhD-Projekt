@@ -1,0 +1,7 @@
+[
+  { "aoi": "partner_face", "label": "Gesicht des anderen Avatars" },
+  { "aoi": "object", "label": "Objekt (Übergabeobjekt)" },
+  { "aoi": "own_hand", "label": "Eigene Hand" },
+  { "aoi": "partner_hand", "label": "Hand des Interaktionspartners" },
+  { "aoi": "environment", "label": "Sonstige Umgebung" }
+]
