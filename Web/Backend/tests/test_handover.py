@@ -1,11 +1,7 @@
 ﻿import pytest
+
 from Backend.app import app
-from Backend.db_session import SessionLocal
-from Backend.models.handover import Handover
-from Backend.models.participant import Participant
-from Backend.models.trial.trial import Trial
-from Backend.models.experiment import Experiment
-from Backend.models.stimulus import StimuliCombination
+
 
 @pytest.fixture
 def client():
