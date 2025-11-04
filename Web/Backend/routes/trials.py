@@ -42,7 +42,7 @@ async def save_trials_route(
 ):
     try:
         if not payload.trials:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="`trials` is required")
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail="`trials` is required")
         selected_questionnaires = [q["questionnaire_id"] for q in payload.questionnaires or []]
         result = save_trials(db, experiment_id, payload.trials, selected_questionnaires)
         save_experiment_questionnaires(db, experiment_id, selected_questionnaires)
