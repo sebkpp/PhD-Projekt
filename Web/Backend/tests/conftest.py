@@ -10,7 +10,7 @@ from Backend.models.questionnaire import Questionnaire, QuestionnaireItem, Quest
 @pytest.fixture(scope="function", autouse=True)
 def clean_db():
     session = SessionLocal()
-    # Wichtig: zuerst die abhängigen Tabellen löschen (child tables)
+    # Cleanup before tests
     session.query(Handover).delete()
     session.query(QuestionnaireResponse).delete()
     session.query(QuestionnaireItem).delete()
@@ -21,7 +21,7 @@ def clean_db():
     session.commit()
     session.close()
     yield
-    # Nach jedem Test nochmal das gleiche, falls Test selbst was hinterlässt
+    # Cleanup after tests
     session = SessionLocal()
     session.query(Handover).delete()
     session.query(QuestionnaireResponse).delete()

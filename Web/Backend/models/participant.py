@@ -17,7 +17,6 @@ class Participant(Base):
     handovers_received = relationship("Handover", foreign_keys="[Handover.receiver]", back_populates="receiver_participant")
     eye_trackings = relationship("EyeTracking", back_populates="participant")
     questionnaire_responses = relationship("QuestionnaireResponse", back_populates="participant")
-    # trial_participant_items = relationship("TrialParticipantItem", back_populates="participant")
     trial_assignments = relationship(
         "TrialParticipantSlot",
         back_populates="participant",
