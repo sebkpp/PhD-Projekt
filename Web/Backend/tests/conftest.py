@@ -1,4 +1,5 @@
 ﻿import pytest
+from fastapi.testclient import TestClient
 from Backend.app import app
 from Backend.db_session import SessionLocal
 from Backend.models.experiment import Experiment
@@ -10,7 +11,7 @@ from Backend.models.questionnaire import Questionnaire, QuestionnaireItem, Quest
 @pytest.fixture(scope="function", autouse=True)
 def clean_db():
     session = SessionLocal()
-    # Cleanup before tests
+    # Cleanup before Test
     session.query(Handover).delete()
     session.query(QuestionnaireResponse).delete()
     session.query(QuestionnaireItem).delete()
@@ -21,7 +22,7 @@ def clean_db():
     session.commit()
     session.close()
     yield
-    # Cleanup after tests
+    # Cleanup after Test
     session = SessionLocal()
     session.query(Handover).delete()
     session.query(QuestionnaireResponse).delete()
@@ -35,6 +36,4 @@ def clean_db():
 
 @pytest.fixture(scope="function")
 def client():
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
+    return TestClient(app)
