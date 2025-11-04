@@ -1,14 +1,11 @@
-﻿import pytest
-from fastapi.testclient import TestClient
+﻿from fastapi.testclient import TestClient
 
 from Backend.app import app
-from Backend.db_session import SessionLocal
-from Backend.models.trial.trial import Trial
 
 client = TestClient(app)
 
 def test_trial_create_validation():
-    # Ungültiges Payload (fehlende trials)
+    # invalid Payload (missing trials)
     payload = {"questionnaires": []}
     response = client.post("/api/experiments/1/trials", json=payload)
     assert response.status_code == 422  # FastAPI-Validation
@@ -30,7 +27,7 @@ def test_create_and_get_trial():
     assert res_post.status_code == 201
     assert res_post.json()["status"] == "ok"
 
-    # Trial abrufen
+    # Trial retrieval
     res_get = client.get("/api/experiments/1/trials")
     assert res_get.status_code == 200
     trials = res_get.json()
