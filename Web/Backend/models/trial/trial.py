@@ -1,6 +1,10 @@
 ﻿from sqlalchemy import Column, Integer, ForeignKey, String, Boolean
 from sqlalchemy.orm import relationship
+
 from Backend.db_session import Base
+
+from pydantic import BaseModel
+from typing import List, Optional, Dict, Any
 
 class Trial(Base):
     __tablename__ = "trial"
@@ -37,3 +41,13 @@ class Trial(Base):
                 for slot in self.slots
             ]
         }
+
+
+class TrialCreateRequest(BaseModel):
+    trials: List[Dict[str, Any]]
+    questionnaires: Optional[List[Dict[str, int]]] = []
+
+class TrialResponse(BaseModel):
+    # Passe die Felder an dein Modell an
+    trial_id: int
+    # weitere Felder nach Bedarf

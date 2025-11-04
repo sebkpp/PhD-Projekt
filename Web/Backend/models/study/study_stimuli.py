@@ -2,6 +2,9 @@
 from sqlalchemy.orm import relationship
 from Backend.db_session import Base
 
+from pydantic import BaseModel, Field
+from typing import Optional
+
 class StudyStimuli(Base):
     __tablename__ = "study_stimuli"
 
@@ -16,3 +19,12 @@ class StudyStimuli(Base):
             "study_id": self.study_id,
             "stimuli_type_id": self.stimuli_type_id
         }
+
+
+class StudyStimuliResponse(BaseModel):
+    study_id: int = Field(..., description="Id of the associated study")
+    stimuli_type_id: int = Field(..., description="Id of the associated stimulus type")
+    name: Optional[str] = Field(None, description="Name of the stimulus type")
+
+    class Config:
+        orm_mode = True

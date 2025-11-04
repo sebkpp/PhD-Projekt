@@ -2,6 +2,9 @@
 from sqlalchemy.orm import relationship
 from Backend.db_session import Base
 
+from pydantic import BaseModel, Field
+from typing import Optional
+
 class StudyConfig(Base):
     __tablename__ = "study_config"
 
@@ -25,3 +28,15 @@ class StudyConfig(Base):
             "trial_number": self.trial_number,
             "trials_permuted": self.trials_permuted
         }
+
+class StudyConfigResponse(BaseModel):
+    study_config_id: int
+    name: Optional[str] = Field(None, description="Name of the study configuration")
+    description: Optional[str] = Field(None, description="Description of the study configuration")
+    principal_investigator: Optional[str] = Field(None, description="Principal investigator of the study")
+    study_id: Optional[int] = Field(None, description="ID of the associated study")
+    trial_number: Optional[int] = Field(None, description="Number of trials in the study")
+    trials_permuted: Optional[bool] = Field(None, description="Indicates if trials are permuted")
+
+    class Config:
+        orm_mode = True

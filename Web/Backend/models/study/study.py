@@ -1,7 +1,15 @@
 ﻿from sqlalchemy import Column, Integer, String, Date, DateTime
 from sqlalchemy.orm import relationship
 from Backend.db_session import Base
-from datetime import datetime
+
+from datetime import date, datetime
+from pydantic import BaseModel, Field
+from typing import Optional, List
+
+from Backend.models.study.study_config import StudyConfigResponse
+from Backend.models.study.study_questionnaire import StudyQuestionnaireResponse
+from Backend.models.study.study_stimuli import StudyStimuliResponse
+
 
 class Study(Base):
     __tablename__ = 'study'
@@ -51,3 +59,31 @@ class Study(Base):
 
         }
         return data
+
+
+class StudyBase(BaseModel):
+    status: Optional[str] = None
+    started_at: Optional[date] = None
+    ended_at: Optional[date] = None
+
+
+class StudyCreate(StudyBase):
+    pass
+
+
+class StudyUpdate(StudyBase):
+    pass
+
+
+class StudyResponse(BaseModel):
+    study_id: int
+    status: Optional[str] = Field(None, description="Status of the study")
+    created_at: Optional[datetime] = Field(None, description="Creation timestamp of the study")
+    started_at: Optional[date] = Field(None, description="Start date of the study")
+    ended_at: Optional[date] = Field(None, description="End date of the study")
+    config: Optional[StudyConfigResponse] = Field(None, description="Configuration details of the study")
+    questionnaires: Optional[List[StudyQuestionnaireResponse]] = Field(None, description="List of questionnaires associated with the study")
+    stimuli: Optional[List[StudyStimuliResponse]] = Field(None, description="List of stimuli types associated with the study")
+
+    class Config:
+        orm_mode = True
