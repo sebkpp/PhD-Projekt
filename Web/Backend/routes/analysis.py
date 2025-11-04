@@ -1,63 +1,120 @@
-﻿from flask import Blueprint, jsonify, request
+﻿from fastapi import APIRouter, HTTPException, status, Depends
 
 from Backend.db_session import SessionLocal
 from Backend.services.data_analysis.performance_analysis_service import analyze_experiment_performance
 from Backend.services.data_analysis.questionnaire_analysis_service import analyze_experiment_questionnaires
 
-analysis_bp = Blueprint("analysis", __name__, url_prefix="/api/analysis")
+router = APIRouter(prefix="/analysis", tags=["analysis"])
 
-@analysis_bp.route("/questionnaires", methods=["GET"])
-def questionnaire_analysis():
-    return jsonify(None)
-
-@analysis_bp.route("/study/<int:study_id>/questionnaires", methods=["GET"])
-def study_questionnaires_analysis(study_id):
-    return jsonify(None)
-
-@analysis_bp.route("/experiment/<int:experiment_id>/questionnaires", methods=["GET"])
-def experiment_questionnaire_analysis(experiment_id):
-    session = SessionLocal()
+def get_db():
+    db = SessionLocal()
     try:
-        result = analyze_experiment_questionnaires(session, experiment_id)
-        if not result:
-            return jsonify({"error": "No Result"}), 404
-        return jsonify(result), 201
-    except Exception as e:
-        session.rollback()
-        return jsonify({"error": str(e)}), 500
+        yield db
     finally:
-        session.close()
+        db.close()
 
-@analysis_bp.route("/performance", methods=["GET"])
-def all_performance_analysis():
-    return jsonify(None)
 
-@analysis_bp.route("/study/<int:study_id>/performance", methods=["GET"])
-def study_performance_analysis(study_id):
-    return jsonify(None)
+@router.get(
+    "/questionnaires",
+    status_code=status.HTTP_200_OK,
+    summary="Questionnaire analysis (all)",
+    description="Return questionnaire analysis for all studies/experiments (not implemented)."
+)
+async def questionnaire_analysis():
+    return None
 
-@analysis_bp.route("/experiment/<int:experiment_id>/performance", methods=["GET"])
-def experiment_performance_analysis(experiment_id):
-    session = SessionLocal()
+
+@router.get(
+    "/study/{study_id}/questionnaires",
+    status_code=status.HTTP_200_OK,
+    summary="Questionnaire analysis for a study",
+    description="Return questionnaire analysis for a specific study (not implemented)."
+)
+async def study_questionnaires_analysis(study_id: int):
+    return None
+
+
+@router.get(
+    "/experiment/{experiment_id}/questionnaires",
+    status_code=status.HTTP_200_OK,
+    summary="Questionnaire analysis for an experiment",
+    description="Return questionnaire analysis for a specific experiment."
+)
+async def experiment_questionnaire_analysis(
+        experiment_id: int,
+        db=Depends(get_db)
+):
     try:
-        result = analyze_experiment_performance(session, experiment_id)
+        result = analyze_experiment_questionnaires(db, experiment_id)
         if not result:
-            return jsonify({"error": "No Result"}), 404
-        return jsonify(result), 201
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No Result")
+        return result
     except Exception as e:
-        session.rollback()
-        return jsonify({"error": str(e)}), 500
-    finally:
-        session.close()
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-@analysis_bp.route("/eyetracking", methods=["GET"])
-def all_eyetracking_analysis():
-    return jsonify(None)
 
-@analysis_bp.route("/study/<int:study_id>/eyetracking", methods=["GET"])
-def study_eyetracking_analysis(study_id):
-    return jsonify(None)
+@router.get(
+    "/performance",
+    status_code=status.HTTP_200_OK,
+    summary="Performance analysis (all)",
+    description="Return performance analysis for all studies/experiments (not implemented)."
+)
+async def all_performance_analysis():
+    return None
 
-@analysis_bp.route("/experiment/<int:experiment_id>/eyetracking", methods=["GET"])
-def experiment_eyetracking_analysis(experiment_id):
-    return jsonify(None)
+@router.get(
+    "/study/{study_id}/performance",
+    status_code=status.HTTP_200_OK,
+    summary="Performance analysis for a study",
+    description="Return performance analysis for a specific study (not implemented)."
+)
+async def study_performance_analysis(study_id: int):
+    return None
+
+@router.get(
+    "/experiment/{experiment_id}/performance",
+    status_code=status.HTTP_200_OK,
+    summary="Performance analysis for an experiment",
+    description="Return performance analysis for a specific experiment."
+)
+async def experiment_performance_analysis(
+        experiment_id: int,
+        db=Depends(get_db)
+):
+    try:
+        result = analyze_experiment_performance(db, experiment_id)
+        if not result:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No Result")
+        return result
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.get(
+    "/eyetracking",
+    status_code=status.HTTP_200_OK,
+    summary="Eyetracking analysis (all)",
+    description="Return eyetracking analysis for all studies/experiments (not implemented)."
+)
+async def all_eyetracking_analysis():
+    return None
+
+@router.get(
+    "/study/{study_id}/eyetracking",
+    status_code=status.HTTP_200_OK,
+    summary="Eyetracking analysis for a study",
+    description="Return eyetracking analysis for a specific study (not implemented)."
+)
+async def study_eyetracking_analysis(study_id: int):
+    return None
+
+@router.get(
+    "/experiment/{experiment_id}/eyetracking",
+    status_code=status.HTTP_200_OK,
+    summary="Eyetracking analysis for an experiment",
+    description="Return eyetracking analysis for a specific experiment (not implemented)."
+)
+async def experiment_eyetracking_analysis(experiment_id: int):
+    return None
