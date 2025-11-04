@@ -3,7 +3,7 @@ from Backend.app import app
 from Backend.db_session import SessionLocal
 from Backend.models.experiment import Experiment
 from Backend.models.participant import Participant
-from Backend.models.trial.trial import Trial, TrialParticipantItem
+from Backend.models.trial.trial import Trial
 from Backend.models.handover import Handover
 from Backend.models.questionnaire import Questionnaire, QuestionnaireItem, QuestionnaireResponse
 
@@ -15,7 +15,6 @@ def clean_db():
     session.query(QuestionnaireResponse).delete()
     session.query(QuestionnaireItem).delete()
     session.query(Questionnaire).delete()
-    session.query(TrialParticipantItem).delete()
     session.query(Trial).delete()
     session.query(Participant).delete()
     session.query(Experiment).delete()
@@ -28,7 +27,6 @@ def clean_db():
     session.query(QuestionnaireResponse).delete()
     session.query(QuestionnaireItem).delete()
     session.query(Questionnaire).delete()
-    session.query(TrialParticipantItem).delete()
     session.query(Trial).delete()
     session.query(Participant).delete()
     session.query(Experiment).delete()
