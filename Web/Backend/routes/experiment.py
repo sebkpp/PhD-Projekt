@@ -4,9 +4,11 @@ from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
 
+from Backend.models.trial.trial import TrialCreateRequest
 from Backend.services.experiment_service import create_experiment, get_experiment_by_id, \
     save_experiment_questionnaires, set_experiment_started_at, set_experiment_completed_at
 from Backend.db_session import SessionLocal
+from Backend.services.trial_service import save_trials, get_trials_for_experiment
 
 router = APIRouter(prefix="/experiments", tags=["experiments"])
 
@@ -140,4 +142,45 @@ async def set_experiment_completed(
         return MessageResponse(message="Experiment completed_at set")
     except Exception as e:
         db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+@router.post(
+    "/{experiment_id}/trials",
+    status_code=status.HTTP_201_CREATED,
+    summary="Save trials for an experiment",
+    description="Save trial configuration and associated questionnaires for a given experiment."
+)
+async def save_trials_route(
+        experiment_id: int,
+        payload: TrialCreateRequest,
+        db: Session = Depends(get_db)
+):
+    try:
+        if not payload.trials:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail="`trials` is required")
+        selected_questionnaires = [q["questionnaire_id"] for q in payload.questionnaires or []]
+        result = save_trials(db, experiment_id, payload.trials, selected_questionnaires)
+        save_experiment_questionnaires(db, experiment_id, selected_questionnaires)
+        db.commit()
+        return result
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+
+@router.get(
+    "/{experiment_id}/trials",
+    status_code=status.HTTP_200_OK,
+    summary="Get trials for an experiment",
+    description="Retrieve all trials for a given experiment."
+)
+async def get_trials_route(
+        experiment_id: int,
+        db: Session = Depends(get_db)
+):
+    try:
+        trials = get_trials_for_experiment(db, experiment_id)
+        return trials
+    except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
