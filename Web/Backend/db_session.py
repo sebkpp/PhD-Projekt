@@ -3,8 +3,10 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-env_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path=env_path)
+if os.getenv('TESTING') == 'true':
+    load_dotenv('.env.test', override=True)
+else:
+    load_dotenv('.env')
 
 DB_USER = os.getenv('DB_USER')
 DB_PASS = os.getenv('DB_PASSWORD')
