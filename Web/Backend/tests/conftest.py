@@ -2,7 +2,7 @@
 
 @pytest.fixture(scope="session", autouse=True)
 def verify_test_database():
-    from Backend.db_session import DB_NAME, DB_PASS
+    from Backend.db_session import DB_NAME
     if not DB_NAME == 'testdb':
         raise RuntimeError(
             f"❌ Tests would run agains '{DB_NAME}'!\n"
