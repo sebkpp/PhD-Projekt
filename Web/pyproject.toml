@@ -7,5 +7,37 @@ dependencies = [
     "fastapi>=0.120.4",
     "flask>=3.1.2",
     "flask-cors>=6.0.1",
+    "httpx==0.28.1",
+    "pandas==2.3.3",
+    "psycopg2==2.9.11",
+    "pytest>=9.0.0",
+    "python-dotenv>=1.2.1",
+    "scipy==1.16.3",
+    "sqlalchemy>=2.0.44",
     "uvicorn>=0.38.0",
 ]
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/data/*",
+    "*/mock/*",
+    "*/public/*"
+]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__:",
+    "if TYPE_CHECKING:",
+]
+show_missing = true
+precision = 2
