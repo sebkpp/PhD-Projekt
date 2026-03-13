@@ -1,101 +1,68 @@
-﻿import json
-import sys
+import json
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import sys
 
-from db_conn import get_db
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-DATA_FILE = os.path.join(os.path.dirname(__file__), '../data/stimuli_definitions.json')
+from Backend.db_session import SessionLocal
+from Backend.models.stimulus import StimulusType, Stimulus, StimulusVisual, StimulusAuditiv, StimulusTactile
+
+DATA_FILE = os.path.join(os.path.dirname(__file__), '../data/static/stimuli_definitions.json')
+
 
 def main():
     with open(DATA_FILE, 'r', encoding='utf-8') as f:
         stimuli_data = json.load(f)
 
-    conn = get_db()
-    cur = conn.cursor()
+    db = SessionLocal()
+    try:
+        type_cache = {}
 
-    type_id_cache = {}
+        for s in stimuli_data:
+            type_name = s['type']
 
-    for stim in stimuli_data:
-        stim_type = stim['type']
+            if type_name not in type_cache:
+                st = db.query(StimulusType).filter_by(type_name=type_name).first()
+                if not st:
+                    print(f"⚠️  StimulusType '{type_name}' not found – skipping {s['name']}")
+                    continue
+                type_cache[type_name] = st.stimulus_type_id
 
-        # Hole stimulus_type_id (gecached)
-        if stim_type not in type_id_cache:
-            cur.execute("SELECT stimulus_type_id FROM stimulus_type WHERE type_name = %s", (stim_type,))
-            result = cur.fetchone()
-            if not result:
-                print(f"⚠️  Stimulus-Typ '{stim_type}' nicht gefunden – überspringe.")
-                continue
-            type_id_cache[stim_type] = result[0]
-        type_id = type_id_cache[stim_type]
+            type_id = type_cache[type_name]
 
-        name = stim['name']
-
-        # Prüfen, ob Stimulus existiert
-        cur.execute("""
-            SELECT stimulus_id FROM stimuli
-            WHERE name = %s AND stimulus_type_id = %s
-        """, (name, type_id))
-        row = cur.fetchone()
-
-        if row:
-            stimulus_id = row[0]
-            print(f"🔄 Aktualisiere Stimulus: {name} (ID {stimulus_id})")
-        else:
-            # Neuer Stimulus
-            cur.execute("""
-                INSERT INTO stimuli (name, stimulus_type_id)
-                VALUES (%s, %s)
-                RETURNING stimulus_id
-            """, (name, type_id))
-            stimulus_id = cur.fetchone()[0]
-            print(f"🆕 Neuer Stimulus: {name} (ID {stimulus_id})")
-
-        # Typ-spezifisch behandeln
-        if stim_type == 'auditory':
-            # Upsert für stimulus_auditory
-            cur.execute("SELECT 1 FROM stimulus_auditiv WHERE stimulus_id = %s", (stimulus_id,))
-            if cur.fetchone():
-                cur.execute("""
-                    UPDATE stimulus_auditiv SET frequency = %s, volume = %s
-                    WHERE stimulus_id = %s
-                """, (stim['frequency'], stim['volume'], stimulus_id))
+            existing = db.query(Stimulus).filter_by(name=s['name'], stimulus_type_id=type_id).first()
+            if existing:
+                stimulus_id = existing.stimulus_id
+                print(f"🔄 Already exists: {s['name']} (DB ID {stimulus_id})")
             else:
-                cur.execute("""
-                    INSERT INTO stimulus_auditiv (stimulus_id, frequency, volume)
-                    VALUES (%s, %s, %s)
-                """, (stimulus_id, stim['frequency'], stim['volume']))
+                kwargs = dict(name=s['name'], stimulus_type_id=type_id)
+                if 'stimulus_id' in s:
+                    kwargs['stimulus_id'] = s['stimulus_id']
+                new_stim = Stimulus(**kwargs)
+                db.add(new_stim)
+                db.flush()
+                stimulus_id = new_stim.stimulus_id
+                print(f"🆕 Inserted: {s['name']} (DB ID {stimulus_id})")
 
-        elif stim_type == 'tactile':
-            cur.execute("SELECT 1 FROM stimulus_tactile WHERE stimulus_id = %s", (stimulus_id,))
-            if cur.fetchone():
-                cur.execute("""
-                    UPDATE stimulus_tactile SET pattern = %s, intensity = %s
-                    WHERE stimulus_id = %s
-                """, (stim['pattern'], stim['intensity'], stimulus_id))
-            else:
-                cur.execute("""
-                    INSERT INTO stimulus_tactile (stimulus_id, pattern, intensity)
-                    VALUES (%s, %s, %s)
-                """, (stimulus_id, stim['pattern'], stim['intensity']))
+            if type_name == 'visual':
+                if not db.query(StimulusVisual).filter_by(stimulus_id=stimulus_id).first():
+                    db.add(StimulusVisual(stimulus_id=stimulus_id, stimulus_name=s['name']))
+            elif type_name == 'auditory':
+                if not db.query(StimulusAuditiv).filter_by(stimulus_id=stimulus_id).first():
+                    db.add(StimulusAuditiv(stimulus_id=stimulus_id, frequency=s['frequency'], volume=s['volume']))
+            elif type_name == 'tactile':
+                if not db.query(StimulusTactile).filter_by(stimulus_id=stimulus_id).first():
+                    db.add(StimulusTactile(stimulus_id=stimulus_id, pattern=s['pattern'], intensity=s['intensity']))
 
-        elif stim_type == 'visual':
-            cur.execute("SELECT 1 FROM stimulus_visual WHERE stimulus_id = %s", (stimulus_id,))
-            if cur.fetchone():
-                cur.execute("""
-                    UPDATE stimulus_visual SET stimulus_name = %s
-                    WHERE stimulus_id = %s
-                """, (name, stimulus_id))
-            else:
-                cur.execute("""
-                    INSERT INTO stimulus_visual (stimulus_id, stimulus_name)
-                    VALUES (%s, %s)
-                """, (stimulus_id, name))
+        db.commit()
+        print("✅ Stimuli imported.")
+    except Exception as e:
+        db.rollback()
+        print(f"❌ Error: {e}")
+        raise
+    finally:
+        db.close()
 
-
-    conn.commit()
-    conn.close()
-    print("✅ Stimuli-Import abgeschlossen.")
 
 if __name__ == '__main__':
     main()
