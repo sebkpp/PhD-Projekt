@@ -1,8 +1,12 @@
 ﻿from Backend.db.handover_repository import HandoverRepository
+from Backend.db.stimuli_repository import StimuliRepository
+from Backend.db.trial.trial import TrialRepository
+from Backend.models import Experiment
 import pandas as pd
 from collections import defaultdict
 import scipy.stats as stats
 import math
+import numpy as np
 
 def sanitize_stats(stats):
     for k, v in stats.items():
@@ -159,4 +163,159 @@ def analyze_experiment_performance(session, experiment_id):
         "by_trial_and_object": stats_by_trial_and_object,
         "by_giver": stats_by_giver,
         "by_receiver": stats_by_receiver
+    }
+
+
+def cohens_d(values_a: list, values_b: list) -> float | None:
+    """Cohen's d effect size between two groups."""
+    if len(values_a) < 2 or len(values_b) < 2:
+        return None
+    mean_diff = np.mean(values_a) - np.mean(values_b)
+    pooled_std = np.sqrt(
+        (np.std(values_a, ddof=1) ** 2 + np.std(values_b, ddof=1) ** 2) / 2
+    )
+    if pooled_std > 0:
+        d = float(mean_diff / pooled_std)
+        return None if (math.isnan(d) or math.isinf(d)) else d
+    return 0.0
+
+
+def run_paired_test(values_a: list, values_b: list) -> dict | None:
+    """
+    Auto-selects paired t-test or Wilcoxon based on Shapiro–Wilk normality test.
+    Returns None when there are not enough data points.
+    """
+    if len(values_a) < 3 or len(values_b) < 3:
+        return None
+    _, p_a = stats.shapiro(values_a)
+    _, p_b = stats.shapiro(values_b)
+    try:
+        if p_a >= 0.05 and p_b >= 0.05:
+            stat, p = stats.ttest_rel(values_a, values_b)
+            test_name = "paired_ttest"
+        else:
+            stat, p = stats.wilcoxon(values_a, values_b)
+            test_name = "wilcoxon"
+    except Exception:
+        return None
+
+    stat_val = None if stat is None or (isinstance(stat, float) and math.isnan(stat)) else float(stat)
+    p_val = None if p is None or (isinstance(p, float) and math.isnan(p)) else float(p)
+    d = cohens_d(values_a, values_b)
+    return {
+        "test": test_name,
+        "statistic": stat_val,
+        "p_value": p_val,
+        "effect_size_d": d,
+        "significant": bool(p_val < 0.05) if p_val is not None else None,
+    }
+
+
+def analyze_study_performance(session, study_id: int) -> dict:
+    """
+    Aggregate handover performance across all experiments in a study,
+    grouped by stimulus condition, and run paired inferential tests.
+    """
+    experiments = (
+        session.query(Experiment).filter_by(study_id=study_id).all()
+    )
+    if not experiments:
+        return {}
+
+    t_repo = TrialRepository(session)
+    h_repo = HandoverRepository(session)
+    s_repo = StimuliRepository(session)
+
+    # condition → list of per-experiment means
+    condition_phase1: dict[str, list] = defaultdict(list)
+    condition_phase2: dict[str, list] = defaultdict(list)
+    condition_phase3: dict[str, list] = defaultdict(list)
+    condition_total: dict[str, list] = defaultdict(list)
+
+    for experiment in experiments:
+        trials = t_repo.get_by_experiment_id(experiment.experiment_id)
+        if not trials:
+            continue
+        trial_ids = [t.trial_id for t in trials]
+        trial_stimuli_map = s_repo.get_stimuli_for_trials(trial_ids)
+
+        # For this experiment, group per condition → collect all handover values
+        exp_condition_data: dict[str, dict[str, list]] = defaultdict(
+            lambda: {"phase1": [], "phase2": [], "phase3": [], "total": []}
+        )
+
+        for trial in trials:
+            stimuli = trial_stimuli_map.get(trial.trial_id, [])
+            if not stimuli:
+                continue
+            condition_name = stimuli[0]["name"]
+
+            handovers = h_repo.get_handovers_for_trial(trial.trial_id)
+            for h in handovers:
+                if not all([
+                    h.giver_grasped_object,
+                    h.receiver_touched_object,
+                    h.receiver_grasped_object,
+                    h.giver_released_object,
+                ]):
+                    continue
+                phase1 = (h.receiver_touched_object - h.giver_grasped_object).total_seconds()
+                phase2 = (h.receiver_grasped_object - h.receiver_touched_object).total_seconds()
+                phase3 = (h.giver_released_object - h.receiver_grasped_object).total_seconds()
+                total = (h.giver_released_object - h.giver_grasped_object).total_seconds()
+                exp_condition_data[condition_name]["phase1"].append(phase1)
+                exp_condition_data[condition_name]["phase2"].append(phase2)
+                exp_condition_data[condition_name]["phase3"].append(phase3)
+                exp_condition_data[condition_name]["total"].append(total)
+
+        # Compute per-experiment mean per condition and accumulate
+        for cond_name, data in exp_condition_data.items():
+            if data["total"]:
+                condition_phase1[cond_name].append(float(np.mean(data["phase1"])))
+                condition_phase2[cond_name].append(float(np.mean(data["phase2"])))
+                condition_phase3[cond_name].append(float(np.mean(data["phase3"])))
+                condition_total[cond_name].append(float(np.mean(data["total"])))
+
+    if not condition_total:
+        return {}
+
+    conditions = sorted(condition_total.keys())
+
+    # Build descriptive stats per condition using calc_stats (expects list of dicts)
+    def _build_records(cond: str) -> list:
+        p1 = condition_phase1.get(cond, [])
+        p2 = condition_phase2.get(cond, [])
+        p3 = condition_phase3.get(cond, [])
+        tot = condition_total.get(cond, [])
+        n = min(len(p1), len(p2), len(p3), len(tot))
+        return [{"phase1": p1[i], "phase2": p2[i], "phase3": p3[i], "total": tot[i]} for i in range(n)]
+
+    by_condition = {}
+    for cond in conditions:
+        records = _build_records(cond)
+        if records:
+            by_condition[cond] = sanitize_stats(calc_stats(records))
+        else:
+            by_condition[cond] = {}
+
+    # Inferential tests (paired between the two conditions, one value per experiment)
+    inferential = {}
+    if len(conditions) >= 2:
+        cond_a, cond_b = conditions[0], conditions[1]
+        for metric, bucket_a, bucket_b in [
+            ("total", condition_total[cond_a], condition_total[cond_b]),
+            ("phase1", condition_phase1[cond_a], condition_phase1[cond_b]),
+            ("phase2", condition_phase2[cond_a], condition_phase2[cond_b]),
+            ("phase3", condition_phase3[cond_a], condition_phase3[cond_b]),
+        ]:
+            inferential[metric] = run_paired_test(bucket_a, bucket_b)
+
+    return {
+        "study_id": study_id,
+        "n_experiments": len(experiments),
+        "conditions": conditions,
+        "performance": {
+            "by_condition": by_condition,
+            "inferential": inferential,
+        },
     }

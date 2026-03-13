@@ -6,11 +6,14 @@ import ExperimentDetails from "@/features/Analysis/components/experiment/Experim
 import {useParticipantsForExperiment} from "@/features/overview/hooks/useParticipantsForExperiment.js";
 import QuestionnaireCharts from "@/features/Analysis/components/experiment/QuestionnaireCharts.jsx";
 import PerformanceCharts from "@/features/Analysis/components/experiment/PerformanceCharts.jsx";
+import EyeTrackingCharts from "@/features/Analysis/components/experiment/EyeTrackingCharts.jsx";
+import ComparisonCharts from "@/features/Analysis/components/experiment/ComparisonCharts.jsx";
 import {useHandovers} from "@/features/Analysis/hooks/useHandovers.js";
 import {computePerformanceMetrics} from "@/features/Analysis/services/performanceMetrics.js";
 import { ExperimentAnalyseTabs, TabPanel } from "@/features/Analysis/components/experiment/ExperimentAnalyseTabs.jsx";
 import {useUxMetrics} from "@/features/Analysis/hooks/useUxMetrics.js";
 import {usePerformanceMetrics} from "@/features/Analysis/hooks/usePerformanceMetrics.js";
+import {useEyeTrackingMetrics} from "@/features/Analysis/hooks/useEyeTrackingMetrics.js";
 
 const TABS = [
     { key: "details", label: "Experiment Info und Details" },
@@ -43,6 +46,7 @@ export default function ExperimentAnalysisPage() {
     const { handovers, loading: handoversLoading, error: handoversError } = useHandovers(experimentId);
     const { data: uxMetrics, loading: uxLoading, error: uxError } = useUxMetrics(experimentId);
     const { data: performanceMetrics, loading: performanceLoading, error: performanceError } = usePerformanceMetrics(experimentId);
+    const { data: eyeTrackingData, loading: eyeTrackingLoading, error: eyeTrackingError } = useEyeTrackingMetrics(experimentId);
 
     const breadcrumbItems = [
         { label: "Studienübersicht", to: "/" },
@@ -50,7 +54,7 @@ export default function ExperimentAnalysisPage() {
         { label: "Experiment-Analyse" }
     ];
 
-    if (loading || participant_loading || handoversLoading || uxLoading || performanceLoading) {
+    if (loading || participant_loading || handoversLoading || uxLoading || performanceLoading || eyeTrackingLoading) {
         return <div>Lädt...</div>;
     }
 
@@ -80,12 +84,10 @@ export default function ExperimentAnalysisPage() {
                     <PerformanceCharts chartData={performanceMetrics} />
                 </TabPanel>
                 <TabPanel tabKey="eyetracking">
-                    <h2 className="mt-8 mb-4">Eye-Tracking</h2>
-                    {/* Eye-Tracking-Komponenten */}
+                    <EyeTrackingCharts chartData={eyeTrackingData} />
                 </TabPanel>
                 <TabPanel tabKey="compare">
-                    <h2 className="mt-8 mb-4">Vergleiche</h2>
-                    {/* Vergleichs-Komponenten */}
+                    <ComparisonCharts uxMetrics={uxMetrics} performanceMetrics={performanceMetrics} />
                 </TabPanel>
             </ExperimentAnalyseTabs>
         </div>
