@@ -293,7 +293,12 @@ ALTER SEQUENCE public.participant_participant_id_seq OWNED BY public.participant
 CREATE TABLE public.questionnaire_item (
     item_name character varying,
     questionnaire_item_id integer NOT NULL,
-    questionnaire_id integer NOT NULL
+    questionnaire_id integer NOT NULL,
+    item_label character varying(255),
+    item_description text,
+    min_label character varying(100),
+    max_label character varying(100),
+    order_index integer DEFAULT 0
 );
 
 
@@ -331,7 +336,10 @@ ALTER SEQUENCE public.questionaire_item_questionnaire_item_id_seq OWNED BY publi
 
 CREATE TABLE public.questionnaire (
     name character varying NOT NULL,
-    questionnaire_id integer NOT NULL
+    questionnaire_id integer NOT NULL,
+    scale_type character varying(20) DEFAULT 'slider',
+    scale_min double precision DEFAULT 0,
+    scale_max double precision DEFAULT 100
 );
 
 

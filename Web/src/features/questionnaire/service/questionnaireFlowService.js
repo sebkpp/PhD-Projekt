@@ -7,6 +7,13 @@
     return data
 }
 
+export async function fetchQuestionnaireById(id) {
+    const response = await fetch(`/api/questionnaires/${id}`)
+    if (response.status === 404) throw new Error('Fragebogen nicht gefunden')
+    if (!response.ok) throw new Error('Fehler beim Laden des Fragebogens')
+    return response.json()
+}
+
 export async function getStudyQuestionnaires(study_id) {
     const response = await fetch(`/api/questionnaires/study/${study_id}`)
     if (!response.ok) throw new Error('Fehler beim Laden der Fragebögen')

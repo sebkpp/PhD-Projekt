@@ -1,14 +1,13 @@
 ﻿import os
 import sys
+from pathlib import Path
 
 from dotenv import load_dotenv, find_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-if os.getenv('TESTING') == 'true' or 'pytest' in sys.argv[0]:
-    load_dotenv(find_dotenv('.env.test'), override=True)
-else:
-    load_dotenv(find_dotenv('.env'), override=True)
+env_path = Path(__file__).parent / ".env.test" if os.getenv('TESTING') == 'true' or 'pytest' in sys.argv[0] else Path(__file__).parent / ".env"
+load_dotenv(dotenv_path=env_path, override=True)
 
 DB_NAME = os.getenv('DB_NAME')
 DB_USER = os.getenv('DB_USER')

@@ -20,19 +20,19 @@ def get_db():
         db.close()
 
 class ExperimentCreateRequest(BaseModel):
-    # Passe die Felder an deine Experimentdaten an
     name: str
+    study_id: int
     description: Optional[str] = None
-    # weitere Felder nach Bedarf
+    researcher: Optional[str] = None
 
 class ExperimentResponse(BaseModel):
     experiment_id: int
-    name: str
     description: Optional[str] = None
-    # weitere Felder nach Bedarf
+    researcher: Optional[str] = None
+    study_id: Optional[int] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ExperimentIdResponse(BaseModel):
     experiment_id: int
@@ -56,7 +56,8 @@ async def create_experiment_route(
         db: Session = Depends(get_db)
 ) -> ExperimentIdResponse:
     try:
-        experiment = create_experiment(db, payload.model_dump())
+        data = {"experimentSettings": payload.model_dump()}
+        experiment = create_experiment(db, data)
         db.commit()
         return ExperimentIdResponse(experiment_id=experiment.experiment_id)
     except Exception as e:

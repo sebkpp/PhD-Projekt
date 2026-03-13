@@ -1,4 +1,4 @@
-﻿from typing import List, Dict, Any, Optional
+﻿from typing import List, Dict, Any, Optional, Union
 from fastapi import APIRouter, HTTPException, status, Depends, Query, Path
 from pydantic import BaseModel
 
@@ -8,7 +8,7 @@ from Backend.db_session import SessionLocal
 from Backend.services.questionnaire_response_service import load_questionnaire_responses, save_questionnaire_responses, \
     are_all_questionnaires_in_trial_done, are_all_questionnaires_done, get_questionnaire_responses_for_experiment
 from Backend.services.questionnaire_service import get_all_questionnaires, create_questionnaire_with_items, \
-    get_questionnaires_for_experiment, get_questionnaires_by_study_id
+    get_questionnaires_for_experiment, get_questionnaires_by_study_id, get_questionnaire_by_id
 
 router = APIRouter(prefix="/questionnaires", tags=["questionnaires"])
 
@@ -26,9 +26,20 @@ class QuestionnaireSubmitRequest(BaseModel):
     questionnaire_name: str
     responses: Dict[str, Any]
 
+class QuestionnaireItemCreateRequest(BaseModel):
+    item_name: str
+    item_label: Optional[str] = None
+    item_description: Optional[str] = None
+    min_label: Optional[str] = None
+    max_label: Optional[str] = None
+    order_index: int = 0
+
 class QuestionnaireCreateRequest(BaseModel):
     name: str
-    items: List[str]
+    scale_type: str = 'slider'
+    scale_min: float = 0
+    scale_max: float = 100
+    items: List[Union[str, QuestionnaireItemCreateRequest]]
 
 class QuestionnaireResponseModel(BaseModel):
     status: str
@@ -91,13 +102,23 @@ async def create_questionnaire(
         db=Depends(get_db)
 ):
     try:
-        questionnaire = create_questionnaire_with_items(db, payload.name, payload.items)
+        # Items können Strings oder QuestionnaireItemCreateRequest-Objekte sein
+        items = [item.model_dump() if hasattr(item, 'model_dump') else item for item in payload.items]
+        questionnaire = create_questionnaire_with_items(
+            db, payload.name, items,
+            scale_type=payload.scale_type,
+            scale_min=payload.scale_min,
+            scale_max=payload.scale_max,
+        )
         db.commit()
         return {
             "status": "ok",
             "questionnaire_id": questionnaire.questionnaire_id,
             "name": questionnaire.name,
-            "items": [item.item_name for item in questionnaire.items]
+            "scale_type": questionnaire.scale_type,
+            "scale_min": questionnaire.scale_min,
+            "scale_max": questionnaire.scale_max,
+            "items": [item.to_dict() for item in questionnaire.items],
         }
     except Exception as e:
         db.rollback()
@@ -195,6 +216,22 @@ async def get_questionnaire_responses_for_experiment_route(
         return {"status": "ok", "data": responses}
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+@router.get(
+    "/{questionnaire_id}",
+    status_code=status.HTTP_200_OK,
+    summary="Get a single questionnaire by ID",
+    description="Retrieve a questionnaire and its items by questionnaire ID."
+)
+async def get_questionnaire_by_id_route(
+        questionnaire_id: int = Path(..., description="Questionnaire ID"),
+        db=Depends(get_db)
+):
+    questionnaire = get_questionnaire_by_id(db, questionnaire_id)
+    if not questionnaire:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Questionnaire not found")
+    return questionnaire.to_dict()
+
 
 @router.get(
     "/study/{study_id}",

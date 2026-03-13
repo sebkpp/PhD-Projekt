@@ -113,13 +113,12 @@ async def delete_study_route(
 ) -> None:
     try:
         deleted = delete_study(db, study_id)
-        if not deleted:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Study not found")
         db.commit()
-        return
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    if not deleted:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Study not found")
 
 
 @router.get(
@@ -134,8 +133,6 @@ async def api_get_experiments_by_study(
         db: Session = Depends(get_db)
 ) -> List[ExperimentResponse]:
     experiments = get_experiments_by_study(db, study_id)
-    if not experiments:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Experiments not found!")
     return experiments
 
 
@@ -151,8 +148,6 @@ async def api_get_participants_by_study(
         db: Session = Depends(get_db)
 ) -> List[ParticipantResponse]:
     participants = get_participants_by_study(db, study_id)
-    if not participants:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Participants not found!")
     return participants
 
 

@@ -11,6 +11,7 @@ dependencies = [
     "pandas==2.3.3",
     "psycopg2==2.9.11",
     "pytest>=9.0.0",
+    "pytest-cov==7.0.0",
     "pytest-env==1.2.0",
     "python-dotenv>=1.2.1",
     "scipy==1.16.3",
@@ -27,9 +28,16 @@ omit = [
     "*/venv/*",
     "*/data/*",
     "*/mock/*",
-    "*/public/*"
+    "*/public/*",
+    "*/models/*",
+    "*/config.py",
+    "*/__init__.py"
 ]
 branch = true
+
+[tool.pytest.ini_options]
+addopts = "--cov=Backend --cov-report=html --cov-report=term"
+pythonpath = ["."]
 
 [tool.coverage.report]
 exclude_lines = [

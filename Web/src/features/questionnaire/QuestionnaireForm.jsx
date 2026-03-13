@@ -1,13 +1,6 @@
-﻿import {useEffect, useMemo, useState} from 'react'
-import NasaTLX from './components/nasaTLX/nasaTLX.jsx'
-import Likert from './components/likert/Likert.jsx'
+import {useEffect, useMemo, useState} from 'react'
+import DynamicQuestionnaireForm from './components/dynamic/DynamicQuestionnaireForm.jsx'
 import { useSubmitQuestionnaire } from '@/features/questionnaire/hooks/useSubmitQuestionnaire'
-
-const formMapping = {
-    'NASA-TLX': props => <NasaTLX {...props} />,
-    'Likert-Skala_Dummy': props => <Likert {...props} />,
-    // weitere Fragebögen hier ergänzen
-}
 
 export default function QuestionnaireForm({
                                               questionnaire,
@@ -16,9 +9,8 @@ export default function QuestionnaireForm({
                                               trialId,
                                               resetSignal
 }) {
-    const FormComponent = useMemo(() => formMapping[questionnaire?.name], [questionnaire?.name])
     const initialValues = useMemo(() => ({}), [])
-    const [isValid, setIsValid] = useState(false); // State hinzufügen
+    const [isValid, setIsValid] = useState(false);
 
     const {
         values: responses,
@@ -39,21 +31,15 @@ export default function QuestionnaireForm({
     async function onSubmit(e) {
         e.preventDefault()
 
-        // Keys extrahieren
-        const questionKeys = questionnaire.questions?.map(q => q.key) ||
-            questionnaire.dimensions?.map(d => d.key) ||
-            [];
+        const questionKeys = questionnaire?.items?.map(i => i.item_name) ?? []
 
-        // Prüfen ob responses überhaupt existieren
         if (!responses || Object.keys(responses).length === 0) {
             alert('Bitte füllen Sie den Fragebogen aus.');
             return;
         }
 
-        // Validierung aller Antworten
         const missing = questionKeys.filter(key => {
             const val = responses[key];
-            // Strikte Prüfung auf leere Werte
             return val === undefined ||
                 val === null ||
                 val === '' ||
@@ -76,27 +62,22 @@ export default function QuestionnaireForm({
         }
     }
 
-
     useEffect(() => {
         reset()
     }, [resetSignal, reset])
 
     return (
         <form onSubmit={onSubmit} className="space-y-6 bg-background text-foreground p-6 rounded-md max-w-3xl mx-auto">
-            {FormComponent ? (
-                <FormComponent
-                    questionnaire={questionnaire}
-                    onChange={handleChange}
-                    responses={responses}
-                    submitting={loading}
-                    error={error}
-                    participantId={participantId}
-                    trialId={trialId}
-                    onValidationChange={setIsValid} // Direkt den State-Setter übergeben
-                />
-            ) : (
-                <p>Fragebogen-Typ <strong>{questionnaire?.name}</strong> wird nicht unterstützt.</p>
-            )}
+            <DynamicQuestionnaireForm
+                questionnaire={questionnaire}
+                onChange={handleChange}
+                responses={responses}
+                submitting={loading}
+                error={error}
+                participantId={participantId}
+                trialId={trialId}
+                onValidationChange={setIsValid}
+            />
 
             {error && <p className="text-red-500">{error}</p>}
 
@@ -118,7 +99,7 @@ export default function QuestionnaireForm({
                     disabled={loading}
                     className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-500 transition"
                 >
-                    🔄 Zurücksetzen
+                    Zurücksetzen
                 </button>
 
                 <button

@@ -10,6 +10,7 @@ import ParticipantWaiting from "./features/questionnaire/QuestionnaireWaiting.js
 import SimulatorController from './debug/SimulatorController.jsx'
 import QuestionnaireRouter from './features/questionnaire/QuestionnaireRouter'
 import QuestionnaireClosing from "./features/questionnaire/QuestionnaireCloseing.jsx";
+import QuestionnairePreviewPage from "./features/questionnaire/QuestionnairePreviewPage.jsx";
 import StudyOverview from "./features/study/StudyOverview.jsx";
 import StudyConfigurationPage from "@/features/study/StudyConfigPage.jsx";
 import ExperimentConfigPage from "@/features/experiment/ExperimentConfigPage.jsx";
@@ -46,6 +47,7 @@ export default function AppRouter() {
 
                     <Route path="/participant/questionnaires" element={<QuestionnaireRouter />} />
                     <Route path="/questionnaire/closing" element={<QuestionnaireClosing />} />
+                    <Route path="/questionnaires/:questionnaireId/preview" element={<QuestionnairePreviewPage />} />
                     <Route path="/experiment/:experimentId/configure" element={<ConfigPage />} />
 
                     <Route path="/simulator" element={<SimulatorController />} />

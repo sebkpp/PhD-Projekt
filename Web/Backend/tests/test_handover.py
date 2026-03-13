@@ -1,30 +1,71 @@
-﻿# import pytest
-#
-# from Backend.app import app
-#
-#
-# @pytest.fixture
-# def client():
-#     app.config['TESTING'] = True
-#     with app.test_client() as client:
-#         yield client
-# def test_post_handover(client, trial_with_participants):
-#     trial = trial_with_participants["trial"]
-#     participant = trial_with_participants["participant"]
-#
-#     payload = {
-#         "grasped_object": "Cube",
-#         "giver_grasped_object": "2025-08-07T10:00:00Z",
-#         "receiver_touched_object": "2025-08-07T10:00:02Z",
-#         "receiver_grasped_object": "2025-08-07T10:00:04Z",
-#         "giver_released_object": 1,
-#         "giver": participant.participant_id,
-#         "receiver": None,
-#     }
-#
-#     res = client.post(f"/api/trials/{trial.trial_id}/handovers", json=payload)
-#     assert res.status_code == 201
-#     json_data = res.get_json()
-#     assert "message" in json_data and json_data["message"] == "Handover gespeichert"
-#     assert "handover_id" in json_data
+from starlette import status
 
+
+def _setup_trial(client, experiment_id: int, participant_id: int) -> int:
+    """Creates a trial and returns the trial_id."""
+    payload = {
+        "trials": [
+            {
+                "trial_number": 1,
+                "participants": {
+                    "1": {"avatar": 1, "participant_id": participant_id, "selectedStimuli": {"vis": 7}}
+                }
+            }
+        ],
+        "questionnaires": []
+    }
+    client.post(f"/experiments/{experiment_id}/trials", json=payload)
+
+    from Backend.db_session import SessionLocal
+    from Backend.models.trial.trial import Trial
+    session = SessionLocal()
+    trial = session.query(Trial).first()
+    session.close()
+    assert trial is not None
+    return trial.trial_id
+
+
+def _create_second_participant(client) -> int:
+    resp = client.post("/api/participants/", json={"age": 30, "gender": "f", "handedness": "left"})
+    assert resp.status_code == 201
+    return resp.json()["participant_id"]
+
+
+def test_save_handover(client, experiment_id, participant_id):
+    trial_id = _setup_trial(client, experiment_id, participant_id)
+    receiver_id = _create_second_participant(client)
+    resp = client.post(f"/handovers/trials/{trial_id}", json={
+        "giver": participant_id,
+        "receiver": receiver_id
+    })
+    assert resp.status_code == status.HTTP_201_CREATED
+    data = resp.json()
+    assert "handover_id" in data
+    assert data["handover_id"] is not None
+
+
+def test_get_handovers_for_trial(client, experiment_id, participant_id):
+    trial_id = _setup_trial(client, experiment_id, participant_id)
+    receiver_id = _create_second_participant(client)
+    client.post(f"/handovers/trials/{trial_id}", json={
+        "giver": participant_id,
+        "receiver": receiver_id
+    })
+    resp = client.get(f"/handovers/trials/{trial_id}")
+    assert resp.status_code == status.HTTP_200_OK
+    data = resp.json()
+    assert isinstance(data, list)
+    assert len(data) >= 1
+    assert data[0]["trial_id"] == trial_id
+
+
+def test_get_handovers_for_experiment(client, experiment_id, participant_id):
+    trial_id = _setup_trial(client, experiment_id, participant_id)
+    receiver_id = _create_second_participant(client)
+    client.post(f"/handovers/trials/{trial_id}", json={
+        "giver": participant_id,
+        "receiver": receiver_id
+    })
+    resp = client.get(f"/handovers/experiments/{experiment_id}")
+    assert resp.status_code == status.HTTP_200_OK
+    assert isinstance(resp.json(), list)

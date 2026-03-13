@@ -1,81 +1,72 @@
-﻿# import pytest
-# from Backend.app import app
-#
-# @pytest.fixture
-# def client():
-#     app.config['TESTING'] = True
-#     with app.test_client() as client:
-#         yield client
-#
-# def test_get_avatar_visibility_success(client):
-#     response = client.get('/api/avatar-visibility')
-#     assert response.status_code == 200
-#
-#     data = response.get_json()
-#     assert isinstance(data, list)
-#     assert len(data) > 0
-#
-#     first = data[0]
-#     assert "id" in first
-#     assert "name" in first
-#     assert "label" in first
-#
-#     expected_labels = {"Nur Hände", "Kopf + Hände", "Ganze Figur"}
-#     assert first["label"] in expected_labels
-#
-# def test_get_avatar_visibility_empty(monkeypatch, client):
-#     def mock_empty():
-#         return []
-#
-#     monkeypatch.setattr('Backend.routes.avatar_visibility.get_all_avatar_visibility', mock_empty)
-#
-#     response = client.get('/api/avatar-visibility')
-#     assert response.status_code == 200
-#     data = response.get_json()
-#     assert data == []
-#
-# def test_get_avatar_visibility_internal_error(monkeypatch, client):
-#     def mock_error():
-#         raise Exception("Test Exception")
-#
-#     monkeypatch.setattr('Backend.routes.avatar_visibility.get_all_avatar_visibility', mock_error)
-#
-#     response = client.get('/api/avatar-visibility')
-#     assert response.status_code == 500
-#     data = response.get_json()
-#     assert "error" in data
-#
-# def test_get_avatar_visibility_all_entries(client):
-#     response = client.get('/api/avatar-visibility')
-#     assert response.status_code == 200
-#
-#     data = response.get_json()
-#     expected_names = {"hands", "head", "full"}
-#     expected_labels = {"Nur Hände", "Kopf + Hände", "Ganze Figur"}
-#
-#     returned_names = {item['name'] for item in data}
-#     returned_labels = {item['label'] for item in data}
-#
-#     assert expected_names == returned_names
-#     assert expected_labels == returned_labels
-#
-# def test_avatar_visibility_content_type(client):
-#     response = client.get('/api/avatar-visibility')
-#     assert response.headers['Content-Type'].startswith('application/json')
-#
-# def test_avatar_visibility_no_extra_fields(client):
-#     response = client.get('/api/avatar-visibility')
-#     data = response.get_json()
-#
-#     allowed_keys = {"id", "name", "label"}
-#     for item in data:
-#         assert set(item.keys()) <= allowed_keys
-#
-# def test_avatar_visibility_empty(monkeypatch, client):
-#     def mock_empty():
-#         return []
-#
-#     monkeypatch.setattr('Backend.routes.avatar_visibility.get_all_avatar_visibility', mock_empty)
-#     response = client.get('/api/avatar-visibility')
-#     assert response.status_code == 200
-#     assert response.get_json() == []
+import pytest
+from starlette import status
+from Backend.models.avatar_visibility import AvatarVisibility
+from Backend.db_session import SessionLocal
+
+
+@pytest.fixture
+def seeded_avatar_visibility():
+    """Fügt zwei AvatarVisibility-Einträge in die Test-DB ein und räumt danach auf."""
+    db = SessionLocal()
+    # Vorhandene Einträge mit denselben Namen entfernen (UNIQUE-Constraint)
+    db.query(AvatarVisibility).filter(
+        AvatarVisibility.avatar_visibility_name.in_(["full", "none"])
+    ).delete(synchronize_session=False)
+    db.commit()
+
+    entries = [
+        AvatarVisibility(avatar_visibility_name="full", label="Vollständig sichtbar"),
+        AvatarVisibility(avatar_visibility_name="none", label="Unsichtbar"),
+    ]
+    db.add_all(entries)
+    db.commit()
+    ids = [e.avatar_visibility_id for e in entries]
+    db.close()
+
+    yield ids
+
+    db = SessionLocal()
+    db.query(AvatarVisibility).filter(
+        AvatarVisibility.avatar_visibility_name.in_(["full", "none"])
+    ).delete(synchronize_session=False)
+    db.commit()
+    db.close()
+
+
+def test_list_avatar_visibility_empty(client):
+    """Leere Tabelle liefert 200 mit leerer Liste – kein 404."""
+    db = SessionLocal()
+    db.query(AvatarVisibility).delete()
+    db.commit()
+    db.close()
+
+    resp = client.get("/avatar-visibility/")
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == []
+
+
+def test_list_avatar_visibility_returns_correct_fields(client, seeded_avatar_visibility):
+    """Antwort enthält die Felder id, name, label – nicht avatar_id oder visible."""
+    resp = client.get("/avatar-visibility/")
+    assert resp.status_code == status.HTTP_200_OK
+    data = resp.json()
+    assert len(data) == 2
+    for item in data:
+        assert "id" in item
+        assert "name" in item
+        assert "label" in item
+        assert "avatar_id" not in item
+        assert "visible" not in item
+
+
+def test_list_avatar_visibility_values(client, seeded_avatar_visibility):
+    """Datenwerte stimmen mit den geseedeten Einträgen überein."""
+    resp = client.get("/avatar-visibility/")
+    assert resp.status_code == status.HTTP_200_OK
+    data = resp.json()
+    names = {item["name"] for item in data}
+    labels = {item["label"] for item in data}
+    assert "full" in names
+    assert "none" in names
+    assert "Vollständig sichtbar" in labels
+    assert "Unsichtbar" in labels

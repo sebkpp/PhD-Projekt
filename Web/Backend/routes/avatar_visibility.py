@@ -1,4 +1,4 @@
-﻿from typing import List
+﻿from typing import List, Optional
 from fastapi import APIRouter, HTTPException, status, Depends
 from pydantic import BaseModel
 
@@ -9,11 +9,9 @@ from Backend.services.avatar_visibility_service import get_all_avatar_visibility
 router = APIRouter(prefix="/avatar-visibility", tags=["avatar-visibility"])
 
 class AvatarVisibilityResponse(BaseModel):
-    avatar_id: int
-    visible: bool
-
-    class Config:
-        orm_mode = True
+    id: int
+    name: str
+    label: Optional[str] = None
 
 def get_db():
     db = SessionLocal()
