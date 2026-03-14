@@ -165,3 +165,17 @@ def test_analyze_aoi_inferential_missing_aoi_in_one_condition():
     result = analyze_aoi_inferential(condition_aoi_durations)
     assert result["hand"] is not None  # present in both conditions
     assert result["partner"] is None   # only present in one condition
+
+
+def test_calc_ppi_inconsistent_duration_ms():
+    """
+    Dokumentiert das Verhalten wenn duration_ms über Records inkonsistent ist.
+    max() wird verwendet — gibt den größten Wert zurück.
+    """
+    records = [
+        {"aoi_name": "environment", "phase": 3, "dwell_time_ms": 300, "duration_ms": 800},
+        {"aoi_name": "hand", "phase": 3, "dwell_time_ms": 200, "duration_ms": 1000},
+    ]
+    # max(800, 1000) = 1000; env_dwell = 300; PPI = 30.0
+    result = calc_ppi(records)
+    assert result == pytest.approx(30.0)

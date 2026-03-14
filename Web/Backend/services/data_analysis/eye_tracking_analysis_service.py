@@ -5,7 +5,6 @@ from Backend.db.handover_repository import HandoverRepository
 from Backend.db.stimuli_repository import StimuliRepository
 from Backend.db.trial.trial import TrialRepository
 from Backend.models import Experiment, AreaOfInterest
-from Backend.utils.stats_utils import sanitize_stats
 from Backend.services.data_analysis.inferential_service import run_inferential_analysis
 
 
@@ -88,14 +87,6 @@ def analyze_aoi_inferential(
         results[aoi_name] = run_inferential_analysis(conditions) if len(conditions) >= 2 else None
 
     return results
-
-
-def _sanitize_aoi_stats(aoi_stats: dict) -> dict:
-    for aoi_name, s in aoi_stats.items():
-        for k, v in s.items():
-            if isinstance(v, float) and (math.isnan(v) or math.isinf(v)):
-                s[k] = None
-    return aoi_stats
 
 
 def _build_aoi_label_map(session) -> dict:
