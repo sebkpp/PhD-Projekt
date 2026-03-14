@@ -6,6 +6,88 @@ from Backend.db.stimuli_repository import StimuliRepository
 from Backend.db.trial.trial import TrialRepository
 from Backend.models import Experiment, AreaOfInterest
 from Backend.utils.stats_utils import sanitize_stats
+from Backend.services.data_analysis.inferential_service import run_inferential_analysis
+
+
+def calc_saccade_rate(saccade_count: int, duration_ms: float) -> float | None:
+    """Sakkaden pro Sekunde. None wenn duration_ms <= 0."""
+    if duration_ms <= 0:
+        return None
+    return (saccade_count / duration_ms) * 1000
+
+
+def calc_transitions(aoi_sequence: list[str]) -> dict[str, int]:
+    """
+    Zählt aufeinanderfolgende AOI-Wechsel.
+    Returns: {"{from}->{to}": count, ...}
+    Beispiel: ["obj", "hand", "obj"] → {"obj->hand": 1, "hand->obj": 1}
+    Ignoriert aufeinanderfolgende gleiche AOIs.
+    """
+    transitions: dict[str, int] = {}
+    prev = None
+    for aoi in aoi_sequence:
+        if prev is not None and aoi != prev:
+            key = f"{prev}->{aoi}"
+            transitions[key] = transitions.get(key, 0) + 1
+        prev = aoi
+    return transitions
+
+
+def calc_ppi(
+    eye_tracking_records: list[dict],
+    phase: int = 3,
+    environment_aoi: str = "environment",
+) -> float | None:
+    """
+    PPI = dwell_time(environment_aoi, phase=phase) / total_duration(phase) × 100
+
+    eye_tracking_records: Liste von Dicts mit Feldern:
+        - "aoi_name" (oder "area_of_interest_name"): str
+        - "phase": int (1, 2 oder 3)
+        - "dwell_time_ms": float
+        - "duration_ms": float (Gesamtdauer dieser Phase)
+
+    Returns: None wenn keine Phase-Daten vorhanden.
+    Returns: float 0.0-100.0
+    """
+    phase_records = [r for r in eye_tracking_records if r.get("phase") == phase]
+    if not phase_records:
+        return None
+    # duration_ms is the total phase duration (same value repeated per record); use max
+    total_duration = max((r.get("duration_ms", 0) for r in phase_records), default=0)
+    if total_duration <= 0:
+        return None
+    env_dwell = sum(
+        r.get("dwell_time_ms", 0)
+        for r in phase_records
+        if r.get("aoi_name", r.get("area_of_interest_name", "")) == environment_aoi
+    )
+    return (env_dwell / total_duration) * 100
+
+
+def analyze_aoi_inferential(
+    condition_aoi_durations: dict[str, dict[str, list]],
+) -> dict[str, dict | None]:
+    """
+    Run inferential analysis per AOI across N conditions.
+
+    condition_aoi_durations: {condition_name: {aoi_name: [durations...]}}
+    Returns: {aoi_name: inferential_result_or_None}
+    """
+    all_aoi_names: set[str] = set()
+    for aoi_map in condition_aoi_durations.values():
+        all_aoi_names.update(aoi_map.keys())
+
+    results: dict[str, dict | None] = {}
+    for aoi_name in all_aoi_names:
+        conditions: dict[str, list] = {}
+        for cond_name, aoi_map in condition_aoi_durations.items():
+            durations = aoi_map.get(aoi_name, [])
+            if durations:
+                conditions[cond_name] = durations
+        results[aoi_name] = run_inferential_analysis(conditions) if len(conditions) >= 2 else None
+
+    return results
 
 
 def _sanitize_aoi_stats(aoi_stats: dict) -> dict:
