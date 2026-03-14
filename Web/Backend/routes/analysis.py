@@ -270,3 +270,49 @@ async def post_clustering(request: ClusteringRequest):
             detail="Clustering requires at least 2 variables",
         )
     return result
+
+
+# ─── Export-Endpunkte ───────────────────────────────────────────────────────
+
+import io
+from fastapi.responses import StreamingResponse
+from Backend.services.data_analysis.export_service import export_handovers_csv, export_handovers_xlsx
+from Backend.db.handover_repository import HandoverRepository
+
+
+@router.get(
+    "/study/{study_id}/export/csv",
+    summary="Export handover data as CSV",
+    description="Export all handover data for a study as a UTF-8 encoded CSV file.",
+)
+async def export_study_csv(study_id: int, db: Session = Depends(get_db)):
+    repo = HandoverRepository(db)
+    handovers = repo.get_handovers_by_study(study_id)
+    if not handovers:
+        raise HTTPException(status_code=404, detail="No handover data found")
+    data = [h.to_dict() for h in handovers]
+    csv_bytes = export_handovers_csv(data)
+    return StreamingResponse(
+        io.BytesIO(csv_bytes),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=handovers_study_{study_id}.csv"},
+    )
+
+
+@router.get(
+    "/study/{study_id}/export/xlsx",
+    summary="Export handover data as XLSX",
+    description="Export all handover data for a study as an Excel (XLSX) file.",
+)
+async def export_study_xlsx(study_id: int, db: Session = Depends(get_db)):
+    repo = HandoverRepository(db)
+    handovers = repo.get_handovers_by_study(study_id)
+    if not handovers:
+        raise HTTPException(status_code=404, detail="No handover data found")
+    data = [h.to_dict() for h in handovers]
+    xlsx_bytes = export_handovers_xlsx(data)
+    return StreamingResponse(
+        io.BytesIO(xlsx_bytes),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f"attachment; filename=handovers_study_{study_id}.xlsx"},
+    )

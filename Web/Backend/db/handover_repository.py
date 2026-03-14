@@ -3,6 +3,7 @@
 from sqlalchemy.orm import Session
 
 from Backend.models import Trial
+from Backend.models.experiment import Experiment
 from Backend.models.handover import Handover
 
 def parse_iso(dt_str):
@@ -28,6 +29,17 @@ class HandoverRepository:
             self.session.query(Handover)
             .join(Trial, Handover.trial_id == Trial.trial_id)
             .filter(Trial.experiment_id == experiment_id)
+            .order_by(Handover.handover_id)
+            .all()
+        )
+
+    def get_handovers_by_study(self, study_id: int):
+        """Gibt alle Handovers einer Studie zurück (über Trial → Experiment → Study)."""
+        return (
+            self.session.query(Handover)
+            .join(Trial, Handover.trial_id == Trial.trial_id)
+            .join(Experiment, Trial.experiment_id == Experiment.experiment_id)
+            .filter(Experiment.study_id == study_id)
             .order_by(Handover.handover_id)
             .all()
         )
