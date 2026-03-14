@@ -8,6 +8,152 @@ import math
 from collections import defaultdict
 import pandas as pd
 
+
+# ---------------------------------------------------------------------------
+# Instrument-aware scoring functions
+# ---------------------------------------------------------------------------
+
+def score_nasa_tlx(responses: dict[str, float]) -> dict:
+    """
+    Score NASA-TLX questionnaire responses.
+
+    responses: {"mental_demand": 75, "physical_demand": 30, ...}
+    Subscales: mental_demand, physical_demand, temporal_demand, performance, effort, frustration
+    Total score = mean of all present subscales (robust: ignores missing ones).
+
+    Returns: {"subscales": responses, "total_score": float, "instrument": "nasa_tlx"}
+    """
+    known_subscales = {
+        "mental_demand", "physical_demand", "temporal_demand",
+        "performance", "effort", "frustration"
+    }
+    present = {k: v for k, v in responses.items() if k in known_subscales}
+    if present:
+        total_score = sum(present.values()) / len(present)
+    else:
+        total_score = 0.0
+    return {
+        "subscales": responses,
+        "total_score": round(total_score, 4),
+        "instrument": "nasa_tlx",
+    }
+
+
+def score_sus(responses: list[float]) -> dict:
+    """
+    Score SUS (System Usability Scale) responses.
+
+    responses: list of 10 values on a 1–5 scale.
+    Odd-index items (0,2,4,6,8): (value - 1) * 2.5
+    Even-index items (1,3,5,7,9): (5 - value) * 2.5
+    Total score = sum of all 10 transformed values (0–100).
+
+    Grade: score >= 85 → "A", >= 70 → "B", >= 50 → "C", >= 35 → "D", else "F"
+
+    Returns: {"total_score": float, "instrument": "sus", "grade": str}
+    """
+    transformed = []
+    for i, value in enumerate(responses):
+        if i % 2 == 0:  # odd items (1-based: 1,3,5,7,9) → 0-based even index
+            transformed.append((value - 1) * 2.5)
+        else:            # even items (1-based: 2,4,6,8,10) → 0-based odd index
+            transformed.append((5 - value) * 2.5)
+    total_score = round(sum(transformed), 4)
+
+    if total_score >= 85:
+        grade = "A"
+    elif total_score >= 70:
+        grade = "B"
+    elif total_score >= 50:
+        grade = "C"
+    elif total_score >= 35:
+        grade = "D"
+    else:
+        grade = "F"
+
+    return {
+        "total_score": total_score,
+        "instrument": "sus",
+        "grade": grade,
+    }
+
+
+def score_attrakdiff2(responses: dict[str, list[float]]) -> dict:
+    """
+    Score AttrakDiff2 questionnaire responses.
+
+    responses: {"PQ": [1,2,3,...], "HQS": [...], "HQI": [...], "ATT": [...]}
+    Values on -3 to +3 scale.
+    Subscale score = mean of items in that subscale.
+    Total score = mean of all subscale means.
+    hq_total = mean of HQS and HQI subscale means.
+
+    Returns: {"subscales": {"PQ": float, "HQS": float, "HQI": float, "ATT": float},
+              "total_score": float, "hq_total": float, "instrument": "attrakdiff2"}
+    """
+    subscale_means: dict[str, float] = {}
+    for subscale, items in responses.items():
+        if items:
+            subscale_means[subscale] = round(sum(items) / len(items), 4)
+
+    total_score = round(sum(subscale_means.values()) / len(subscale_means), 4) if subscale_means else 0.0
+
+    hq_scores = [subscale_means[k] for k in ("HQS", "HQI") if k in subscale_means]
+    hq_total = round(sum(hq_scores) / len(hq_scores), 4) if hq_scores else 0.0
+
+    return {
+        "subscales": subscale_means,
+        "total_score": total_score,
+        "hq_total": hq_total,
+        "instrument": "attrakdiff2",
+    }
+
+
+def score_iso_metrics(responses: dict[str, list[float]]) -> dict:
+    """
+    Score ISO-Metrics questionnaire responses.
+
+    responses: {"subscale1": [values], "subscale2": [values], ...}
+    Subscale score = mean of items in that subscale.
+    Total score = mean of all subscale means.
+
+    Returns: {"subscales": {subscale: float}, "total_score": float, "instrument": "iso_metrics"}
+    """
+    subscale_means: dict[str, float] = {}
+    for subscale, items in responses.items():
+        if items:
+            subscale_means[subscale] = round(sum(items) / len(items), 4)
+
+    total_score = round(sum(subscale_means.values()) / len(subscale_means), 4) if subscale_means else 0.0
+
+    return {
+        "subscales": subscale_means,
+        "total_score": total_score,
+        "instrument": "iso_metrics",
+    }
+
+
+def score_questionnaire(instrument: str, responses: dict | list) -> dict | None:
+    """
+    Dispatcher: calls the appropriate scoring function based on instrument type.
+
+    instrument: "nasa_tlx", "sus", "attrakdiff2", "iso_metrics", unknown → None
+    responses: dict or list depending on instrument.
+
+    Returns scored result dict, or None for unknown instruments.
+    """
+    instrument_lower = instrument.lower() if instrument else ""
+    if instrument_lower == "nasa_tlx":
+        return score_nasa_tlx(responses)
+    elif instrument_lower == "sus":
+        return score_sus(responses)
+    elif instrument_lower == "attrakdiff2":
+        return score_attrakdiff2(responses)
+    elif instrument_lower == "iso_metrics":
+        return score_iso_metrics(responses)
+    else:
+        return None
+
 def build_response_dataframe(responses):
     return pd.DataFrame([{
         "participant_id": r.participant_id,
