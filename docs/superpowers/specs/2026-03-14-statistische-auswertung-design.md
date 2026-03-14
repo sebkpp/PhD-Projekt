@@ -513,6 +513,64 @@ Clustering via `scipy.cluster.hierarchy`. Abhängigkeit: `scikit-learn` zu `pypr
 Globaler Filter auf Analyse-Seiten: Dropdown `Händigkeit: Alle | Rechtshänder | Linkshänder`.
 Wird als `?handedness=...` an alle API-Calls weitergegeben.
 
+### 5.8 Download & Export
+
+Alle Daten und Visualisierungen müssen exportierbar sein — für SPSS-Import, Paper-Abbildungen
+und Rohdaten-Verifikation.
+
+**Daten-Export (Backend-Endpunkte):**
+
+Neue Endpunkte unter `/api/export/`:
+
+```
+GET /export/study/{study_id}/raw?format=csv|xlsx
+    → Rohdaten: Handovers, Eye-Tracking, Questionnaire-Responses als separate Sheets/Dateien
+
+GET /export/study/{study_id}/analysis?format=csv|xlsx
+    → Analyseergebnisse: deskriptive Statistiken, Inferenz-Tabellen, Effektgrößen,
+      Post-hoc-Tabellen, Korrelationen — SPSS-importierbar formatiert
+
+GET /export/experiment/{experiment_id}/raw?format=csv|xlsx
+    → Rohdaten eines einzelnen Experiments
+```
+
+Format `csv`: eine Datei pro Datensatz-Typ (zip-Archiv bei mehreren Dateien).
+Format `xlsx`: mehrere Sheets in einer Datei (Handovers, EyeTracking, Questionnaire, Stats).
+
+**Python-Bibliothek:** `openpyxl` (für xlsx). CSV via Python-stdlib.
+**Dependency:** `openpyxl` zu `pyproject.toml` hinzufügen.
+
+**Daten-Konventionen für SPSS-Kompatibilität:**
+- Spaltennamen: nur ASCII, keine Leerzeichen (Unterstriche statt Leerzeichen)
+- Maximale Spaltenname-Länge: 64 Zeichen (SPSS-Limit)
+- Encoding: UTF-8 mit BOM für Windows-Kompatibilität (`encoding='utf-8-sig'`)
+- Zahlen: Punkt als Dezimaltrennzeichen (nicht Komma)
+- Fehlende Werte: leere Zelle (kein `NaN`-String)
+- Datetimes: ISO 8601 Format (`YYYY-MM-DD HH:MM:SS.fff`)
+
+**Visualisierungs-Export (Frontend):**
+
+Jede Chart-Komponente erhält einen **Download-Button** (Symbol: ↓) der Folgendes exportiert:
+
+| Format | Verwendung | Technische Umsetzung |
+|---|---|---|
+| PNG (300 dpi) | Paper-Abbildungen, Präsentationen | Plotly `toImage({format:'png', scale:3})` |
+| SVG | Vektorgrafik für Editoren (Inkscape, Illustrator) | Plotly `toImage({format:'svg'})` |
+| CSV | Rohdaten der Grafik für Nachbearbeitung | Daten des Chart-Calls direkt |
+
+**Weißer Hintergrund für Publikationen:**
+Alle Chart-Komponenten unterstützen einen `exportMode`-Prop. Beim Download wird:
+- Hintergrundfarbe auf `#ffffff` gesetzt (statt transparent/dunkel)
+- Schriftfarbe auf `#000000`
+- Gitternetzlinien: `#cccccc` (hellgrau, gut sichtbar auf weiß)
+- Farbpalette: publikationsfähig (farbenblindheitssicher, druckbar in Graustufen)
+
+Technisch: vor dem PNG-Export wird die Plotly-Figur temporär mit `paper_bgcolor='white'`
+und `plot_bgcolor='white'` neu gerendert, ohne die angezeigte Version zu verändern.
+
+Dateiname-Konvention: `{study_name}_{chart_type}_{datum}.{format}`
+Beispiel: `HS1_performance_boxplot_2026-03-14.png`
+
 ---
 
 ## 6. Methodische Einschränkungen (in UI kommunizieren)
@@ -528,11 +586,12 @@ Wird als `?handedness=...` an alle API-Calls weitergegeben.
 
 ## 7. Abhängigkeiten (Python-Pakete)
 
-Neue Pakete in `pyproject.toml` (`uv add pingouin scikit_posthocs scikit-learn`):
+Neue Pakete in `pyproject.toml` (`uv add pingouin scikit_posthocs scikit-learn openpyxl`):
 ```
 pingouin        # RM-ANOVA, Post-hoc, Effektgrößen (η²p, Mauchly intern)
 scikit_posthocs # Dunn-Test, Nemenyi-Test nach Friedman
 scikit-learn    # PCA (exploratory_service), Clustering (scipy bereits vorhanden)
+openpyxl        # Excel-Export (.xlsx) mit mehreren Sheets
 ```
 
 Cliff's Delta: **manuelle Implementierung** in `effect_size_service.py` (kein zusätzliches Package).
