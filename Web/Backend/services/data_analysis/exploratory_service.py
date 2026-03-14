@@ -7,8 +7,6 @@ import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import AgglomerativeClustering
-from scipy.cluster.hierarchy import linkage, dendrogram
-from scipy.spatial.distance import pdist
 
 
 def run_pca(
