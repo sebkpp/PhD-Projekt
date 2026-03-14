@@ -11,9 +11,13 @@
 
 ### 1.1 Studienaufbau
 
-Die Untersuchung analysiert Handover-Interaktionen in VR. Zwei Teilnehmende bauen
-kooperativ aus je 50 Bauklötzen etwas — 25 davon müssen an den Partner übergeben werden.
-Reihenfolge: teilnehmergesteuert. Pro Trial: 25 Übergaben pro Person als Geber und 25 als Empfänger.
+Die Untersuchung analysiert Handover-Interaktionen in VR. Zwei Teilnehmende führen eine
+kooperative Aufgabe durch, bei der Objekte zwischen den Partnern übergeben werden müssen.
+Reihenfolge der Übergaben: teilnehmergesteuert. Das System ist szenario-agnostisch —
+Aufgabentyp, Objekttypen und Anzahl der Übergaben variieren je Studie (siehe 1.4).
+
+*Erste Instanz (Bauklötzchen-Studie):* je 50 Objekte pro Person, davon 25 zu übergeben →
+pro Trial symmetrisch: 25× Geber, 25× Empfänger pro Teilnehmer.
 
 **Zwei unabhängige Variablen:**
 
