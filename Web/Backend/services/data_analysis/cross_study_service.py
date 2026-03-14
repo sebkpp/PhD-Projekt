@@ -9,7 +9,6 @@ Nur Effektgrößen + Konfidenzintervalle werden nebeneinandergestellt.
 from __future__ import annotations
 import numpy as np
 from scipy import stats as scipy_stats
-from typing import Optional
 
 
 def calc_mean_ci(values: list[float], confidence: float = 0.95) -> dict:
