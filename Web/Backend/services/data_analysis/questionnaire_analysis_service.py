@@ -2,7 +2,7 @@
 from Backend.db.stimuli_repository import StimuliRepository
 from Backend.db.trial.trial import TrialRepository
 from Backend.models import Experiment
-from Backend.services.data_analysis.performance_analysis_service import run_paired_test
+from Backend.utils.stats_utils import run_paired_test
 
 import math
 from collections import defaultdict

@@ -5,7 +5,7 @@ from Backend.db.handover_repository import HandoverRepository
 from Backend.db.stimuli_repository import StimuliRepository
 from Backend.db.trial.trial import TrialRepository
 from Backend.models import Experiment, AreaOfInterest
-from Backend.services.data_analysis.performance_analysis_service import sanitize_stats
+from Backend.utils.stats_utils import sanitize_stats
 
 
 def _sanitize_aoi_stats(aoi_stats: dict) -> dict:

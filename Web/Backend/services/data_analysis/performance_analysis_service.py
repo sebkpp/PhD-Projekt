@@ -2,19 +2,12 @@
 from Backend.db.stimuli_repository import StimuliRepository
 from Backend.db.trial.trial import TrialRepository
 from Backend.models import Experiment
+from Backend.utils.stats_utils import sanitize_stats, cohens_d, run_paired_test
 import pandas as pd
 from collections import defaultdict
 import scipy.stats as stats
 import math
 import numpy as np
-
-def sanitize_stats(stats):
-    for k, v in stats.items():
-        if isinstance(v, float) and (math.isnan(v) or math.isinf(v)):
-            stats[k] = None
-        if isinstance(v, tuple):
-            stats[k] = tuple(None if (isinstance(x, float) and (math.isnan(x) or math.isinf(x))) else x for x in v)
-    return stats
 
 def calc_stats(data):
     df = pd.DataFrame(data)
@@ -163,51 +156,6 @@ def analyze_experiment_performance(session, experiment_id):
         "by_trial_and_object": stats_by_trial_and_object,
         "by_giver": stats_by_giver,
         "by_receiver": stats_by_receiver
-    }
-
-
-def cohens_d(values_a: list, values_b: list) -> float | None:
-    """Cohen's d effect size between two groups."""
-    if len(values_a) < 2 or len(values_b) < 2:
-        return None
-    mean_diff = np.mean(values_a) - np.mean(values_b)
-    pooled_std = np.sqrt(
-        (np.std(values_a, ddof=1) ** 2 + np.std(values_b, ddof=1) ** 2) / 2
-    )
-    if pooled_std > 0:
-        d = float(mean_diff / pooled_std)
-        return None if (math.isnan(d) or math.isinf(d)) else d
-    return 0.0
-
-
-def run_paired_test(values_a: list, values_b: list) -> dict | None:
-    """
-    Auto-selects paired t-test or Wilcoxon based on Shapiro–Wilk normality test.
-    Returns None when there are not enough data points.
-    """
-    if len(values_a) < 3 or len(values_b) < 3:
-        return None
-    _, p_a = stats.shapiro(values_a)
-    _, p_b = stats.shapiro(values_b)
-    try:
-        if p_a >= 0.05 and p_b >= 0.05:
-            stat, p = stats.ttest_rel(values_a, values_b)
-            test_name = "paired_ttest"
-        else:
-            stat, p = stats.wilcoxon(values_a, values_b)
-            test_name = "wilcoxon"
-    except Exception:
-        return None
-
-    stat_val = None if stat is None or (isinstance(stat, float) and math.isnan(stat)) else float(stat)
-    p_val = None if p is None or (isinstance(p, float) and math.isnan(p)) else float(p)
-    d = cohens_d(values_a, values_b)
-    return {
-        "test": test_name,
-        "statistic": stat_val,
-        "p_value": p_val,
-        "effect_size_d": d,
-        "significant": bool(p_val < 0.05) if p_val is not None else None,
     }
 
 
