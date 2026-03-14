@@ -38,6 +38,25 @@ Reihenfolge: teilnehmergesteuert. Pro Trial: 25 Übergaben pro Person als Geber 
 **Within-Subject:** Jedes Experiment-Paar durchläuft alle Bedingungen (permutiert via `trials_permuted`).
 **Between-Study:** Verschiedene Teilnehmer je Studie → Cross-Study-Vergleiche nur deskriptiv.
 
+### 1.4 Szenario-Unabhängigkeit (Design-Constraint)
+
+Das Analyse-System ist **szenario-agnostisch** zu implementieren. Der Bauklötzchen-Kontext
+(VS1–HS3) ist die erste Instanz — es ist geplant, dieselbe Plattform auf andere Kontexte
+zu übertragen (z.B. VR-Operations-Szenario mit Skalpell, Schere, Klemme etc.).
+
+Folgende Parameter **dürfen nicht hardcodiert** werden:
+- **Objekt-Typen** (`grasped_object`): Freitext, variiert je Szenario
+- **Anzahl Handovers pro Trial**: variiert je Szenario und Teilnehmerpaar
+- **Anzahl Trials pro Experiment**: konfigurierbar über `study_config.trial_number`
+- **AOI-Definitionen**: kommen aus der DB (`area_of_interest`-Tabelle), nicht aus Code
+- **Stimulus-Typen und -Namen**: kommen aus der DB (`stimulus`-Tabelle)
+- **Szenario-spezifische Schwellenwerte** (z.B. "gute" Transferzeit): nur als
+  konfigurierbare Referenzwerte (wie `baseline_ms`), nicht als Konstante im Code
+
+Das bedeutet konkret: alle Gruppierungen, Labels und Metriken werden dynamisch aus den
+Datenbankeinträgen abgeleitet. Tests verwenden synthetische Daten die verschiedene
+Objekt-Typen und Handover-Zahlen abdecken.
+
 ### 1.2 Theoretischer Rahmen
 
 **Realwelt-Baseline:** Voruntersuchung (120Hz-Kamera, Inter-Rater-Reliabilität ICC=88%)
