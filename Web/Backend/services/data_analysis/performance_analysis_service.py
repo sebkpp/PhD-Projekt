@@ -3,6 +3,7 @@ from Backend.db.stimuli_repository import StimuliRepository
 from Backend.db.trial.trial import TrialRepository
 from Backend.models import Experiment
 from Backend.utils.stats_utils import sanitize_stats, cohens_d, run_paired_test
+from Backend.services.data_analysis.inferential_service import run_inferential_analysis
 import pandas as pd
 from collections import defaultdict
 import scipy.stats as stats
@@ -246,17 +247,17 @@ def analyze_study_performance(session, study_id: int) -> dict:
         else:
             by_condition[cond] = {}
 
-    # Inferential tests (paired between the two conditions, one value per experiment)
+    # Inferential tests (N conditions, one value per experiment per condition)
     inferential = {}
     if len(conditions) >= 2:
-        cond_a, cond_b = conditions[0], conditions[1]
-        for metric, bucket_a, bucket_b in [
-            ("total", condition_total[cond_a], condition_total[cond_b]),
-            ("phase1", condition_phase1[cond_a], condition_phase1[cond_b]),
-            ("phase2", condition_phase2[cond_a], condition_phase2[cond_b]),
-            ("phase3", condition_phase3[cond_a], condition_phase3[cond_b]),
+        for metric, bucket in [
+            ("total", condition_total),
+            ("phase1", condition_phase1),
+            ("phase2", condition_phase2),
+            ("phase3", condition_phase3),
         ]:
-            inferential[metric] = run_paired_test(bucket_a, bucket_b)
+            cond_dict = {cond: bucket[cond] for cond in conditions}
+            inferential[metric] = run_inferential_analysis(cond_dict)
 
     return {
         "study_id": study_id,
