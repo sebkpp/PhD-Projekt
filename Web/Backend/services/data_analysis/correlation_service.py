@@ -5,10 +5,8 @@ Mehrfachkorrektur via Bonferroni über alle Paare.
 """
 from __future__ import annotations
 import numpy as np
-from scipy import stats as scipy_stats
 from scipy.stats import shapiro, pearsonr, spearmanr
 from itertools import combinations
-from typing import Optional
 
 
 def check_normality(values: list[float]) -> tuple[float, bool]:
