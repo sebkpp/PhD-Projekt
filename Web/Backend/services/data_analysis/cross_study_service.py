@@ -37,7 +37,7 @@ def calc_mean_ci(values: list[float], confidence: float = 0.95) -> dict:
 
 
 def compare_studies_descriptive(
-    study_data: dict[str, dict[str, list[float]]],
+    study_data: dict[str, list[float]],
     metric: str = "transfer_duration_ms",
 ) -> dict:
     """

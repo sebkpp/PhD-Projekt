@@ -190,7 +190,7 @@ async def experiment_eyetracking_analysis(experiment_id: int, db=Depends(get_db)
     summary="Eye-tracking analysis for a study (hyphenated alias)",
     description="Return eyetracking AOI analysis aggregated across all experiments in a study.",
 )
-def get_study_eye_tracking(study_id: int, db=Depends(get_db)):
+async def get_study_eye_tracking(study_id: int, db=Depends(get_db)):
     result = analyze_study_eye_tracking(db, study_id)
     if not result:
         raise HTTPException(status_code=404, detail="No eye-tracking data found")
@@ -207,7 +207,7 @@ class CorrelationRequest(BaseModel):
     summary="Correlation matrix",
     description="Compute pairwise Pearson correlations for the supplied variables.",
 )
-def post_correlation(request: CorrelationRequest):
+async def post_correlation(request: CorrelationRequest):
     if len(request.variables) < 2:
         raise HTTPException(status_code=400, detail="At least 2 variables required")
     result = calc_correlation_matrix(request.variables)
@@ -225,7 +225,7 @@ class CrossStudyRequest(BaseModel):
     summary="Cross-study descriptive comparison",
     description="Descriptive comparison of a metric across multiple studies/conditions.",
 )
-def post_cross_study(request: CrossStudyRequest):
+async def post_cross_study(request: CrossStudyRequest):
     result = compare_studies_descriptive(request.study_data, request.metric)
     return result
 
@@ -241,7 +241,7 @@ class PCARequest(BaseModel):
     summary="Principal Component Analysis",
     description="Run PCA on the supplied variables.",
 )
-def post_pca(request: PCARequest):
+async def post_pca(request: PCARequest):
     result = run_pca(request.data, n_components=request.n_components)
     if result is None:
         raise HTTPException(
@@ -262,7 +262,7 @@ class ClusteringRequest(BaseModel):
     summary="Hierarchical clustering",
     description="Run agglomerative clustering on the supplied variables.",
 )
-def post_clustering(request: ClusteringRequest):
+async def post_clustering(request: ClusteringRequest):
     result = run_clustering(request.data, n_clusters=request.n_clusters)
     if result is None:
         raise HTTPException(
