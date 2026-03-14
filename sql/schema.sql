@@ -1491,3 +1491,12 @@ ALTER TABLE ONLY public.trial_participant_slot
 -- PostgreSQL database dump complete
 --
 
+-- Schema extensions added post-dump
+
+ALTER TABLE public.handover
+  ADD COLUMN IF NOT EXISTS is_error BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS error_type VARCHAR(100);
+
+ALTER TABLE public.study_config
+  ADD COLUMN IF NOT EXISTS study_type VARCHAR(50) DEFAULT 'stimulus_comparison';
+
