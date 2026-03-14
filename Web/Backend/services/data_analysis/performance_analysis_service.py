@@ -2,12 +2,11 @@
 from Backend.db.stimuli_repository import StimuliRepository
 from Backend.db.trial.trial import TrialRepository
 from Backend.models import Experiment
-from Backend.utils.stats_utils import sanitize_stats, cohens_d, run_paired_test
+from Backend.utils.stats_utils import sanitize_stats
 from Backend.services.data_analysis.inferential_service import run_inferential_analysis
 import pandas as pd
 from collections import defaultdict
 import scipy.stats as stats
-import math
 import numpy as np
 
 def calc_stats(data):
@@ -141,9 +140,8 @@ def analyze_experiment_performance(session, experiment_id):
     stats_by_trial = {}
     for trial_id, data in grouped_by_trial.items():
         stats = calc_stats(data)
-        stats_by_trial[trial_id] = sanitize_stats(stats)
         stats["total_values"] = [d["total"] for d in data]
-        stats_by_trial[trial_id] = stats
+        stats_by_trial[trial_id] = sanitize_stats(stats)
 
     stats_by_trial_and_object = {}
     for trial_id, obj_dict in grouped_by_trial_and_object.items():
