@@ -513,7 +513,70 @@ Clustering via `scipy.cluster.hierarchy`. Abhängigkeit: `scikit-learn` zu `pypr
 Globaler Filter auf Analyse-Seiten: Dropdown `Händigkeit: Alle | Rechtshänder | Linkshänder`.
 Wird als `?handedness=...` an alle API-Calls weitergegeben.
 
-### 5.8 Download & Export
+### 5.8 UX-Funktionen
+
+#### 5.8.1 Automatisch generierter Analyse-Report
+
+Ein **"Report generieren"**-Button pro Studie erstellt ein vollständiges Analyse-Dokument
+mit allen Charts und Statistik-Tabellen — für Dissertation und Präsentationen.
+
+- Format: HTML (druckbar) und/oder PDF
+- Inhalt: alle Chart-Kategorien (1–5) + Inferenz-Tabellen + Effektgrößen + Metadaten der Studie
+- Backend: `Jinja2`-HTML-Template + `WeasyPrint` für PDF-Rendering
+- Endpunkt: `GET /export/study/{study_id}/report?format=html|pdf`
+- Charts werden server-seitig als Base64-PNG eingebettet (weißer Hintergrund, 300dpi)
+- Dependency: `weasyprint` zu `pyproject.toml`
+
+#### 5.8.2 Voraussetzungs-Transparenz
+
+Unter jedem inferenziellen Chart: Info-Box die zeigt welcher Test verwendet wurde und warum.
+
+Beispiel:
+> *Shapiro-Wilk: Bedingung A p=0.23 ✓ · B p=0.04 ✗ → Friedman-Test · Post-hoc: Dunn (Bonferroni)*
+
+Datenquelle: `test_used`, `normality`, `sphericity_p` aus dem Inferenz-Response (Abschnitt 3.6).
+Einklappbar (default: zugeklappt), damit es erfahrene Nutzer nicht stört.
+
+#### 5.8.3 Signifikanz-Highlighting in Tabellen
+
+In allen Ergebnis-Tabellen (Post-hoc, Korrelationen, Effektgrößen):
+- Signifikante p-Werte (p_adjusted < 0.05): grün hinterlegt
+- Tendenziell signifikant (0.05 ≤ p < 0.10): gelb hinterlegt
+- Effektgrößen mit Interpretation: `d=0.74` → `d=0.74 (groß)`
+  (Schwellenwerte nach Cohen: klein <0.5, mittel <0.8, groß ≥0.8 für d;
+  klein <0.06, mittel <0.14, groß ≥0.14 für η²p)
+
+#### 5.8.4 Datenqualitäts-Indikator
+
+Vor der Analyse: nicht-blockierende Warnung mit Überblick über Datenvollständigkeit.
+
+Angezeigt als gelbes Banner (dismissbar), **blockiert die Analyse nicht**:
+
+> ⚠️ *Studie HS1 · 18/20 Experimente abgeschlossen · Bedingung A: n=18, B: n=16 ·
+> 3 Handovers ohne Timestamps · ET-Daten fehlen: 2 Handovers*
+
+Endpunkt: `GET /analysis/study/{study_id}/quality-check`
+Gibt zurück: n pro Bedingung, fehlende Timestamps, fehlende ET-Records, unfertige Trials.
+UI-Warnung wird beim Laden der Analyse-Seite automatisch abgerufen.
+
+#### 5.8.5 Bedingungsvergleich-Overlay
+
+In Performance- und ET-Charts: **Overlay-Modus** per Checkbox im Chart-Header.
+- Aus: Bedingungen nebeneinander (default)
+- An: Bedingungen überlagert in einem Chart (verschiedene Farben/Linientypen)
+
+Besonders nützlich für Boxplots (überlappende Verteilungen sichtbar) und
+Phasen-Zeitverläufe (Linien überlagert).
+
+#### 5.8.6 Cross-Study-Vergleichsseite
+
+Dedizierte Seite `/analysis/cross-study` mit:
+- Multi-Select-Dropdown: Studien aus der DB auswählen (nicht manuell IDs eingeben)
+- Automatische Befüllung von Forest Plot und Side-by-side-Charts
+- Optionale Baseline-Eingabe (default: 300ms, überschreibbar)
+- Kennzeichnung "Deskriptiver Vergleich — kein inferenzieller Test" prominent sichtbar
+
+### 5.9 Download & Export
 
 Alle Daten und Visualisierungen müssen exportierbar sein — für SPSS-Import, Paper-Abbildungen
 und Rohdaten-Verifikation.
