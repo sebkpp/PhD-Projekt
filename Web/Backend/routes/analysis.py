@@ -1,6 +1,10 @@
+import io
+
 from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
+from sqlalchemy.orm import Session
 from Backend.db_session import SessionLocal
 from Backend.services.data_analysis.eye_tracking_analysis_service import (
     analyze_experiment_eye_tracking,
@@ -17,6 +21,8 @@ from Backend.services.data_analysis.questionnaire_analysis_service import (
 from Backend.services.data_analysis.correlation_service import calc_correlation_matrix
 from Backend.services.data_analysis.cross_study_service import compare_studies_descriptive
 from Backend.services.data_analysis.exploratory_service import run_pca, run_clustering
+from Backend.services.data_analysis.export_service import export_handovers_csv, export_handovers_xlsx
+from Backend.db.handover_repository import HandoverRepository
 
 router = APIRouter(prefix="/analysis", tags=["analysis"])
 
@@ -273,11 +279,6 @@ async def post_clustering(request: ClusteringRequest):
 
 
 # ─── Export-Endpunkte ───────────────────────────────────────────────────────
-
-import io
-from fastapi.responses import StreamingResponse
-from Backend.services.data_analysis.export_service import export_handovers_csv, export_handovers_xlsx
-from Backend.db.handover_repository import HandoverRepository
 
 
 @router.get(
