@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends
+from pydantic import BaseModel
 
 from Backend.db_session import SessionLocal
 from Backend.services.data_analysis.eye_tracking_analysis_service import (
@@ -13,6 +14,9 @@ from Backend.services.data_analysis.questionnaire_analysis_service import (
     analyze_experiment_questionnaires,
     analyze_study_questionnaires,
 )
+from Backend.services.data_analysis.correlation_service import calc_correlation_matrix
+from Backend.services.data_analysis.cross_study_service import compare_studies_descriptive
+from Backend.services.data_analysis.exploratory_service import run_pca, run_clustering
 
 router = APIRouter(prefix="/analysis", tags=["analysis"])
 
@@ -173,3 +177,96 @@ async def experiment_eyetracking_analysis(experiment_id: int, db=Depends(get_db)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+# ---------------------------------------------------------------------------
+# New endpoints: eye-tracking (hyphenated alias), correlation, cross-study,
+# PCA, clustering
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/study/{study_id}/eye-tracking",
+    status_code=status.HTTP_200_OK,
+    summary="Eye-tracking analysis for a study (hyphenated alias)",
+    description="Return eyetracking AOI analysis aggregated across all experiments in a study.",
+)
+def get_study_eye_tracking(study_id: int, db=Depends(get_db)):
+    result = analyze_study_eye_tracking(db, study_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="No eye-tracking data found")
+    return result
+
+
+class CorrelationRequest(BaseModel):
+    variables: dict[str, list[float]]
+
+
+@router.post(
+    "/correlation",
+    status_code=status.HTTP_200_OK,
+    summary="Correlation matrix",
+    description="Compute pairwise Pearson correlations for the supplied variables.",
+)
+def post_correlation(request: CorrelationRequest):
+    if len(request.variables) < 2:
+        raise HTTPException(status_code=400, detail="At least 2 variables required")
+    result = calc_correlation_matrix(request.variables)
+    return result
+
+
+class CrossStudyRequest(BaseModel):
+    study_data: dict[str, list[float]]
+    metric: str = "transfer_duration_ms"
+
+
+@router.post(
+    "/cross-study",
+    status_code=status.HTTP_200_OK,
+    summary="Cross-study descriptive comparison",
+    description="Descriptive comparison of a metric across multiple studies/conditions.",
+)
+def post_cross_study(request: CrossStudyRequest):
+    result = compare_studies_descriptive(request.study_data, request.metric)
+    return result
+
+
+class PCARequest(BaseModel):
+    data: dict[str, list[float]]
+    n_components: int = 2
+
+
+@router.post(
+    "/pca",
+    status_code=status.HTTP_200_OK,
+    summary="Principal Component Analysis",
+    description="Run PCA on the supplied variables.",
+)
+def post_pca(request: PCARequest):
+    result = run_pca(request.data, n_components=request.n_components)
+    if result is None:
+        raise HTTPException(
+            status_code=400,
+            detail="PCA requires at least 2 variables with equal length",
+        )
+    return result
+
+
+class ClusteringRequest(BaseModel):
+    data: dict[str, list[float]]
+    n_clusters: int = 3
+
+
+@router.post(
+    "/clustering",
+    status_code=status.HTTP_200_OK,
+    summary="Hierarchical clustering",
+    description="Run agglomerative clustering on the supplied variables.",
+)
+def post_clustering(request: ClusteringRequest):
+    result = run_clustering(request.data, n_clusters=request.n_clusters)
+    if result is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Clustering requires at least 2 variables",
+        )
+    return result
