@@ -23,3 +23,9 @@ export async function fetchExperimentPPI(experimentId) {
     if (!res.ok) throw new Error(`Failed to fetch PPI: ${res.status}`);
     return res.json();
 }
+
+export async function fetchExperimentSaccadeRate(experimentId) {
+    const res = await fetch(`/api/analysis/experiment/${experimentId}/eyetracking/saccade-rate`);
+    if (!res.ok) throw new Error(`Saccade rate fetch failed: ${res.status}`);
+    return res.json();
+}
