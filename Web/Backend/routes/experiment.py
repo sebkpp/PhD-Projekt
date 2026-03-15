@@ -77,10 +77,15 @@ async def get_experiment_route(
         experiment_id: int,
         db: Session = Depends(get_db)
 ) -> ExperimentResponse:
-    experiment = get_experiment_by_id(db, experiment_id)
-    if not experiment:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Experiment not found")
-    return experiment
+    try:
+        experiment = get_experiment_by_id(db, experiment_id)
+        if not experiment:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Experiment not found")
+        return experiment
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @router.put(
     "/{experiment_id}/questionnaires",

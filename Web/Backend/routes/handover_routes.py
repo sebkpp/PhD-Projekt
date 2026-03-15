@@ -5,7 +5,9 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from Backend.db_session import SessionLocal
+from Backend.services.experiment_service import get_experiment_by_id
 from Backend.services.handover_service import save_handover, get_handovers_for_trial, get_handovers_for_experiment
+from Backend.services.trial_service import get_trial
 
 router = APIRouter(prefix="/handovers", tags=["handovers"])
 
@@ -52,8 +54,13 @@ async def get_handovers_for_trial_route(
         db: Session = Depends(get_db)
 ) -> List[HandoverResponse]:
     try:
+        trial = get_trial(db, trial_id)
+        if trial is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trial not found")
         handovers = get_handovers_for_trial(db, trial_id)
         return handovers
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
@@ -70,8 +77,13 @@ async def get_handovers_for_experiment_route(
         db: Session = Depends(get_db)
 ) -> List[HandoverResponse]:
     try:
+        experiment = get_experiment_by_id(db, experiment_id)
+        if experiment is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Experiment not found")
         handovers = get_handovers_for_experiment(db, experiment_id)
         return handovers
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 

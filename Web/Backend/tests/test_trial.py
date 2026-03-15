@@ -119,3 +119,28 @@ def test_get_participants_for_trial():
     resp = client.get(f"/trials/{trial_id}/participants")
     assert resp.status_code == status.HTTP_200_OK
     assert isinstance(resp.json(), list)
+
+
+def test_get_trial_not_found():
+    """GET /trials/9999 → 404 (nicht 400) für unbekannte trial_id."""
+    resp = client.get("/trials/9999")
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_end_trial_not_found():
+    """POST /trials/9999/end → 500 (nicht 400) für unbekannte trial_id."""
+    resp = client.post("/trials/9999/end")
+    assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+
+
+def test_get_trial_response_structure():
+    """GET /trials/{id} enthält trial_id, trial_number und slots."""
+    experiment_id = _get_or_create_experiment()
+    _create_trial(experiment_id)
+    trial_id = _get_first_trial_id()
+    resp = client.get(f"/trials/{trial_id}")
+    assert resp.status_code == status.HTTP_200_OK
+    data = resp.json()
+    assert "trial_id" in data
+    assert "trial_number" in data
+    assert "slots" in data

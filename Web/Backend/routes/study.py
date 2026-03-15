@@ -37,13 +37,15 @@ def get_db():
 async def list_studies(
         db: Session = Depends(get_db)
 ) -> List[StudyResponse]:
-    studies = get_all_studies(db)
-    return studies
+    try:
+        studies = get_all_studies(db)
+        return studies
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.get(
     "/{study_id}",
-    response_model=StudyResponse,
     status_code=status.HTTP_200_OK,
     summary="Get study by ID",
     description="Retrieve a study by its ID."
@@ -51,11 +53,11 @@ async def list_studies(
 async def get_study_route(
         study_id: int,
         db: Session = Depends(get_db)
-) -> StudyResponse:
+):
     study = get_study_by_id(db, study_id)
     if not study:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Study not found")
-    return study
+    return study.to_dict()
 
 
 @router.post(
@@ -132,8 +134,16 @@ async def api_get_experiments_by_study(
         study_id: int,
         db: Session = Depends(get_db)
 ) -> List[ExperimentResponse]:
-    experiments = get_experiments_by_study(db, study_id)
-    return experiments
+    try:
+        study = get_study_by_id(db, study_id)
+        if not study:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Study not found")
+        experiments = get_experiments_by_study(db, study_id)
+        return experiments
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.get(
@@ -147,8 +157,16 @@ async def api_get_participants_by_study(
         study_id: int,
         db: Session = Depends(get_db)
 ) -> List[ParticipantResponse]:
-    participants = get_participants_by_study(db, study_id)
-    return participants
+    try:
+        study = get_study_by_id(db, study_id)
+        if not study:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Study not found")
+        participants = get_participants_by_study(db, study_id)
+        return participants
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.post(

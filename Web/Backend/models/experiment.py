@@ -53,6 +53,7 @@ class ExperimentResponse(BaseModel):
     completed_at: Optional[datetime] = None
     researcher: Optional[str] = None
     study_id: int
+    trials: Optional[List] = None
 
     class Config:
         orm_mode = True

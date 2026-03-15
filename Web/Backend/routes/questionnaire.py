@@ -227,10 +227,15 @@ async def get_questionnaire_by_id_route(
         questionnaire_id: int = Path(..., description="Questionnaire ID"),
         db=Depends(get_db)
 ):
-    questionnaire = get_questionnaire_by_id(db, questionnaire_id)
-    if not questionnaire:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Questionnaire not found")
-    return questionnaire.to_dict()
+    try:
+        questionnaire = get_questionnaire_by_id(db, questionnaire_id)
+        if not questionnaire:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Questionnaire not found")
+        return questionnaire.to_dict()
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.get(

@@ -70,7 +70,7 @@ async def end_trial_route(
         return StatusResponse(status="ok", message=f"Trial {trial_id} marked as finished")
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.get(
@@ -95,9 +95,13 @@ async def get_trial_route(
 ):
     try:
         trial = get_trial(db, trial_id)
+        if trial is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trial not found")
         return trial.to_dict()
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.get(
@@ -114,5 +118,5 @@ async def get_trial_participants_route(
         participants = get_participants_for_trial(db, trial_id)
         return [p.to_dict() for p in participants]
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 

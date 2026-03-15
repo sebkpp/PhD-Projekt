@@ -171,3 +171,9 @@ def test_get_responses_for_experiment(client, experiment_id):
 def test_get_questionnaires_by_study(client, study_id):
     resp = client.get(f"/questionnaires/study/{study_id}")
     assert resp.status_code == status.HTTP_200_OK
+
+
+def test_get_questionnaire_not_found(client):
+    """GET /questionnaires/9999 → 404 für unbekannte questionnaire_id."""
+    resp = client.get("/questionnaires/9999")
+    assert resp.status_code == status.HTTP_404_NOT_FOUND

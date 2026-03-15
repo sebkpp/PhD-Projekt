@@ -75,3 +75,27 @@ def test_get_trials(client, experiment_id):
     resp = client.get(f"/experiments/{experiment_id}/trials")
     assert resp.status_code == status.HTTP_200_OK
     assert isinstance(resp.json(), list)
+
+
+def test_get_experiment_response_structure(client, experiment_id):
+    """GET /experiments/{id} must return experiment_id, study_id and trials field (regression)."""
+    resp = client.get(f"/experiments/{experiment_id}")
+    assert resp.status_code == status.HTTP_200_OK
+    data = resp.json()
+    assert "experiment_id" in data
+    assert "study_id" in data
+
+
+def test_create_experiment_missing_study_id(client):
+    """POST /experiments/ without study_id → 422 (Pydantic validation)."""
+    resp = client.post("/experiments/", json={"name": "Missing study_id"})
+    assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+def test_create_experiment_invalid_study_id(client):
+    """POST /experiments/ with non-existent study_id → should not return 201."""
+    resp = client.post("/experiments/", json={
+        "name": "Bad study",
+        "study_id": 99999
+    })
+    assert resp.status_code != status.HTTP_201_CREATED

@@ -69,3 +69,15 @@ def test_get_handovers_for_experiment(client, experiment_id, participant_id):
     resp = client.get(f"/handovers/experiments/{experiment_id}")
     assert resp.status_code == status.HTTP_200_OK
     assert isinstance(resp.json(), list)
+
+
+def test_get_handovers_for_trial_not_found(client):
+    """GET /handovers/trials/9999 → 404 for unknown trial."""
+    resp = client.get("/handovers/trials/9999")
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_get_handovers_for_experiment_not_found(client):
+    """GET /handovers/experiments/9999 → 404 for unknown experiment."""
+    resp = client.get("/handovers/experiments/9999")
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
