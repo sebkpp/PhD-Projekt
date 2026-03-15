@@ -1,6 +1,14 @@
 import React from "react";
 import Plot from "react-plotly.js";
 
+const darkLayout = {
+    paper_bgcolor: "#23272f",
+    plot_bgcolor: "#23272f",
+    font: { color: "#fff" },
+    margin: { t: 40, l: 80, r: 20, b: 80 },
+    dragmode: false,
+};
+
 export default function TransitionMatrixPlotly({ transitionsData, chartRef, buttonRef, onExport }) {
     if (!transitionsData?.by_trial || Object.keys(transitionsData.by_trial).length === 0) return null;
 
@@ -17,7 +25,7 @@ export default function TransitionMatrixPlotly({ transitionsData, chartRef, butt
 
     // Compute global max for synchronized color scale
     const allValues = trials.flatMap(([, t]) => Object.values(t.transitions ?? {}));
-    const globalZMax = Math.max(1, ...allValues);
+    const globalZMax = allValues.reduce((m, v) => Math.max(m, v), 1);
 
     const buildZ = (transitions) =>
         globalAois.map(from =>
@@ -25,14 +33,6 @@ export default function TransitionMatrixPlotly({ transitionsData, chartRef, butt
         );
 
     const plotHeight = Math.max(250, globalAois.length * 60);
-
-    const darkLayout = {
-        paper_bgcolor: "#23272f",
-        plot_bgcolor: "#23272f",
-        font: { color: "#fff" },
-        margin: { t: 40, l: 80, r: 20, b: 80 },
-        dragmode: false,
-    };
 
     return (
         <div

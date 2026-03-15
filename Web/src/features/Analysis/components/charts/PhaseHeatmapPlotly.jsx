@@ -1,6 +1,14 @@
 import React from "react";
 import Plot from "react-plotly.js";
 
+const darkLayout = {
+    paper_bgcolor: "#23272f",
+    plot_bgcolor: "#23272f",
+    font: { color: "#fff" },
+    margin: { t: 40, l: 80, r: 20, b: 50 },
+    dragmode: false,
+};
+
 export default function PhaseHeatmapPlotly({ phasesData, chartRef, buttonRef, onExport }) {
     if (!phasesData?.by_trial || Object.keys(phasesData.by_trial).length === 0) return null;
 
@@ -17,14 +25,6 @@ export default function PhaseHeatmapPlotly({ phasesData, chartRef, buttonRef, on
 
     const xLabels = ["Phase 1", "Phase 2", "Phase 3"];
     const plotHeight = Math.max(200, allAois.length * 40);
-
-    const darkLayout = {
-        paper_bgcolor: "#23272f",
-        plot_bgcolor: "#23272f",
-        font: { color: "#fff" },
-        margin: { t: 40, l: 80, r: 20, b: 50 },
-        dragmode: false,
-    };
 
     return (
         <div
