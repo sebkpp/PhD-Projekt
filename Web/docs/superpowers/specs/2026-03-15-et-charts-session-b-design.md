@@ -449,18 +449,29 @@ PNG-Export-Pattern: identisch zu `PerformanceCharts.jsx` —
 `chartRefs = useRef({})`, `buttonRefs = useRef({})`, `exportChart = useChartExport()`.
 Keys: `"phaseHeatmap"`, `"transitionMatrix"`.
 
-**Wichtig: bestehender Early-Return-Guard**
+**Wichtig: bestehende Early-Return-Guards**
 
-Die aktuelle `EyeTrackingCharts.jsx` hat am Anfang:
+Die aktuelle `EyeTrackingCharts.jsx` hat **zwei** Guards, die beide entfernt/umgebaut werden müssen:
+
+**Guard 1** (ganz oben, ca. Zeile 19):
 ```jsx
 if (!chartData?.by_trial) {
     return <div>Keine Eye-Tracking-Daten verfügbar.</div>;
 }
 ```
-Dieser Guard muss **entfernt** werden. Stattdessen wird `chartData` nur als Guard
-für den AOI-Stacked-Bar-Abschnitt verwendet. Die neuen Sub-Charts haben eigene
-interne Guards (`if (!prop) return null`) und sollen auch rendern, wenn `chartData`
-keine Daten hat aber `phasesData`/`ppiData`/`saccadeData` geladen sind.
+Dieser Guard muss **entfernt** werden. Er verhindert sonst, dass die neuen Charts rendern.
+
+**Guard 2** (wenige Zeilen darunter, ca. Zeile 31–37):
+```jsx
+if (trials.length === 0) {
+    return <div className="mt-8 text-gray-400">Keine Trial-Daten vorhanden.</div>;
+}
+```
+Dieser Guard muss **innerhalb** des `chartData?.by_trial &&`-Blocks bleiben —
+er darf NICHT auf Top-Level herausgezogen werden, da er sonst alle neuen Charts blockiert.
+
+Stattdessen wird `chartData` nur als Guard für den AOI-Stacked-Bar-Abschnitt verwendet.
+Die neuen Sub-Charts haben eigene interne Guards (`if (!prop) return null`).
 
 **Neue Struktur des Return-Blocks:**
 ```jsx
@@ -513,7 +524,9 @@ return (
    {saccadeLoading && <LoadingSpinner message="Sakkaden-Rate berechnen..." />}
    {saccadeError && <ErrorMessage error={saccadeError} />}
    ```
-5. `<EyeTrackingCharts>` Props erweitern:
+5. Das bestehende `{eyeTrackingData && <EyeTrackingCharts chartData={eyeTrackingData} />}`
+   **durch eine unbedingte Instanz ersetzen** — `EyeTrackingCharts` behandelt fehlende
+   Daten intern. `chartData` wird weiterhin übergeben (kann `null` sein):
    ```jsx
    <EyeTrackingCharts
        chartData={eyeTrackingData}
