@@ -237,17 +237,8 @@ const barData = SUBSCALES.map(key => {
 
 ### 6.6 Container
 
-Kein eigener Rahmen. `QuestionnaireCharts.jsx` rendert bedingt:
-```jsx
-{trials.length > 0 && (
-    <>
-        <h2 className="mt-8 mb-4 text-xl font-semibold">NASA-TLX Subskalen</h2>
-        <NasaTlxBar trialItemStats={chartData.trial_item_stats} />
-    </>
-)}
-```
-
-Damit ist kein schwebender `<h2>` ohne Chart möglich.
+Kein eigener Rahmen. Die Heading-Logik ist in `QuestionnaireCharts.jsx` via `hasQuestionnaire`
+geregelt — siehe Section 10.3 für das authoritative Rendering-Pattern.
 
 ---
 
@@ -293,25 +284,12 @@ if (barData.length === 0) return null;
 
 ### 7.5 Container
 
-`QuestionnaireCharts.jsx` rendert bedingt (nach NasaTlxBar-Muster):
-```jsx
-{susBarData.length > 0 && (
-    <>
-        <h2 className="mt-8 mb-4 text-xl font-semibold">SUS-Score pro Trial</h2>
-        <SusScoreBar trialItemStats={chartData.trial_item_stats} />
-    </>
-)}
-```
+Kein eigener Rahmen. Die Heading-Logik ist in `QuestionnaireCharts.jsx` via `hasQuestionnaire`
+geregelt — siehe Section 10.3 für das authoritative Rendering-Pattern.
 
-**Hinweis:** Damit die Bedingung in `QuestionnaireCharts` ausgewertet werden kann ohne die
-Berechnungslogik zu duplizieren, prüft `QuestionnaireCharts` einfach ob die Questionnaire-Daten
-für "SUS" vorhanden sind:
-```jsx
-const hasSus = Object.values(chartData.trial_item_stats ?? {})
-    .some(t => t.questionnaires?.["SUS"]?.items?.length > 0);
-```
-
-Gleiches Muster für alle vier Charts.
+**Hinweis SUS-Referenzlinien:** Die Referenzlinien bei 68 ("Akzeptabel", Brooke 1996) und
+80.3 ("Gut", Bangor 2009) weichen bewusst von den `susGrade`-Schwellenwerten (77, 85) ab —
+sie repräsentieren die originalen Acceptability-Grenzen aus der SUS-Literatur.
 
 ---
 
@@ -336,10 +314,15 @@ const scatterData = Object.entries(trialItemStats)
     .sort(([, a], [, b]) => (a.trial_number ?? 0) - (b.trial_number ?? 0))
     .map(([, t]) => {
         const { pq, att } = calcAttrakDiffSubscales(t.questionnaires["AttrakDiff2"].items);
+        if (pq == null || att == null) return null;   // Subskale nicht berechenbar
         return { x: pq, y: att, label: `Trial ${t.trial_number}` };
-    });
+    })
+    .filter(Boolean);  // null-Einträge entfernen
 if (scatterData.length === 0) return null;
 ```
+
+**Hinweis:** `calcAttrakDiffSubscales` gibt `null` zurück, wenn eine Subskala keine Items hat.
+Solche Punkte werden herausgefiltert, damit kein `{x: null, y: null}`-Punkt bei (0,0) landet.
 
 ### 8.4 Recharts-Konfiguration
 
