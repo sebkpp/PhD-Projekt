@@ -1,5 +1,6 @@
 import math
 from collections import defaultdict
+from datetime import datetime
 
 from Backend.db.handover_repository import HandoverRepository
 from Backend.db.stimuli_repository import StimuliRepository
@@ -395,7 +396,7 @@ def analyze_experiment_eye_tracking_transitions(session, experiment_id: int) -> 
                 all_et.append((et.starttime, aoi_name))
 
         # Sort by starttime, build sequence
-        all_et.sort(key=lambda x: x[0] if x[0] is not None else "")
+        all_et.sort(key=lambda x: x[0] if x[0] is not None else datetime.min)
         aoi_sequence = [aoi for _, aoi in all_et]
         transitions = calc_transitions(aoi_sequence)
 
