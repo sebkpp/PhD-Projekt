@@ -12,6 +12,7 @@ from Backend.services.data_analysis.eye_tracking_analysis_service import (
     analyze_experiment_eye_tracking_phases,
     analyze_experiment_eye_tracking_transitions,
     analyze_experiment_ppi,
+    analyze_experiment_saccade_rate,
 )
 from Backend.services.data_analysis.performance_analysis_service import (
     analyze_experiment_performance,
@@ -237,6 +238,25 @@ async def experiment_ppi(experiment_id: int, db=Depends(get_db)):
         result = analyze_experiment_ppi(db, experiment_id)
         if not result:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No handover data found")
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.get(
+    "/experiment/{experiment_id}/eyetracking/saccade-rate",
+    status_code=status.HTTP_200_OK,
+    summary="Saccade rate for an experiment",
+    description="Saccades per second per trial, split by giver/receiver role.",
+)
+async def experiment_eyetracking_saccade_rate(experiment_id: int, db=Depends(get_db)):
+    try:
+        result = analyze_experiment_saccade_rate(db, experiment_id)
+        if not result:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No eye-tracking data found")
         return result
     except HTTPException:
         raise

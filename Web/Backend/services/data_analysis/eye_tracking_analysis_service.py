@@ -487,3 +487,76 @@ def analyze_experiment_ppi(session, experiment_id: int) -> dict:
         }
 
     return {"experiment_id": experiment_id, "by_trial": by_trial}
+
+
+def analyze_experiment_saccade_rate(session, experiment_id: int) -> dict:
+    """
+    Sakkaden-Rate (Sakkaden/Sekunde) pro Trial, aufgeteilt nach Geber/Empfänger.
+
+    Sakkaden werden als AOI-Übergänge gezählt (aufeinanderfolgende verschiedene AOIs).
+    Gesamtdauer = Summe aller et.duration-Werte pro Rolle und Trial.
+
+    Returns: {
+      "experiment_id": int,
+      "by_trial": {
+        trial_id: {
+          "trial_number": int,
+          "stimuli_conditions": [...],
+          "saccade_rate_giver": float | None,
+          "saccade_rate_receiver": float | None
+        }
+      }
+    }
+    """
+    t_repo = TrialRepository(session)
+    h_repo = HandoverRepository(session)
+    s_repo = StimuliRepository(session)
+
+    trials = t_repo.get_by_experiment_id(experiment_id)
+    if not trials:
+        return {}
+
+    trial_ids = [t.trial_id for t in trials]
+    trial_stimuli_map = s_repo.get_stimuli_for_trials(trial_ids)
+
+    by_trial = {}
+    for trial in trials:
+        handovers = h_repo.get_handovers_for_trial(trial.trial_id)
+
+        giver_et: list[tuple[object, str]] = []
+        receiver_et: list[tuple[object, str]] = []
+        giver_duration_ms: int = 0
+        receiver_duration_ms: int = 0
+
+        for handover in handovers:
+            for et in handover.eye_trackings:
+                aoi_name = et.aoi.aoi if et.aoi else str(et.aoi_id)
+                dur = et.duration if et.duration is not None else 0
+                if et.participant_id == handover.giver:
+                    giver_et.append((et.starttime, aoi_name))
+                    giver_duration_ms += dur
+                else:
+                    receiver_et.append((et.starttime, aoi_name))
+                    receiver_duration_ms += dur
+
+        giver_et.sort(key=lambda x: x[0] if x[0] is not None else datetime.min)
+        receiver_et.sort(key=lambda x: x[0] if x[0] is not None else datetime.min)
+
+        giver_seq = [aoi for _, aoi in giver_et]
+        receiver_seq = [aoi for _, aoi in receiver_et]
+
+        giver_saccades = sum(calc_transitions(giver_seq).values())
+        receiver_saccades = sum(calc_transitions(receiver_seq).values())
+
+        stimuli = trial_stimuli_map.get(trial.trial_id, [])
+        by_trial[trial.trial_id] = {
+            "trial_number": trial.trial_number,
+            "stimuli_conditions": [
+                {"name": s["name"], "type": s.get("stimulus_type", "stimulus")}
+                for s in stimuli
+            ],
+            "saccade_rate_giver": calc_saccade_rate(giver_saccades, giver_duration_ms),
+            "saccade_rate_receiver": calc_saccade_rate(receiver_saccades, receiver_duration_ms),
+        }
+
+    return {"experiment_id": experiment_id, "by_trial": by_trial}

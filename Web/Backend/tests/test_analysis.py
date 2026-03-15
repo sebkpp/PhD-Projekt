@@ -108,3 +108,8 @@ def test_experiment_performance_includes_error_rate(client, experiment_id):
         assert "error_count" in trial_stats
         assert "total_count" in trial_stats
         assert 0.0 <= trial_stats["error_rate"] <= 1.0
+
+
+def test_analysis_saccade_rate_experiment(client, experiment_id):
+    resp = client.get(f"/analysis/experiment/{experiment_id}/eyetracking/saccade-rate")
+    assert resp.status_code < 500
