@@ -2,7 +2,7 @@
 from Backend.db.stimuli_repository import StimuliRepository
 from Backend.db.trial.trial import TrialRepository
 from Backend.models import Experiment
-from Backend.utils.stats_utils import run_paired_test
+from Backend.services.data_analysis.inferential_service import run_inferential_analysis
 
 import math
 from collections import defaultdict
@@ -391,19 +391,17 @@ def analyze_study_questionnaires(session, study_id: int) -> dict:
                     }
             by_condition[condition] = cond_stats
 
-        # Build inferential tests (paired between conditions per item)
+        # Build inferential tests (N conditions per item using run_inferential_analysis)
         inferential: dict[str, dict | None] = {}
         if len(conditions) >= 2:
-            cond_a, cond_b = conditions[0], conditions[1]
             for item_name in sorted(item_names):
-                vals_a = condition_item_values[cond_a].get(item_name, [])
-                vals_b = condition_item_values[cond_b].get(item_name, [])
-                # Pair up by participant order (both lists contain one value per participant)
-                min_len = min(len(vals_a), len(vals_b))
-                if min_len >= 3:
-                    inferential[item_name] = run_paired_test(
-                        vals_a[:min_len], vals_b[:min_len]
-                    )
+                cond_dict = {
+                    cond: condition_item_values[cond].get(item_name, [])
+                    for cond in conditions
+                    if condition_item_values[cond].get(item_name)
+                }
+                if len(cond_dict) >= 2 and all(len(v) >= 3 for v in cond_dict.values()):
+                    inferential[item_name] = run_inferential_analysis(cond_dict)
                 else:
                     inferential[item_name] = None
 
