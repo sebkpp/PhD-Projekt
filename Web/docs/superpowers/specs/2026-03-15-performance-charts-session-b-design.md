@@ -35,20 +35,40 @@ Beide neuen Charts zeigen Daten **pro Trial** (entspricht einer Bedingung).
 
 ### 3.2 Änderung
 
-In `analyze_experiment_performance` wird pro Trial zusätzlich die Fehlerrate berechnet.
+In `analyze_experiment_performance` wird pro Trial die Fehlerrate berechnet.
 `Handover` hat die Felder `is_error: Boolean` und `error_type: String` (nullable).
 
-Die drei neuen Felder werden am Ende des Trial-Stats-Blocks ergänzt (nach den bestehenden
-`total_values`, `phase1_*`, `phase2_*`, `phase3_*` Feldern):
+**Wichtig:** Der bestehende Timestamp-Filter (`if not all([...]) continue`) überspringt
+Handovers ohne vollständige Phasen-Zeitstempel. Da fehlerhafte Handovers oft genau diese
+Zeitstempel nicht haben, darf die Fehlerrate **nicht** aus `grouped_by_trial` abgeleitet
+werden — sondern aus den **rohen, ungefilterten** Handovers pro Trial.
+
+**Schritt 1:** Vor dem Timestamp-Filter-Loop eine separate Gruppierung anlegen:
 
 ```python
-stats["error_count"] = sum(1 for h in handovers if h.is_error)
-stats["total_count"] = len(handovers)
-stats["error_rate"] = (
-    stats["error_count"] / stats["total_count"]
-    if stats["total_count"] > 0
-    else 0.0
-)
+# NACH Zeile 96 (handovers = h_repo.get_handovers_by_experiment(experiment_id)):
+handovers_by_trial: dict[int, list] = defaultdict(list)
+for h in handovers:
+    handovers_by_trial[h.trial_id].append(h)
+```
+
+**Schritt 2:** Im `stats_by_trial`-Loop (nach Zeile 143, `stats["total_values"] = ...`)
+die drei Felder ergänzen:
+
+```python
+for trial_id, data in grouped_by_trial.items():
+    stats = calc_stats(data)
+    stats["total_values"] = [d["total"] for d in data]
+    # Fehlerrate aus ALLEN Handovers des Trials (inkl. gefilterter)
+    trial_handovers = handovers_by_trial[trial_id]
+    stats["error_count"] = sum(1 for h in trial_handovers if h.is_error)
+    stats["total_count"] = len(trial_handovers)
+    stats["error_rate"] = (
+        stats["error_count"] / stats["total_count"]
+        if stats["total_count"] > 0
+        else 0.0
+    )
+    stats_by_trial[trial_id] = sanitize_stats(stats)
 ```
 
 ### 3.3 Auswirkung auf bestehende Consumers
@@ -66,7 +86,9 @@ def test_experiment_performance_includes_error_rate(client, experiment_id):
     resp = client.get(f"/analysis/experiment/{experiment_id}/performance")
     assert resp.status_code == 200
     data = resp.json()
-    for trial_stats in data.get("by_trial", {}).values():
+    by_trial = data.get("by_trial", {})
+    assert len(by_trial) > 0, "Test requires at least one trial with complete handover data"
+    for trial_stats in by_trial.values():
         assert "error_rate" in trial_stats
         assert "error_count" in trial_stats
         assert "total_count" in trial_stats
@@ -91,14 +113,19 @@ ViolinPlotPlotly({ boxplotData, chartRef, buttonRef, onExport })
 ```js
 [{
     name: string,      // Trial-ID / Label
-    y: number[],       // Rohe Handover-Dauern (total_values)
-    min: number,
+    y: number[],       // Rohe Handover-Dauern (total_values) — EINZIGES Feld das Plotly nutzt
+    min: number,       // Nur für Konsistenz mit BoxplotPlotly, vom Violin-Trace ignoriert
     q1: number,
     median: number,
     q3: number,
     max: number,
 }]
 ```
+
+**Hinweis:** Plotly `type: "violin"` berechnet alle Verteilungsstatistiken intern aus `y`.
+Die Felder `min`, `q1`, `median`, `q3`, `max` werden vom Violin-Trace **nicht** genutzt —
+sie sind nur für Props-Konsistenz mit `BoxplotPlotly` vorhanden und dürfen nicht als
+Plotly-Trace-Properties übergeben werden.
 
 ### 4.3 Plotly-Konfiguration
 
@@ -113,6 +140,7 @@ ViolinPlotPlotly({ boxplotData, chartRef, buttonRef, onExport })
 - Legende: horizontal, zentriert, unter dem Chart (`y: -0.25`)
 - `dragmode: false`, `displayModeBar: false`
 - Höhe: `350px`, `width: "100%"`
+- Container: `minWidth: 0` (identisch zu `BoxplotPlotly`, notwendig für flex-Layout)
 
 ### 4.4 Export-Button
 
@@ -174,9 +202,10 @@ const barData = Object.entries(chartData.by_trial ?? {}).map(([id, m]) => ({
 
 ### 5.5 Leer-Zustand
 
-Wenn alle `error_rate === 0`: kleinen Hinweis-Text anzeigen:
+Wenn Daten vorhanden aber alle `errorRate === 0`: kleinen Hinweis-Text anzeigen.
+Guard gegen leeres Array (`[].every(...)` gibt `true` zurück in JavaScript):
 ```jsx
-{barData.every(d => d.errorRate === 0) && (
+{barData.length > 0 && barData.every(d => d.errorRate === 0) && (
     <p className="text-xs text-gray-500 mt-1">Keine Fehler in diesem Experiment.</p>
 )}
 ```
