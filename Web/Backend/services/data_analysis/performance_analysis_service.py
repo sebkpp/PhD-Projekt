@@ -149,7 +149,7 @@ def analyze_experiment_performance(session, experiment_id):
         trial_stats["total_values"] = [d["total"] for d in data]
         # Error rate from ALL handovers in this trial (including filtered/errored ones)
         trial_handovers = handovers_by_trial[trial_id]
-        trial_stats["error_count"] = sum(1 for h in trial_handovers if h.is_error is True)
+        trial_stats["error_count"] = sum(1 for h in trial_handovers if h.is_error)
         trial_stats["total_count"] = len(trial_handovers)
         trial_stats["error_rate"] = (
             trial_stats["error_count"] / trial_stats["total_count"]
