@@ -15,6 +15,7 @@ import { useEyeTrackingMetrics } from "@/features/Analysis/hooks/useEyeTrackingM
 import { useEyeTrackingPhases } from "@/features/Analysis/hooks/useEyeTrackingPhases.js";
 import { useEyeTrackingTransitions } from "@/features/Analysis/hooks/useEyeTrackingTransitions.js";
 import { usePPI } from "@/features/Analysis/hooks/usePPI.js";
+import { useSaccadeRate } from "@/features/Analysis/hooks/useSaccadeRate.js";
 import LoadingSpinner from "@/features/Analysis/components/shared/LoadingSpinner.jsx";
 import ErrorMessage from "@/features/Analysis/components/shared/ErrorMessage.jsx";
 import DescriptiveOnlyWarning from "@/features/Analysis/components/shared/DescriptiveOnlyWarning.jsx";
@@ -44,13 +45,14 @@ export default function ExperimentAnalysisPage() {
         usePerformanceMetrics(experimentId, loadedTabs.has("performance") || loadedTabs.has("compare"));
     const { data: eyeTrackingData, loading: etLoading, error: etError } =
         useEyeTrackingMetrics(experimentId, loadedTabs.has("eyetracking"));
-    const { data: _etPhasesData, loading: phasesLoading, error: phasesError } =
+    const { data: etPhasesData, loading: phasesLoading, error: phasesError } =
         useEyeTrackingPhases(experimentId, loadedTabs.has("eyetracking"));
-    // etTransitionsData prefixed with _ — data is fetched now but rendered in Session B (TransitionSankey)
-    const { data: _etTransitionsData, loading: transLoading, error: transError } =
+    const { data: etTransitionsData, loading: transLoading, error: transError } =
         useEyeTrackingTransitions(experimentId, loadedTabs.has("eyetracking"));
     const { data: ppiData, loading: ppiLoading, error: ppiError } =
         usePPI(experimentId, loadedTabs.has("eyetracking"));
+    const { data: saccadeData, loading: saccadeLoading, error: saccadeError } =
+        useSaccadeRate(experimentId, loadedTabs.has("eyetracking"));
 
     function handleTabChange(tabKey) {
         if (tabKey === "compare") {
@@ -104,42 +106,20 @@ export default function ExperimentAnalysisPage() {
                     <DescriptiveOnlyWarning message={DESCRIPTIVE_WARNING} />
                     {etLoading && <LoadingSpinner message="Eye-Tracking-Daten laden..." />}
                     {etError && <ErrorMessage error={etError} />}
-                    {eyeTrackingData && <EyeTrackingCharts chartData={eyeTrackingData} />}
-
-                    {/* Phase + Transition data loading states */}
                     {(phasesLoading || transLoading) && <LoadingSpinner message="Phasen & Transitionen laden..." />}
                     {phasesError && <ErrorMessage error={phasesError} />}
                     {transError && <ErrorMessage error={transError} />}
-                    {/* etTransitionsData is fetched here and will be consumed by Session B's TransitionSankey */}
-
-                    {/* PPI display */}
                     {ppiLoading && <LoadingSpinner message="PPI berechnen..." />}
                     {ppiError && <ErrorMessage error={ppiError} />}
-                    {ppiData && ppiData.by_trial && (
-                        <div className="mt-4 bg-gray-800 rounded-xl p-4">
-                            <h3 className="text-sm font-semibold mb-2">Proaktiver Planungsindex (PPI)</h3>
-                            <p className="text-xs text-gray-400 mb-2">
-                                Anteil der Geber-Blickzeit auf den Aufgabenbereich (environment) in Phase 3.
-                                Hoher PPI (&gt;30%) = automatisch-haptische Übergabe.
-                            </p>
-                            <div className="flex flex-wrap gap-3">
-                                {Object.values(ppiData.by_trial).map(trial => (
-                                    <div key={trial.trial_number} className="text-xs bg-gray-700 rounded px-3 py-2">
-                                        <div className="font-medium">Trial {trial.trial_number}</div>
-                                        <div>Geber: {trial.ppi_giver !== null ? `${trial.ppi_giver.toFixed(1)}%` : "–"}</div>
-                                        <div>Empfänger: {trial.ppi_receiver !== null ? `${trial.ppi_receiver.toFixed(1)}%` : "–"}</div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* SESSION B placeholders */}
-                    <PlaceholderChart label="AOI × Phasen-Heatmap (kommt in Session B)" />
-                    <PlaceholderChart label="Blickpfad-Sankey (kommt in Session B)" />
-                    <PlaceholderChart label="Sakkaden-Rate pro Bedingung (kommt in Session B)" />
-                    <PlaceholderChart label="Gaze-Timeline (kommt in Session B)" />
-                    <PlaceholderChart label="PPI-Balkendiagramm pro Bedingung (kommt in Session B)" />
+                    {saccadeLoading && <LoadingSpinner message="Sakkaden-Rate berechnen..." />}
+                    {saccadeError && <ErrorMessage error={saccadeError} />}
+                    <EyeTrackingCharts
+                        chartData={eyeTrackingData}
+                        phasesData={etPhasesData}
+                        transitionsData={etTransitionsData}
+                        ppiData={ppiData}
+                        saccadeData={saccadeData}
+                    />
                 </TabPanel>
 
                 {/* === UX / QUESTIONNAIRES === */}
