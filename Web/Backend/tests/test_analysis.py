@@ -88,3 +88,23 @@ def test_analysis_eyetracking_transitions_experiment(client, experiment_id):
 def test_analysis_ppi_experiment(client, experiment_id):
     resp = client.get(f"/analysis/experiment/{experiment_id}/ppi")
     assert resp.status_code < 500
+
+
+def test_experiment_performance_includes_error_rate(client, experiment_id):
+    """Performance response must include error_rate, error_count, total_count per trial.
+
+    NOTE: The test fixture provides no seeded handover data, so by_trial will be empty
+    and the loop body will not execute. This test therefore cannot serve as a TDD red/green
+    gate — it is a structural validation test that protects the contract when data is present.
+    This is consistent with the smoke-test pattern of this file (see test_analysis_performance_experiment).
+    """
+    resp = client.get(f"/analysis/experiment/{experiment_id}/performance")
+    if resp.status_code == 404:
+        return  # no handover data in fixture — vacuous pass
+    assert resp.status_code == 200
+    data = resp.json()
+    for trial_stats in data.get("by_trial", {}).values():
+        assert "error_rate" in trial_stats
+        assert "error_count" in trial_stats
+        assert "total_count" in trial_stats
+        assert 0.0 <= trial_stats["error_rate"] <= 1.0

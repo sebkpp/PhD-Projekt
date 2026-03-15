@@ -97,6 +97,12 @@ def analyze_experiment_performance(session, experiment_id):
     if not handovers:
         return {}
 
+    # Pre-filter grouping: ALL handovers per trial (incl. errored/incomplete ones)
+    # Used for error rate — must be built before the timestamp-filter loop below.
+    handovers_by_trial: dict[int, list] = defaultdict(list)
+    for h in handovers:
+        handovers_by_trial[h.trial_id].append(h)
+
     # Objektunabhängig gruppieren
     grouped_by_trial = defaultdict(list)
     # Objektabhängig gruppieren
@@ -139,9 +145,18 @@ def analyze_experiment_performance(session, experiment_id):
 
     stats_by_trial = {}
     for trial_id, data in grouped_by_trial.items():
-        stats = calc_stats(data)
-        stats["total_values"] = [d["total"] for d in data]
-        stats_by_trial[trial_id] = sanitize_stats(stats)
+        trial_stats = calc_stats(data)
+        trial_stats["total_values"] = [d["total"] for d in data]
+        # Error rate from ALL handovers in this trial (including filtered/errored ones)
+        trial_handovers = handovers_by_trial[trial_id]
+        trial_stats["error_count"] = sum(1 for h in trial_handovers if h.is_error is True)
+        trial_stats["total_count"] = len(trial_handovers)
+        trial_stats["error_rate"] = (
+            trial_stats["error_count"] / trial_stats["total_count"]
+            if trial_stats["total_count"] > 0
+            else 0.0
+        )
+        stats_by_trial[trial_id] = sanitize_stats(trial_stats)
 
     stats_by_trial_and_object = {}
     for trial_id, obj_dict in grouped_by_trial_and_object.items():
