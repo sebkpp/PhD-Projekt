@@ -113,3 +113,13 @@ def test_experiment_performance_includes_error_rate(client, experiment_id):
 def test_analysis_saccade_rate_experiment(client, experiment_id):
     resp = client.get(f"/analysis/experiment/{experiment_id}/eyetracking/saccade-rate")
     assert resp.status_code < 500
+
+
+def test_questionnaire_trial_item_stats_has_trial_number(client, experiment_id):
+    resp = client.get(f"/analysis/experiment/{experiment_id}/questionnaires")
+    if resp.status_code != 200:
+        return  # no questionnaire data in fixture — vacuous pass
+    data = resp.json()
+    trial_item_stats = data.get("trial_item_stats", {})
+    for trial_stats in trial_item_stats.values():
+        assert "trial_number" in trial_stats

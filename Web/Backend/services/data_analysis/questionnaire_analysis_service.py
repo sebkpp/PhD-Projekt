@@ -165,7 +165,7 @@ def build_response_dataframe(responses):
         "response_value": r.response_value
     } for r in responses])
 
-def compute_trial_item_stats(df, trial_stimuli_map):
+def compute_trial_item_stats(df, trial_stimuli_map, trial_number_map=None):
     stats = {}
     trial_item_stats = (
         df.groupby(["trial_id", "questionnaire_id", "questionnaire_name", "questionnaire_item_id", "item_name"])
@@ -182,7 +182,8 @@ def compute_trial_item_stats(df, trial_stimuli_map):
             for s in stimuli
         ]
         stats.setdefault(t_id, {
-            "stimuli_conditions": stimuli_conditions
+            "stimuli_conditions": stimuli_conditions,
+            "trial_number": trial_number_map.get(t_id) if trial_number_map else None,
         }).setdefault("questionnaires", {}).setdefault(q_name, {
             "items": []
         })
@@ -243,13 +244,14 @@ def analyze_experiment_questionnaires(session, experiment_id):
     s_repo = StimuliRepository(session)
 
     trials = t_repo.get_by_experiment_id(experiment_id)
+    trial_number_map = {t.trial_id: t.trial_number for t in trials}
     trial_ids = [trial.trial_id for trial in trials]
     trial_stimuli_map = s_repo.get_stimuli_for_trials(trial_ids)
 
     responses = qr_repo.get_questionnaire_responses_for_trials(trial_ids)
 
     df = build_response_dataframe(responses)
-    stats = compute_trial_item_stats(df, trial_stimuli_map)
+    stats = compute_trial_item_stats(df, trial_stimuli_map, trial_number_map)
     mean_diffs = compute_mean_diffs(stats)
     result = build_participant_result(responses)
 
