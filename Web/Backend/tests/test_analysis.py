@@ -73,3 +73,18 @@ def test_analysis_study_eyetracking_not_found(client):
     """GET /analysis/study/9999/eyetracking → 404 (nicht 500) für unbekannte study_id."""
     resp = client.get("/analysis/study/9999/eyetracking")
     assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_analysis_eyetracking_phases_experiment(client, experiment_id):
+    resp = client.get(f"/analysis/experiment/{experiment_id}/eyetracking/phases")
+    assert resp.status_code < 500
+
+
+def test_analysis_eyetracking_transitions_experiment(client, experiment_id):
+    resp = client.get(f"/analysis/experiment/{experiment_id}/eyetracking/transitions")
+    assert resp.status_code < 500
+
+
+def test_analysis_ppi_experiment(client, experiment_id):
+    resp = client.get(f"/analysis/experiment/{experiment_id}/ppi")
+    assert resp.status_code < 500

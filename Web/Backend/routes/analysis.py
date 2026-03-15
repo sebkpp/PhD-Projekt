@@ -9,6 +9,9 @@ from Backend.db_session import SessionLocal
 from Backend.services.data_analysis.eye_tracking_analysis_service import (
     analyze_experiment_eye_tracking,
     analyze_study_eye_tracking,
+    analyze_experiment_eye_tracking_phases,
+    analyze_experiment_eye_tracking_transitions,
+    analyze_experiment_ppi,
 )
 from Backend.services.data_analysis.performance_analysis_service import (
     analyze_experiment_performance,
@@ -177,6 +180,63 @@ async def experiment_eyetracking_analysis(experiment_id: int, db=Depends(get_db)
         result = analyze_experiment_eye_tracking(db, experiment_id)
         if not result:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No Result")
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.get(
+    "/experiment/{experiment_id}/eyetracking/phases",
+    status_code=status.HTTP_200_OK,
+    summary="Eye-tracking phase breakdown for an experiment",
+    description="Return per-trial AOI dwell-time grouped by handover phase (1=Coordination, 2=Grasp, 3=Transfer).",
+)
+async def experiment_eyetracking_phases(experiment_id: int, db=Depends(get_db)):
+    try:
+        result = analyze_experiment_eye_tracking_phases(db, experiment_id)
+        if not result:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No eye-tracking data found")
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.get(
+    "/experiment/{experiment_id}/eyetracking/transitions",
+    status_code=status.HTTP_200_OK,
+    summary="AOI transition matrix for an experiment",
+    description="Return per-trial AOI transition counts (ordered by fixation starttime).",
+)
+async def experiment_eyetracking_transitions(experiment_id: int, db=Depends(get_db)):
+    try:
+        result = analyze_experiment_eye_tracking_transitions(db, experiment_id)
+        if not result:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No eye-tracking data found")
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.get(
+    "/experiment/{experiment_id}/ppi",
+    status_code=status.HTTP_200_OK,
+    summary="Proactive Planning Index for an experiment",
+    description="PPI = environment dwell-time in phase 3 / total phase-3 duration × 100, split by giver/receiver.",
+)
+async def experiment_ppi(experiment_id: int, db=Depends(get_db)):
+    try:
+        result = analyze_experiment_ppi(db, experiment_id)
+        if not result:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No handover data found")
         return result
     except HTTPException:
         raise
