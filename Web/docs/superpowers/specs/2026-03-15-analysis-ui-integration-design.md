@@ -1,191 +1,200 @@
-# Design-Spec: Analysis UI Integration & Performance-Optimierung
+# Design-Spec: Analysis UI Integration — Session A
 
 **Datum:** 2026-03-15
 **Branch:** 20-web-interface-for-data-collection
 **Referenz:** `docs/superpowers/specs/2026-03-14-statistische-auswertung-design.md` (Spec v2)
-**Status:** Approved
+**Status:** Approved (v3 — nach Studiendesign-Review)
 
 ---
 
-## 1. Kontext & Ziel
+## 1. Studiendesign & Auswertungsebenen
 
-Die statistischen Analyse-Services (Backend) und viele Frontend-Komponenten sind bereits
-implementiert. Drei Probleme verhindern die nutzbare Integration:
+### 1.1 Struktur
 
-1. **`AnalysisPage` (`/analysis`) ist leer** — nur Platzhaltertext, kein Inhalt
-2. **`AnalysisDashboard`** (`pages/AnalysisDashboard.jsx`) ist gebaut aber nie geroutet —
-   verwaiste Komponente mit paralleler, inkonsistenter Implementierung
-3. **Ladezeiten** — `StudyAnalysisPage` und `ExperimentAnalysisPage` starten alle API-Calls
-   gleichzeitig beim Mount und blockieren die gesamte Seite bis alle fertig sind
+```
+Studie
+├── Experiment 1 (Teilnehmerpaar A)
+│   ├── Trial 1 = Bedingung X → ~25–50 Handover-Interaktionen
+│   ├── Trial 2 = Bedingung Y → ~25–50 Handover-Interaktionen
+│   └── Trial 3 = Bedingung Z → ~25–50 Handover-Interaktionen
+├── Experiment 2 (Teilnehmerpaar B) — gleiche Bedingungen
+└── Experiment N (Teilnehmerpaar N) — gleiche Bedingungen
+```
 
-Diese Session schließt die Integration-Lücke. Neue Chart-Kategorien (Spec 5.2–5.5),
-Report-Export (Spec 5.8.1) und Signifikanz-Highlighting (Spec 5.8.3) sind separater Scope.
+**Bedingungen (Trials) sind innerhalb einer Studie konstant.** Jedes Experiment-Paar
+durchläuft alle Bedingungen (within-subject, permutiert).
+
+### 1.2 Konsequenzen für Auswertungsebenen
+
+| Ebene | n | Geeignet für |
+|---|---|---|
+| **Experiment** (1 Paar) | ~25–50 Handovers/Bedingung — vom **selben Paar** | Deskriptive Analyse, ET-Auswertung, Fragebogen-Display |
+| **Studie** (N Paare) | n = Anzahl Experiment-Paare | Inferenzielle Tests (RM-ANOVA/Friedman), Effektgrößen, Correlationen, PCA |
+
+**Inferenzielle Tests auf Experiment-Ebene sind Pseudoreplikation** (die 25–50 Handovers
+kommen vom selben Paar und sind nicht unabhängig). Die echte statistische Aussagekraft liegt
+auf Studienebene wo jedes Paar einen Datenpunkt pro Bedingung liefert.
 
 ---
 
-## 2. Scope
+## 2. Session-Aufteilung
 
-### In Scope
-
-- `AnalysisPage` als Cross-Study-Übersicht (Spec 5.8.6)
-- `ExperimentAnalyseTabs` auf CSS-Visibility umstellen (Voraussetzung für Lazy Loading)
-- Lazy Tab Loading für `StudyAnalysisPage` und `ExperimentAnalysisPage`
-- Export-Tab in `StudyAnalysisPage` (CSV/XLSX, Spec 5.9)
+### Session A (dieser Spec)
+- Alle drei Analysis-Seiten erreichbar und funktional machen
+- ExperimentAnalysisPage: vollständig deskriptive Auswertung + Layout-Gerüst mit Platzhaltern
+- StudyAnalysisPage: inferenzielle Ergebnisse (die Backend bereits liefert) korrekt anzeigen
+- Lazy Tab Loading (Performance-Optimierung)
+- Neue Backend-Endpoints für Experiment-Ebene (ET-Phasen, Transitions, PPI)
+- Backend-Migration: Questionnaire-Service auf N-Bedingungen aktualisieren
 - Bereinigung verwaister Komponenten
 
-### Nicht in Scope (explizit verschoben)
-
-- **Händigkeit-Filter (Spec 5.7):** Backend-Endpunkte unterstützen `?handedness=` noch nicht
-  (kein Query-Parameter in den Route-Signaturen). Wird in separater Session implementiert,
-  sobald Backend angepasst ist.
-- Neue Chart-Komponenten (Spec 5.2–5.5: Boxplot, Violin, Heatmap, Sankey etc.)
-- Report-Generator (Spec 5.8.1)
-- Signifikanz-Highlighting in Tabellen (Spec 5.8.3)
-- Datenqualitäts-Indikator (Spec 5.8.4)
-- Chart-Export (PNG/SVG, Spec 5.9 Visualisierungs-Export)
+### Session B (separater Spec)
+- Neue Chart-Komponenten: PosthocHeatmap, PhaseAOIHeatmap, TransitionSankey,
+  SaccadeRateBar, PPIBar, AttrakDiffMatrix, AttrakDiffRadar, NASATLXBar (bedingungsbasiert),
+  SUSScoreBar (bedingungsbasiert), CorrelationMatrix, CorrelationScatter, PCABiplot
+- Diese werden in die in Session A vorbereiteten Platzhalter eingebaut
 
 ---
 
-## 3. Zu löschende Dateien (Bereinigung)
+## 3. Statistik-Implementierungsstand (Backend)
+
+### 3.1 Inferenzielle Tests — vollständig implementiert
+
+`inferential_service.py` → `run_inferential_analysis(conditions)`:
+- **k=2:** Shapiro-Wilk → gepaarter t-Test oder Wilcoxon
+- **k≥3, normal, n≥5:** RM-ANOVA (pingouin) + Bonferroni Post-hoc
+- **k≥3, nicht-normal:** Friedman + Dunn-Test (Bonferroni-Korrektur)
+- Sphericity: Mauchly-Test via pingouin, Greenhouse-Geisser-Korrektur automatisch
+
+**Zu Tukey vs. Bonferroni:** Tukey war initial diskutiert; Pingouin unterstützt kein Tukey
+für Repeated-Measures-Designs. Bonferroni ist für abhängige Stichproben methodisch korrekt
+und konservativ. Akzeptiert.
+
+### 3.2 Effektgrößen — vollständig implementiert
+
+| Effektgröße | Berechnung | Wann |
+|---|---|---|
+| Cohen's d | `stats_utils.cohens_d()` | k=2 (parametrisch), Post-hoc |
+| Cliff's Delta | `effect_size_service.cliffs_delta()` | k=2 (non-param.), Post-hoc |
+| η²p (eta²p) | pingouin `ng2`-Spalte | RM-ANOVA Haupteffekt |
+| ω²p (omega²p) | `effect_size_service.omega2p_from_anova()` | RM-ANOVA Haupteffekt |
+| Kendall's W | `effect_size_service.kendalls_w_from_friedman()` | Friedman Haupteffekt |
+
+Interpretationen (vernachlässigbar/klein/mittel/groß) für alle Maße vorhanden.
+
+### 3.3 Wo diese Ergebnisse bereits in API-Responses enthalten sind
+
+- `GET /analysis/study/{id}/performance` → enthält `inferential`-Block mit allen Tests und Effektgrößen ✅
+- `GET /analysis/study/{id}/eyetracking` → enthält `analyze_aoi_inferential`-Ergebnisse ✅
+- `GET /analysis/study/{id}/questionnaires` → enthält nur alten `run_paired_test` (k=2 only) ⚠️ → Migration nötig
+
+### 3.4 Backend-Migration: Questionnaire-Service (Session A)
+
+`questionnaire_analysis_service.py` nutzt noch `run_paired_test` (nur k=2).
+Muss auf `run_inferential_analysis` (N-Bedingungen) migriert werden.
+
+Änderung in `analyze_study_questionnaires`:
+```python
+# ALT:
+inferential[item_name] = run_paired_test(...)
+
+# NEU:
+from Backend.services.data_analysis.inferential_service import run_inferential_analysis
+# cond_dict = { condition_name: [experiment_means] }
+inferential[item_name] = run_inferential_analysis(cond_dict)
+```
+
+---
+
+## 4. Zu löschende Dateien (Bereinigung)
 
 | Datei | Grund |
 |---|---|
-| `src/features/Analysis/pages/AnalysisDashboard.jsx` | Verwaist, nie geroutet; parallele Implementierung zu `StudyAnalysisPage` |
-| `src/features/Analysis/components/PerformanceChart.jsx` | Ausschließlich von `AnalysisDashboard` genutzt; self-fetching, inkonsistent mit Hook-Architektur |
-| `src/features/Analysis/components/EyeTrackingChart.jsx` | Ausschließlich von `AnalysisDashboard` genutzt; self-fetching, inkonsistent mit Hook-Architektur |
+| `src/features/Analysis/pages/AnalysisDashboard.jsx` | Verwaist, nie geroutet |
+| `src/features/Analysis/components/PerformanceChart.jsx` | Nur von AnalysisDashboard genutzt (self-fetching) |
+| `src/features/Analysis/components/EyeTrackingChart.jsx` | Nur von AnalysisDashboard genutzt (self-fetching) |
+
+`components/experiment/PerformanceCharts.jsx` und `EyeTrackingCharts.jsx` (Plural) bleiben
+erhalten — andere Namen, anderer Kontext.
 
 ---
 
-## 4. AnalysisPage (`/analysis`) — Cross-Study-Übersicht
+## 5. AnalysisPage (`/analysis`) — Cross-Study-Übersicht
 
-### 4.1 Zweck
+### 5.1 Zweck
 
-Dedizierte Seite für studienbübergreifende deskriptive Vergleiche (Spec 5.8.6).
-Kein inferenzieller Test — verschiedene Teilnehmer je Studie.
+Deskriptiver Studien-übergreifender Vergleich. Kein inferenzieller Test
+(verschiedene Teilnehmer je Studie).
 
-### 4.2 Aufbau
+### 5.2 Layout
 
 ```
 AnalysisPage
 ├── Breadcrumbs: Studienübersicht → Studien-Meta-Analyse
-├── Studienauswahl-Panel
-│   ├── Ladezustand (LoadingSpinner) während useStudies lädt
-│   ├── Liste aller nicht-Entwurf-Studien (status !== "Entwurf")
-│   ├── Multi-Select-Checkboxen
+├── Studienauswahl-Panel (bg-gray-800)
+│   ├── LoadingSpinner während useStudies lädt
+│   ├── Checkboxen: alle Studien mit status !== "Entwurf"
 │   └── Button "Studien vergleichen" (disabled wenn < 2 gewählt)
-├── Baseline-Eingabe (Number Input, default: 300ms, Label: "Realwelt-Baseline (ms)")
-└── Ergebnis-Sektion (nur wenn ≥2 Studien gewählt und Vergleich gestartet)
-    ├── Hinweis-Banner: "Deskriptiver Vergleich — kein inferenzieller Test (verschiedene Stichproben)"
-    ├── Ladezustand während Fetch läuft (LoadingSpinner)
-    ├── Fehlerfall (ErrorMessage)
-    └── CrossStudyChart (vorhanden: components/CrossStudyChart.jsx)
+├── Baseline-Eingabe (Number Input, default: 300ms)
+└── Ergebnis-Sektion (erst nach Klick auf "Vergleichen")
+    ├── Banner: "Deskriptiver Vergleich — kein inferenzieller Test"
+    ├── LoadingSpinner / ErrorMessage
+    └── CrossStudyChart (data={{ conditions, baseline_ms }} metric="Transfer Duration (ms)")
 ```
 
-### 4.3 Datenfluss
+Status-Strings: `"Entwurf"` | `"Aktiv"` | `"Abgeschlossen"`. Filter: `!== "Entwurf"`.
 
-`fetchStudyPerformance` liefert aggregierte Statistiken (`by_condition[name].total_mean` etc.),
-keine Raw-Arrays. `postCrossStudy` erwartet Raw-Arrays. Daher wird `postCrossStudy` **nicht**
-für die AnalysisPage genutzt — stattdessen direkter Vergleich auf Basis der aggregierten Daten.
+### 5.3 Datenfluss
+
+`postCrossStudy` wird **nicht** genutzt (erwartet Raw-Arrays). Direktaggregation:
 
 ```
-useStudies() → Studienliste (nur status !== "Entwurf" anzeigen)
-  ↓ User wählt ≥2 Studien + klickt "Vergleichen"
-fetchStudyPerformance(studyId) für jede gewählte Studie (parallel via Promise.all)
-  ↓ Daten für CrossStudyChart aufbereiten:
-    conditions = { [studyName]: { mean: total_mean, ci_lower, ci_upper, n } }
-    Quelle: performance.by_condition → über alle Bedingungen mitteln oder beste nehmen
-    (Vereinfachung: Gesamtmittelwert über alle Bedingungen pro Studie)
+useStudies() → Studienliste gefiltert
+  ↓ User wählt ≥2 Studien + klickt
+Promise.all(studyIds.map(fetchStudyPerformance))
+  ↓ Aggregation pro Studie:
+    mean   = Mittelwert der total_mean-Werte aller Bedingungen
+    ci_low = mean − 1.96 * (gewichtete Std / √n_gesamt)
+    ci_up  = mean + 1.96 * (gewichtete Std / √n_gesamt)
+    n      = Summe aller n-Werte der Bedingungen
+    label  = study.config.name
   ↓
-<CrossStudyChart
-  data={{ conditions, baseline_ms }}
-  metric="Transfer Duration (ms)"
-/>
+CrossStudyChart({ data: { conditions, baseline_ms }, metric })
 ```
 
-**Wichtig:** `CrossStudyChart` erwartet einen `data`-Prop (kein Spread), der `conditions`
-und `baseline_ms` enthält. Die JSX-Schreibweise muss exakt so sein.
+`CrossStudyChart` erwartet `data`-Prop: `{ conditions: { [label]: {mean, ci_lower, ci_upper, n} }, baseline_ms }`.
 
-**Feldmapping `fetchStudyPerformance` → `CrossStudyChart`:**
-
-`fetchStudyPerformance` Response-Shape (aus `analyze_study_performance`):
-```json
-{
-  "performance": {
-    "by_condition": {
-      "Bedingung A": { "total_mean": 850.3, "total_std": 120.1, "n": 18, ... },
-      "Bedingung B": { "total_mean": 720.1, "total_std": 98.4,  "n": 17, ... }
-    }
-  },
-  "n_experiments": 20
-}
-```
-
-`CrossStudyChart` erwartet:
-```json
-{
-  "conditions": {
-    "Studie HS1": { "mean": 785.2, "ci_lower": 750.0, "ci_upper": 820.4, "n": 35 },
-    "Studie HS2": { "mean": 650.0, "ci_lower": 610.0, "ci_upper": 690.0, "n": 30 }
-  },
-  "baseline_ms": 300
-}
-```
-
-Aggregations-Logik im Frontend (pro Studie): Mittelwert der `total_mean`-Werte aller
-Bedingungen; CI approximiert als `mean ± 1.96 * (gewichtete Std / sqrt(n_gesamt))`;
-n = Summe der n-Werte aller Bedingungen; Label = Studienname aus `study.config.name`.
-
-Fehlerfall: wenn eine Studie keine Performance-Daten hat (leere `by_condition`),
-wird sie in der Ergebnis-Sektion mit Hinweis "Keine Daten" markiert, aber andere
-Studien werden trotzdem angezeigt (kein vollständiger Abbruch).
-
-### 4.4 Styling
-
-Konsistent mit restlicher App: Tailwind CSS, `bg-gray-900 min-h-screen text-gray-100`.
-Studienauswahl-Panel: `bg-gray-800 rounded-xl border border-gray-700`.
-Hinweis-Banner: `bg-yellow-900 border-yellow-600 text-yellow-200` (nicht blockierend).
-
-### 4.5 Status-Strings
-
-Studienstatus-Werte aus dem Backend (aus `StudyTile.jsx` verifiziert):
-`"Entwurf"`, `"Aktiv"`, `"Abgeschlossen"`. Filter: `status !== "Entwurf"`
-schließt sowohl aktive als auch abgeschlossene Studien ein.
+Studien ohne Performance-Daten: mit Hinweis markiert, andere weiter anzeigen.
 
 ---
 
-## 5. Lazy Tab Loading — Mechanismus
+## 6. ExperimentAnalyseTabs — Umbau auf CSS-Visibility
 
-### 5.1 Prinzip
+**Problem:** Aktuelle Implementierung gibt inaktive Tabs als `null` zurück → Unmounting
+zerstört Hook-State, macht Lazy-Loading-Mechanismus nutzlos.
 
-Daten werden nur geladen wenn der zugehörige Tab erstmals aktiviert wird.
-Bereits geladene Daten bleiben gecacht (kein Re-fetch bei Tab-Wechsel).
-
-### 5.2 ExperimentAnalyseTabs — Umbau auf CSS-Visibility
-
-**Problem:** Das bestehende `ExperimentAnalyseTabs` gibt inaktive Tabs als `null` zurück
-(vollständiges Unmounting). Das zerstört bei jedem Tab-Wechsel den Hook-State der
-inaktiven Tabs, was die `enabled`-Flag-Strategie nutzlos macht.
-
-**Lösung:** `ExperimentAnalyseTabs` und `TabPanel` werden umgebaut:
-- Inaktive `TabPanel`-Instanzen rendern weiterhin, werden aber per CSS versteckt
-- `TabPanel` bekommt `isActive`-Prop und rendert mit `hidden`-Klasse wenn inaktiv
+**Lösung:**
 
 ```jsx
-// ExperimentAnalyseTabs.jsx — geändert
+// components/experiment/ExperimentAnalyseTabs.jsx
 export function ExperimentAnalyseTabs({ tabs, defaultKey, onTabChange, children }) {
     const [activeKey, setActiveKey] = useState(defaultKey ?? tabs[0].key);
 
     function handleClick(key) {
         setActiveKey(key);
-        onTabChange?.(key);   // optional callback für Parent
+        onTabChange?.(key);
     }
 
     return (
         <div>
-            <div className="flex gap-2 mb-6">
+            <div className="flex gap-2 mb-6 flex-wrap">
                 {tabs.map(tab => (
                     <button key={tab.key} onClick={() => handleClick(tab.key)}
-                        className={`px-4 py-2 rounded ${activeKey === tab.key ? "bg-blue-700 text-white" : "bg-gray-700 text-gray-300"}`}>
+                        className={`px-4 py-2 rounded transition-colors ${
+                            activeKey === tab.key
+                                ? "bg-blue-700 text-white"
+                                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                        }`}>
                         {tab.label}
                     </button>
                 ))}
@@ -197,37 +206,37 @@ export function ExperimentAnalyseTabs({ tabs, defaultKey, onTabChange, children 
     );
 }
 
-export function TabPanel({ children, isActive }) {
+export function TabPanel({ tabKey, children, isActive }) {
     return <div className={isActive ? '' : 'hidden'}>{children}</div>;
 }
 ```
 
-`onTabChange`-Callback ermöglicht dem Parent (`StudyAnalysisPage`, `ExperimentAnalysisPage`)
-den `loadedTabs`-State zu aktualisieren.
+`isActive` wird von `TabPanel` konsumiert (nie auf DOM-Element weitergereicht → kein React-Warning).
 
-### 5.3 Implementierung im Parent-Component
+---
+
+## 7. Lazy Tab Loading — Mechanismus
+
+### 7.1 loadedTabs-Pattern
 
 ```jsx
-const [loadedTabs, setLoadedTabs] = useState(new Set(['performance']));
+const [loadedTabs, setLoadedTabs] = useState(new Set(['<default-tab-key>']));
 
 function handleTabChange(tabKey) {
     setLoadedTabs(prev => new Set([...prev, tabKey]));
 }
 ```
 
-### 5.4 Hooks mit `enabled`-Flag
+### 7.2 Hooks mit `enabled`-Flag
 
-Alle Study-Hooks (`useStudyPerformanceMetrics`, `useStudyUxMetrics`,
-`useStudyEyeTrackingMetrics`) und Experiment-Hooks (`useUxMetrics`, `usePerformanceMetrics`,
-`useEyeTrackingMetrics`) erhalten ein optionales `enabled`-Parameter.
-
-**Wichtig:** Initialer `loading`-State muss `false` sein wenn `enabled=false`,
-damit inaktive Tabs keinen Spinner anzeigen bevor sie je aktiviert wurden.
+Alle 6 betroffenen Hooks erhalten `enabled = true` als zweiten Parameter.
+**Initialer `loading`-State = `false`** (nicht `true`), damit nie-aktivierte Tabs
+keinen Spinner zeigen.
 
 ```js
 export function useStudyPerformanceMetrics(studyId, enabled = true) {
     const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(false);   // false, nicht true
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -244,211 +253,299 @@ export function useStudyPerformanceMetrics(studyId, enabled = true) {
 }
 ```
 
-Hooks werden **nur gefetcht wenn `enabled === true`**. Der Effekt re-triggert automatisch
-wenn `enabled` von `false` auf `true` wechselt.
-
 ---
 
-## 6. StudyAnalysisPage — Refactoring
+## 8. StudyAnalysisPage — Refactoring
 
-### 6.0 Entfernung der kombinierten Lade-Guards
-
-Die aktuelle `StudyAnalysisPage.jsx` enthält folgende Blöcke die **entfernt** werden:
+### 8.1 Kombinierte Lade-Guards entfernen
 
 ```js
-// ENTFERNEN:
+// ENTFERNEN (Zeilen 34–82 der aktuellen Datei):
 const loading = perfLoading || uxLoading || etLoading;
 const error = perfError || uxError || etError;
-
-if (loading) return ( <div>...</div> );
-if (error)   return ( <div>...</div> );
+if (loading) return (...);
+if (error)   return (...);
 ```
 
-Die Seiten-Shell (`Breadcrumbs`, `<h1>`, `ExperimentAnalyseTabs`) rendert immer.
-Jeder Tab-Inhalt zeigt seinen eigenen `<LoadingSpinner>` oder `<ErrorMessage>`.
+Seiten-Shell rendert immer. Jeder Tab zeigt eigenen `<LoadingSpinner>` / `<ErrorMessage>`.
 
-### 6.1 Tabs (nach Refactoring)
+### 8.2 Tabs
 
-| Tab-Key | Label | Datenquelle | Laden |
+| Tab-Key | Label | Daten | Laden |
 |---|---|---|---|
 | `performance` | Performance | `useStudyPerformanceMetrics` | sofort (default) |
 | `questionnaires` | Fragebögen | `useStudyUxMetrics` | lazy |
 | `eyetracking` | Eye-Tracking | `useStudyEyeTrackingMetrics` | lazy |
-| `export` | Export | kein API-Call | sofort, kein Hook |
+| `export` | Export | kein Hook | sofort |
 
-### 6.2 Export-Tab
+### 8.3 Inferenzielle Ergebnisse anzeigen (NEU in Session A)
 
-Inhalt: CSV- und XLSX-Download-Buttons.
-Nutzt `downloadStudyCsv(studyId)` und `downloadStudyXlsx(studyId)` aus
-`inferentialAnalysisService.js` (vorhanden).
-Download-Fehler werden als inline `ErrorMessage`-Komponente angezeigt (kein `alert()`).
-Download-Zustand: `downloading`-State, Buttons disabled während Download läuft.
-Kein `enabled`-Flag nötig — der Export-Tab hat keinen Hook.
+Das Backend liefert in den Performance- und Eye-Tracking-Responses bereits vollständige
+inferenzielle Ergebnisse (Tests, Effektgrößen, Post-hoc-Paare). Diese müssen im Frontend
+sichtbar gemacht werden.
 
-### 6.3 Ladelogik und Tab-Verkabelung
+**Performance-Tab:** Nach den deskriptiven Charts (bereits vorhanden) wird ein
+**Inferenz-Panel** angezeigt:
+- Verwendeter Test (`test_used`): Anzeige als Badge (z.B. "RM-ANOVA + Bonferroni Post-hoc")
+- Voraussetzungen: Shapiro-Wilk p-Werte pro Bedingung, Sphärizität (einklappbar)
+- Haupteffekt: F/χ²-Statistik, p-Wert, Signifikanz-Marker, η²p / ω²p / Kendall's W
+- Post-hoc-Paare: Tabelle mit Bedingungspaar | p_adjusted | Signifikanz | Cohen's d / Cliff's Delta + Interpretation
+- Bestehende `InferentialResultBadge`-Komponente (`components/shared/`) für Badges nutzen
+- `DescriptiveOnlyWarning` wenn n < 3 (kein Test möglich)
 
-Kein gemeinsamer kombinierter Loading-State mehr. Jeder Tab zeigt seinen eigenen
-`LoadingSpinner` (vorhanden: `components/shared/LoadingSpinner.jsx`) und
-`ErrorMessage` (vorhanden: `components/shared/ErrorMessage.jsx`).
+**Eye-Tracking-Tab:** Gleiches Inferenz-Panel für AOI-Dwell-Time-Ergebnisse.
 
-`onTabChange` muss explizit an `ExperimentAnalyseTabs` weitergegeben werden:
+**Fragebögen-Tab:** Nach Backend-Migration (Abschnitt 3.4) ebenfalls Inferenz-Panel.
+
+**PosthocHeatmap** (vollständige Visualisierung) kommt in Session B. In Session A:
+Post-hoc als kompakte Tabelle in der UI.
+
+### 8.4 Export-Tab
 
 ```jsx
-// StudyAnalysisPage.jsx
-const [loadedTabs, setLoadedTabs] = useState(new Set(['performance']));
+// Download-Buttons mit inline ErrorMessage (kein alert())
+const [downloading, setDownloading] = useState(false);
+const [downloadError, setDownloadError] = useState(null);
+// downloadStudyCsv(studyId) und downloadStudyXlsx(studyId) aus inferentialAnalysisService
+```
 
-function handleTabChange(tabKey) {
-    setLoadedTabs(prev => new Set([...prev, tabKey]));
-}
+### 8.5 Tab-Verkabelung
 
-// Im JSX:
+```jsx
 <ExperimentAnalyseTabs tabs={TABS} defaultKey="performance" onTabChange={handleTabChange}>
+    <TabPanel tabKey="performance">
+        {perfLoading && <LoadingSpinner />}
+        {perfError && <ErrorMessage error={perfError} />}
+        {studyPerformance && <StudyPerformanceCharts chartData={studyPerformance} />}
+        {studyPerformance && <InferenzPanel data={studyPerformance.inferential} />}
+    </TabPanel>
     ...
 </ExperimentAnalyseTabs>
 ```
 
-Hooks-Aufruf mit `enabled`:
+Hooks:
 ```js
-const { data: studyPerformance, loading: perfLoading, error: perfError } =
-    useStudyPerformanceMetrics(studyId, true);                           // sofort
-const { data: studyQuestionnaires, loading: uxLoading, error: uxError } =
-    useStudyUxMetrics(studyId, loadedTabs.has('questionnaires'));        // lazy
-const { data: studyEyeTracking, loading: etLoading, error: etError } =
-    useStudyEyeTrackingMetrics(studyId, loadedTabs.has('eyetracking')); // lazy
+const { data: studyPerformance } = useStudyPerformanceMetrics(studyId, true);
+const { data: studyQuestionnaires } = useStudyUxMetrics(studyId, loadedTabs.has('questionnaires'));
+const { data: studyEyeTracking } = useStudyEyeTrackingMetrics(studyId, loadedTabs.has('eyetracking'));
 ```
 
 ---
 
-## 7. ExperimentAnalysisPage — Refactoring
+## 9. ExperimentAnalysisPage — Vollständige deskriptive Neustrukturierung
 
-### 7.1 Tabs (nach Refactoring)
+### 9.1 Analyseprinzip
+
+**Nur deskriptiv.** Die ~25–50 Handovers pro Bedingung kommen vom selben Paar
+(Pseudoreplikation). Inferenzielle Tests gehören auf Studienebene. Ein Hinweis-Banner
+verweist bei Bedarf auf die Studien-Analyse.
+
+### 9.2 Neue Tab-Struktur
 
 | Tab-Key | Label | Datenquellen | Laden |
 |---|---|---|---|
-| `details` | Experiment Info | `useExperiment` + `useParticipantsForExperiment` | sofort (default) |
-| `ux` | UX | `useUxMetrics` | lazy |
+| `details` | Experiment Info | `useExperiment` + `useParticipantsForExperiment` | sofort |
 | `performance` | Performance | `usePerformanceMetrics` | lazy |
-| `eyetracking` | Eye-Tracking | `useEyeTrackingMetrics` | lazy |
-| `compare` | Vergleiche | nutzt UX + Performance Daten (bereits im State) | lazy, kein extra Fetch |
+| `eyetracking` | Eye-Tracking | `useEyeTrackingMetrics` + neue ET-Hooks | lazy |
+| `ux` | Fragebögen / UX | `useUxMetrics` | lazy |
+| `compare` | Vergleich | gecachte perf + ux Daten | lazy, triggert perf+ux |
 
-### 7.2 Details-Tab
+### 9.3 Details-Tab (unverändert)
 
-`useExperiment` und `useParticipantsForExperiment` sind schnelle Calls (Metadaten).
-Laden sofort — bilden die sinnvolle Default-Ansicht.
+Experiment-Metadaten via `ExperimentDetails`. `useExperiment` + `useParticipantsForExperiment`
+laden sofort (schnelle Calls).
 
-### 7.3 Vergleich-Tab
+### 9.4 Performance-Tab
 
-`ComparisonCharts` bekommt bereits im Parent gecachte `uxMetrics` und `performanceMetrics`.
-Kein eigener Fetch nötig. Tab ist aktiv sobald beide Datensätze geladen wurden.
-Wenn noch nicht geladen: Hinweis "Bitte zuerst die UX- und Performance-Tabs öffnen"
-oder automatisches Triggern beider Fetches beim ersten Aufrufen des Vergleich-Tabs.
+Zeigt Handover-Daten deskriptiv **nach Bedingung** (Trial-Bedingung, nicht Trial-Nummer):
 
-**Entscheidung:** Beim Aktivieren des Vergleich-Tabs werden UX und Performance automatisch
-mitgetriggert (in `loadedTabs` hinzugefügt), damit kein manueller Umweg nötig ist.
+**Vorhandene Komponenten (direkt einbindbar):**
+- `PerformanceCharts.jsx` → Boxplot + Stacked-Bar + Statistiktabelle (vorhanden, bedingungsbasiert)
 
-### 7.4 Gemeinsamer Ladeindikator entfällt und Tab-Verkabelung
-
-Der bisherige kombinierte `if (loading || ...) return <div>Lädt...</div>` (Zeile 57 in
-`ExperimentAnalysisPage.jsx`) wird entfernt. Die Seiten-Shell rendert immer.
-
-`onTabChange` und `handleTabChange` müssen explizit verdrahtet werden:
-
+**Platzhalter für Session B:**
 ```jsx
-// ExperimentAnalysisPage.jsx
-const [loadedTabs, setLoadedTabs] = useState(new Set(['details']));
-
-function handleTabChange(tabKey) {
-    if (tabKey === 'compare') {
-        setLoadedTabs(prev => new Set([...prev, tabKey, 'ux', 'performance']));
-    } else {
-        setLoadedTabs(prev => new Set([...prev, tabKey]));
-    }
-}
-
-// Im JSX:
-<ExperimentAnalyseTabs tabs={TABS} defaultKey="details" onTabChange={handleTabChange}>
-    ...
-</ExperimentAnalyseTabs>
+{/* SESSION B: PerformanceViolin */}
+<PlaceholderChart label="Violinplot pro Bedingung (kommt in Session B)" />
+{/* SESSION B: ErrorRateBar */}
+<PlaceholderChart label="Fehlerrate pro Bedingung (kommt in Session B)" />
 ```
 
-Hooks-Aufruf mit `enabled`:
+**Deskriptiver Hinweis:**
+```jsx
+<DescriptiveOnlyWarning
+  message="Deskriptive Analyse eines Messdurchgangs. Inferenzielle Auswertung über alle Experimente → Studien-Analyse."
+/>
+```
+
+### 9.5 Eye-Tracking-Tab
+
+Drei neue Backend-Endpoints werden in Session A hinzugefügt (siehe Abschnitt 10).
+Entsprechend drei neue Frontend-Hooks.
+
+**Vorhandene Komponenten (direkt einbindbar):**
+- `EyeTrackingCharts.jsx` → AOI Stacked Bar + Tabelle (vorhanden)
+
+**Platzhalter für Session B:**
+```jsx
+{/* SESSION B: PhaseAOIHeatmap */}
+<PlaceholderChart label="AOI × Phasen-Heatmap (kommt in Session B)" />
+{/* SESSION B: TransitionSankey */}
+<PlaceholderChart label="Blickpfad-Sankey (kommt in Session B)" />
+{/* SESSION B: SaccadeRateBar */}
+<PlaceholderChart label="Sakkaden-Rate pro Bedingung (kommt in Session B)" />
+{/* SESSION B: GazeTimeline */}
+<PlaceholderChart label="Gaze-Timeline (kommt in Session B)" />
+{/* SESSION B: PPIBar */}
+<PlaceholderChart label="Proaktiver Planungsindex (kommt in Session B)" />
+```
+
+**Was ist PPI:** Proaktiver Planungsindex = Anteil der Blickzeit des Gebers auf den
+Aufgabenbereich (`environment`) in Phase 3 (Transfer). Hoher PPI (>30%) bedeutet: der
+Geber schaut bereits zur nächsten Aufgabe, die Übergabe läuft automatisch-haptisch —
+analog zum Realwelt-Befund (300ms Baseline). Getrennt für Geber und Empfänger berechnet.
+
+### 9.6 Fragebögen/UX-Tab
+
+**Vorhandene Komponenten:**
+- `QuestionnaireCharts.jsx` → Items pro Bedingung (vorhanden)
+
+**Platzhalter für Session B:**
+```jsx
+{/* SESSION B: NASATLXBar (bedingungsbasiert, 6 Subskalen) */}
+<PlaceholderChart label="NASA-TLX Subskalen pro Bedingung (kommt in Session B)" />
+{/* SESSION B: SUSScoreBar */}
+<PlaceholderChart label="SUS-Score pro Bedingung (kommt in Session B)" />
+{/* SESSION B: AttrakDiffMatrix (Portfolio) */}
+<PlaceholderChart label="AttrakDiff2 Portfolio-Matrix (kommt in Session B)" />
+{/* SESSION B: AttrakDiffRadar */}
+<PlaceholderChart label="AttrakDiff2 Subskalen-Radar (kommt in Session B)" />
+```
+
+### 9.7 Vergleich-Tab
+
+Aktivierung triggert automatisch Performance + UX laden:
 ```js
-const { data: uxMetrics, loading: uxLoading }           = useUxMetrics(experimentId, loadedTabs.has('ux'));
-const { data: performanceMetrics, loading: perfLoading } = usePerformanceMetrics(experimentId, loadedTabs.has('performance'));
-const { data: eyeTrackingData, loading: etLoading }      = useEyeTrackingMetrics(experimentId, loadedTabs.has('eyetracking'));
+if (tabKey === 'compare') {
+    setLoadedTabs(prev => new Set([...prev, tabKey, 'performance', 'ux']));
+}
 ```
 
-`useHandovers` und `computeMetricsPerTrial` werden vollständig entfernt (`_metricsPerTrial`
-war durchgehend unused).
+Vorhandene `ComparisonCharts.jsx` bleibt. Platzhalter für Session B:
+```jsx
+{/* SESSION B: CorrelationMatrix */}
+<PlaceholderChart label="Korrelationsmatrix (kommt in Session B)" />
+```
+
+### 9.8 PlaceholderChart-Komponente (neu, klein)
+
+Minimale Komponente die einen beschrifteten Rahmen mit Hinweis rendert:
+```jsx
+// components/shared/PlaceholderChart.jsx
+export default function PlaceholderChart({ label }) {
+    return (
+        <div className="border border-dashed border-gray-600 rounded-xl p-6 text-center text-gray-500 my-4">
+            <div className="text-sm">{label}</div>
+        </div>
+    );
+}
+```
+
+### 9.9 Entfernung des kombinierten Ladeindikators
+
+Zeile 57 in `ExperimentAnalysisPage.jsx` (`if (loading || ...) return`) wird entfernt.
+`useHandovers` und `computeMetricsPerTrial` werden vollständig entfernt
+(`_metricsPerTrial` war unused).
 
 ---
 
-## 8. Hook-Änderungen (Zusammenfassung)
+## 10. Neue Backend-Endpoints (Experiment-Ebene)
 
-Folgende Hooks erhalten ein `enabled`-Parameter (default `true` für Rückwärtskompatibilität).
-Initialer `loading`-State: `false` (war bisher `true`).
+Diese Endpoints existieren noch nicht und werden in Session A hinzugefügt:
 
-**Study-Hooks (nur `enabled`, kein `handedness` — Backend unterstützt Parameter noch nicht):**
-- `useStudyPerformanceMetrics(studyId, enabled = true)`
-- `useStudyUxMetrics(studyId, enabled = true)`
-- `useStudyEyeTrackingMetrics(studyId, enabled = true)`
+```
+GET /api/analysis/experiment/{experiment_id}/eyetracking/phases
+GET /api/analysis/experiment/{experiment_id}/eyetracking/transitions
+GET /api/analysis/experiment/{experiment_id}/ppi
+```
 
-**Experiment-Hooks:**
-- `useUxMetrics(experimentId, enabled = true)`
-- `usePerformanceMetrics(experimentId, enabled = true)`
-- `useEyeTrackingMetrics(experimentId, enabled = true)`
+Die Berechnungslogik existiert bereits in `eye_tracking_analysis_service.py`
+(phasenweise Zuordnung, Transition-Matrix, PPI-Berechnung). Es müssen nur die
+Route-Handler in `Backend/routes/analysis.py` und die Service-Aufrufe ergänzt werden.
 
-`useExperiment` und `useParticipantsForExperiment` bleiben unverändert (sofortiges Laden erwünscht).
-
-`useHandovers` wird aus `ExperimentAnalysisPage` entfernt (wird dort nur für `computeMetricsPerTrial`
-genutzt — `_metricsPerTrial` ist durchgehend unused/prefixed). Der Hook selbst bleibt erhalten
-da er möglicherweise von anderen Stellen genutzt wird.
+Entsprechende Frontend-Hooks:
+```
+hooks/useEyeTrackingPhases.js      (experimentId, enabled)
+hooks/useEyeTrackingTransitions.js (experimentId, enabled)
+hooks/usePPI.js                    (experimentId, enabled)
+```
 
 ---
 
-## 9. Navigations-Korrektheit (Prüfung)
+## 11. Hook-Änderungen (vollständige Liste)
 
-Folgende Navigationspfade existieren bereits und bleiben unverändert:
+### Bestehende Hooks — `enabled`-Flag hinzufügen, `loading` init `false`
 
-| Von | Button/Link | Ziel |
+| Hook | Änderung |
+|---|---|
+| `useStudyPerformanceMetrics.js` | `enabled = true`, `loading` init `false` |
+| `useStudyUxMetrics.js` | `enabled = true`, `loading` init `false` |
+| `useStudyEyeTrackingMetrics.js` | `enabled = true`, `loading` init `false` |
+| `useUxMetrics.js` | `enabled = true`, `loading` init `false` |
+| `usePerformanceMetrics.js` | `enabled = true`, `loading` init `false` |
+| `useEyeTrackingMetrics.js` | `enabled = true`, `loading` init `false` |
+
+### Neue Hooks (Session A)
+
+| Hook | Endpoint | Wo genutzt |
+|---|---|---|
+| `useEyeTrackingPhases.js` | `/experiment/{id}/eyetracking/phases` | ExperimentAnalysisPage ET-Tab |
+| `useEyeTrackingTransitions.js` | `/experiment/{id}/eyetracking/transitions` | ExperimentAnalysisPage ET-Tab |
+| `usePPI.js` | `/experiment/{id}/ppi` | ExperimentAnalysisPage ET-Tab |
+
+Unverändert: `useExperiment`, `useParticipantsForExperiment`, `useHandovers`.
+
+---
+
+## 12. Navigations-Korrektheit
+
+Alle Routen und Navigations-Buttons existieren bereits. Keine Routing-Änderungen.
+
+| Von | Button | Ziel |
 |---|---|---|
 | `StudyOverview` | "Statistiken" | `/analysis` ✓ |
 | `StudyTile` | "Analyse" | `/study/:id/analysis` ✓ |
 | `ExperimentOverview` | "Auswertung" | `/study/:id/analysis` ✓ |
 | `ExperimentTile` | "Daten-Übersicht ansehen" | `/study/:id/experiment/:id/analysis` ✓ |
 
-Alle Routen sind in `AppRouter.jsx` registriert. Keine Routing-Änderungen nötig.
-
 ---
 
-## 10. Dateistruktur (nach Refactoring)
+## 13. Dateistruktur nach Session A
 
 ```
+Backend/
+├── routes/analysis.py                          ÄNDERN (+3 neue ET-Endpoints)
+├── services/data_analysis/
+│   └── questionnaire_analysis_service.py       ÄNDERN (run_paired_test → run_inferential_analysis)
+
 src/features/Analysis/
 ├── AnalysisPage.jsx                            ÄNDERN (Cross-Study-Inhalt)
-├── StudyAnalysisPage.jsx                       ÄNDERN (lazy loading, export tab)
-├── ExperimentAnalysisPage.jsx                  ÄNDERN (lazy loading, useHandovers entfernen)
-├── pages/
-│   └── AnalysisDashboard.jsx                   LÖSCHEN
+├── StudyAnalysisPage.jsx                       ÄNDERN (lazy loading, Inferenz-Panel, export tab)
+├── ExperimentAnalysisPage.jsx                  ÄNDERN (neue Tab-Struktur, deskriptiv, Platzhalter)
+├── pages/AnalysisDashboard.jsx                 LÖSCHEN
 ├── components/
-│   ├── PerformanceChart.jsx                    LÖSCHEN (nur von AnalysisDashboard genutzt)
-│   ├── EyeTrackingChart.jsx                    LÖSCHEN (nur von AnalysisDashboard genutzt)
-│   ├── experiment/PerformanceCharts.jsx        UNVERÄNDERT (anderer Name, anderer Kontext)
-│   ├── experiment/EyeTrackingCharts.jsx        UNVERÄNDERT (anderer Name, anderer Kontext)
-│   ├── CrossStudyChart.jsx                     UNVERÄNDERT
-│   ├── shared/                                 UNVERÄNDERT
-│   ├── charts/                                 UNVERÄNDERT
-│   └── study/                                  UNVERÄNDERT
-├── components/experiment/
-│   └── ExperimentAnalyseTabs.jsx               ÄNDERN (CSS-Visibility statt null-return)
+│   ├── PerformanceChart.jsx                    LÖSCHEN
+│   ├── EyeTrackingChart.jsx                    LÖSCHEN
+│   ├── shared/PlaceholderChart.jsx             NEU
+│   └── experiment/ExperimentAnalyseTabs.jsx    ÄNDERN (CSS-Visibility)
 ├── hooks/
-│   ├── useStudyPerformanceMetrics.js           ÄNDERN (enabled, loading init false)
-│   ├── useStudyUxMetrics.js                    ÄNDERN (enabled, loading init false)
-│   ├── useStudyEyeTrackingMetrics.js           ÄNDERN (enabled, loading init false)
-│   ├── useUxMetrics.js                         ÄNDERN (enabled, loading init false)
-│   ├── usePerformanceMetrics.js                ÄNDERN (enabled, loading init false)
-│   ├── useEyeTrackingMetrics.js                ÄNDERN (enabled, loading init false)
-│   ├── useExperiment.js                        UNVERÄNDERT
-│   └── useHandovers.js                         UNVERÄNDERT
+│   ├── useStudyPerformanceMetrics.js           ÄNDERN
+│   ├── useStudyUxMetrics.js                    ÄNDERN
+│   ├── useStudyEyeTrackingMetrics.js           ÄNDERN
+│   ├── useUxMetrics.js                         ÄNDERN
+│   ├── usePerformanceMetrics.js                ÄNDERN
+│   ├── useEyeTrackingMetrics.js                ÄNDERN
+│   ├── useEyeTrackingPhases.js                 NEU
+│   ├── useEyeTrackingTransitions.js            NEU
+│   └── usePPI.js                               NEU
 └── services/                                   UNVERÄNDERT
 ```
