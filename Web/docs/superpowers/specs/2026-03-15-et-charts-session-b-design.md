@@ -449,7 +449,10 @@ import { useChartExport } from "@/features/Analysis/hooks/useChartExport.js";
 // in der Komponente:
 const chartRefs = useRef({});
 const buttonRefs = useRef({});
-const exportChart = useChartExport();  // gibt eine plain function zurück, kein Objekt
+// useChartExport() ist ein bereits existierender Hook (src/features/Analysis/hooks/useChartExport.js).
+// Er gibt eine plain function zurück (kein Objekt):
+//   exportChart(chartDivRef, buttonRef, filename) → löst PNG-Download aus
+const exportChart = useChartExport();
 
 const handleExport = (key, filename) => {
     exportChart(chartRefs.current[key], buttonRefs.current[key], filename);
