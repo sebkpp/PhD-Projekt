@@ -183,54 +183,79 @@ Wenn alle `error_rate === 0`: kleinen Hinweis-Text anzeigen:
 
 ### 5.6 Container-Styling
 
-Kein eigener Rahmen-Container — `PerformanceCharts.jsx` setzt `<h3>` und rendert `ErrorRateBar` direkt.
+Kein eigener Rahmen-Container — `PerformanceCharts.jsx` setzt `<h2>Fehlerrate pro Trial</h2>`
+und rendert `ErrorRateBar` direkt darunter.
+
+### 5.7 PNG-Export
+
+`ErrorRateBar` hat **keinen** PNG-Export-Button. Recharts unterstützt kein natives
+PNG-Export analog zu Plotly. Diese Einschränkung ist akzeptiert.
 
 ---
 
-## 6. Integration in PerformanceCharts.jsx
+## 6. Integration
 
-### 6.1 Datei
+### 6.1 Änderungen in PerformanceCharts.jsx
 
-`src/features/Analysis/components/experiment/PerformanceCharts.jsx`
+**Datei:** `src/features/Analysis/components/experiment/PerformanceCharts.jsx`
 
-### 6.2 Neue Imports
+`PerformanceCharts.jsx` nutzt bereits das folgende Ref-Dictionary-Pattern für PNG-Export:
 
+```jsx
+const chartRefs = useRef({});
+const buttonRefs = useRef({});
+const exportChart = useChartExport();  // gibt eine Funktion zurück, KEIN Objekt
+
+const handleExport = (key, filename) => {
+    exportChart(chartRefs.current[key], buttonRefs.current[key], filename);
+};
+```
+
+**Neue Imports:**
 ```jsx
 import ViolinPlotPlotly from "@/features/Analysis/components/charts/ViolinPlotPlotly.jsx";
 import ErrorRateBar from "@/features/Analysis/components/experiment/ErrorRateBar.jsx";
 ```
 
-`PlaceholderChart`-Import kann entfernt werden (wenn keine anderen Platzhalter mehr im File).
-
-### 6.3 Ersetzung der PlaceholderCharts
+**ViolinPlotPlotly** wird nach dem bestehenden `<BoxplotPlotly>` eingefügt, mit
+Callback-Refs in die bestehenden `chartRefs`/`buttonRefs` Dictionaries:
 
 ```jsx
-// ALT:
-<PlaceholderChart label="Violinplot pro Bedingung (kommt in Session B)" />
-<PlaceholderChart label="Fehlerrate pro Bedingung (kommt in Session B)" />
-
-// NEU:
 <ViolinPlotPlotly
     boxplotData={boxplotData}
-    chartRef={violinRef}
-    buttonRef={violinBtnRef}
-    onExport={() => exportChart(violinRef, violinBtnRef, "violinplot")}
+    chartRef={el => chartRefs.current["violin"] = el}
+    buttonRef={el => buttonRefs.current["violin"] = el}
+    onExport={() => handleExport("violin", "violinplot.png")}
 />
-<h3 className="mt-6 mb-2 text-base font-medium">Fehlerrate pro Handover</h3>
+```
+
+**ErrorRateBar** wird danach eingefügt (kein PNG-Export — Recharts unterstützt kein
+natives PNG-Export wie Plotly):
+
+```jsx
+<h2 className="mt-8 mb-4">Fehlerrate pro Trial</h2>
 <ErrorRateBar chartData={chartData} />
 ```
 
-### 6.4 Neue Refs
+### 6.2 Entfernung der PlaceholderCharts aus ExperimentAnalysisPage.jsx
 
-`PerformanceCharts.jsx` nutzt bereits `useChartExport` für den Boxplot. Gleiche Logik
-für den Violinplot:
+Die PlaceholderCharts befinden sich in `ExperimentAnalysisPage.jsx` (Performance-Tab),
+NICHT in `PerformanceCharts.jsx`. Sie müssen dort entfernt werden:
 
 ```jsx
-const { chartRef: violinRef, buttonRef: violinBtnRef, exportChart } = useChartExport();
+// ENTFERNEN aus ExperimentAnalysisPage.jsx (Performance-Tab):
+{/* SESSION B: PerformanceViolin */}
+<PlaceholderChart label="Violinplot pro Bedingung (kommt in Session B)" />
+{/* SESSION B: ErrorRateBar */}
+<PlaceholderChart label="Fehlerrate pro Bedingung (kommt in Session B)" />
 ```
 
-Prüfen ob `useChartExport` mehrfach aufrufbar ist oder ob Refs manuell angelegt werden
-müssen — falls letzeres, `useRef` direkt verwenden.
+Die neuen Charts werden von `PerformanceCharts.jsx` gerendert (das weiterhin als
+`<PerformanceCharts chartData={performanceMetrics} />` eingebunden bleibt).
+`PlaceholderChart`-Import aus `ExperimentAnalysisPage.jsx` entfernen wenn
+danach keine weiteren Platzhalter mehr im Performance-Tab verbleiben — es verbleiben
+jedoch noch Platzhalter für andere Session-B-Bereiche (ET, UX), daher bleibt der
+Import erhalten.
 
 ---
 
@@ -238,16 +263,17 @@ müssen — falls letzeres, `useRef` direkt verwenden.
 
 ```
 Backend/
-└── services/data_analysis/performance_analysis_service.py   MODIFY (+3 Felder)
+└── services/data_analysis/performance_analysis_service.py   MODIFY (+3 Felder pro Trial)
     tests/test_analysis.py                                    MODIFY (+1 Test)
 
 src/features/Analysis/
+├── ExperimentAnalysisPage.jsx                                MODIFY (2 PlaceholderCharts entfernen)
 ├── components/
 │   ├── charts/
 │   │   └── ViolinPlotPlotly.jsx                             CREATE
 │   └── experiment/
 │       ├── ErrorRateBar.jsx                                  CREATE
-│       └── PerformanceCharts.jsx                             MODIFY
+│       └── PerformanceCharts.jsx                             MODIFY (+ViolinPlot, +ErrorRateBar)
 ```
 
 ---
