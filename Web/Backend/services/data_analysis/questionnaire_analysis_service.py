@@ -273,7 +273,7 @@ def _safe_float(v):
 def analyze_study_questionnaires(session, study_id: int) -> dict:
     """
     Aggregate questionnaire responses across all experiments in a study,
-    grouped by stimulus condition, and run paired inferential tests per item.
+    grouped by stimulus condition, and run N-condition inferential tests per item (RM-ANOVA/Friedman for k≥3, paired t-test/Wilcoxon for k=2).
 
     Returns:
     {
@@ -286,7 +286,7 @@ def analyze_study_questionnaires(session, study_id: int) -> dict:
             "<condition>": { "<item_name>": {"mean": float, "std": float, "n": int}, ... }
           },
           "inferential": {
-            "<item_name>": {"test": ..., "statistic": ..., "p_value": ..., "effect_size_d": ..., "significant": bool}
+            "<item_name>": {"test_used": str, "main_effect": {"p_value": float, "significant": bool, ...}, "posthoc": [...]} | None
           }
         }
       }
@@ -400,7 +400,7 @@ def analyze_study_questionnaires(session, study_id: int) -> dict:
                     for cond in conditions
                     if condition_item_values[cond].get(item_name)
                 }
-                if len(cond_dict) >= 2 and all(len(v) >= 3 for v in cond_dict.values()):
+                if len(cond_dict) >= 2 and all(len(v) >= 3 for v in cond_dict.values()):  # n>=3 triggers non-parametric path inside run_inferential_analysis (Shapiro-Wilk needs n>3)
                     inferential[item_name] = run_inferential_analysis(cond_dict)
                 else:
                     inferential[item_name] = None
