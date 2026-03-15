@@ -121,13 +121,41 @@ def analyze_experiment_saccade_rate(session, experiment_id: int) -> dict:
 
 ### 3.3 Neuer Endpoint
 
-In `Backend/routes/analysis.py`:
+In `Backend/routes/analysis.py` — zwei Änderungen:
+
+**Schritt 1:** `analyze_experiment_saccade_rate` zum bestehenden Top-Level-Import-Block hinzufügen:
 
 ```python
-@router.get("/experiment/{experiment_id}/eyetracking/saccade-rate")
-def get_experiment_saccade_rate(experiment_id: int, session: Session = Depends(get_session)):
-    from Backend.services.data_analysis.eye_tracking_analysis_service import analyze_experiment_saccade_rate
-    return analyze_experiment_saccade_rate(session, experiment_id)
+from Backend.services.data_analysis.eye_tracking_analysis_service import (
+    analyze_experiment_eye_tracking,
+    analyze_study_eye_tracking,
+    analyze_experiment_eye_tracking_phases,
+    analyze_experiment_eye_tracking_transitions,
+    analyze_experiment_ppi,
+    analyze_experiment_saccade_rate,   # NEU
+)
+```
+
+**Schritt 2:** Route nach dem `experiment_ppi`-Handler ergänzen (identisches Muster):
+
+```python
+@router.get(
+    "/experiment/{experiment_id}/eyetracking/saccade-rate",
+    status_code=status.HTTP_200_OK,
+    summary="Saccade rate for an experiment",
+    description="Saccades per second per trial, split by giver/receiver role.",
+)
+async def experiment_eyetracking_saccade_rate(experiment_id: int, db=Depends(get_db)):
+    try:
+        result = analyze_experiment_saccade_rate(db, experiment_id)
+        if not result:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No eye-tracking data found")
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 ```
 
 ### 3.4 Test
@@ -173,6 +201,7 @@ export function useSaccadeRate(experimentId, enabled = true) {
     useEffect(() => {
         if (!experimentId || !enabled) return;
         setLoading(true);
+        setError(null);   // stale error zurücksetzen (identisch zu usePPI.js)
         fetchExperimentSaccadeRate(experimentId)
             .then(setData)
             .catch(setError)
@@ -283,21 +312,29 @@ PhaseHeatmapPlotly({ phasesData, chartRef, buttonRef, onExport })
 
 ```js
 // Pro Trial: X = ["Phase 1", "Phase 2", "Phase 3"]
-// Y = sortierte AOI-Labels (aus phasesData.by_trial[id].phases[phase][aoi_name].label)
+// Y = sortierte AOI-Labels (aus phasesData.by_trial[id].phases["1"/"2"/"3"][aoi_name].label)
 // Z = percentage-Werte als Matrix [aoi_index][phase_index]
+
+// WICHTIG: Nach JSON-Parse sind Integer-Keys Strings: phases["1"], phases["2"], phases["3"]
+// NICHT phases[1] — das würde undefined liefern.
 
 const trials = Object.entries(phasesData.by_trial ?? {});
 
 // Alle AOI-Namen über alle Trials und Phasen sammeln (für einheitliche Y-Achse)
 const allAois = [...new Set(
     trials.flatMap(([, t]) =>
-        [1, 2, 3].flatMap(p => Object.keys(t.phases?.[p] ?? {}))
+        ["1", "2", "3"].flatMap(p => Object.keys(t.phases?.[p] ?? {}))
     )
 )].sort();
 
 // Pro Trial: z-Matrix aufbauen
 // z[aoi_index][phase_index] = percentage
 const xLabels = ["Phase 1", "Phase 2", "Phase 3"];
+
+// Beispiel für eine Trial-z-Matrix:
+// z = allAois.map(aoi =>
+//     ["1", "2", "3"].map(p => trial.phases?.[p]?.[aoi]?.percentage ?? 0)
+// );
 ```
 
 ### 7.4 Plotly-Konfiguration (Small Multiples)
@@ -349,32 +386,35 @@ TransitionMatrixPlotly({ transitionsData, chartRef, buttonRef, onExport })
 ### 8.3 Datentransformation
 
 ```js
-// transitions: { "aoi_from->aoi_to": count }
-// Alle eindeutigen AOIs sammeln (Union aus from und to)
 const trials = Object.entries(transitionsData.by_trial ?? {});
 
-// Pro Trial:
-const parseTransitions = (transitions) => {
-    const aois = new Set();
-    Object.keys(transitions).forEach(key => {
-        const [from, to] = key.split("->");
-        aois.add(from);
-        aois.add(to);
-    });
-    const aoiList = [...aois].sort();
-    // z-Matrix: z[from_index][to_index] = count
-    const z = aoiList.map(from =>
-        aoiList.map(to => transitions[`${from}->${to}`] ?? 0)
+// Alle AOIs über ALLE Trials sammeln — einheitliche Achsenbeschriftung für Vergleichbarkeit
+const globalAois = [...new Set(
+    trials.flatMap(([, t]) =>
+        Object.keys(t.transitions ?? {}).flatMap(key => key.split("->"))
+    )
+)].sort();
+
+// Globales zmax für synchronisierte Farbskala über alle Trial-Subplots
+const globalZMax = Math.max(
+    1,  // Fallback wenn keine Übergänge
+    ...trials.flatMap(([, t]) => Object.values(t.transitions ?? {}))
+);
+
+// Pro Trial: z-Matrix aufbauen
+// z[from_index][to_index] = count (0 wenn kein Übergang)
+const buildZ = (transitions) =>
+    globalAois.map(from =>
+        globalAois.map(to => transitions[`${from}->${to}`] ?? 0)
     );
-    return { aoiList, z };
-};
 ```
 
 ### 8.4 Plotly-Konfiguration
 
 Mehrere `<Plot>`-Instanzen (eine pro Trial), identischer Ansatz wie `PhaseHeatmapPlotly`:
-- `type: "heatmap"`, X = AOI-to-Labels, Y = AOI-from-Labels, Z = count-Matrix
-- `colorscale: "Oranges"`, `zmin: 0`
+- `type: "heatmap"`, X = `globalAois` (AOI-to), Y = `globalAois` (AOI-from), Z = `buildZ(transitions)`
+- `colorscale: "Oranges"`, `zmin: 0`, `zmax: globalZMax` — **synchronisiert über alle Trials**
+- `showscale: true` nur beim letzten `<Plot>` (einheitliche Legende rechts)
 - Achsenbeschriftung: X-Titel `"nach AOI"`, Y-Titel `"von AOI"`
 - Dunkles Design (identisch zu anderen Plotly-Charts)
 - `dragmode: false`, `displayModeBar: false`
@@ -409,13 +449,50 @@ PNG-Export-Pattern: identisch zu `PerformanceCharts.jsx` —
 `chartRefs = useRef({})`, `buttonRefs = useRef({})`, `exportChart = useChartExport()`.
 Keys: `"phaseHeatmap"`, `"transitionMatrix"`.
 
-Render-Reihenfolge (nach bestehendem AOI-Stacked-Bar):
-1. `<PhaseHeatmapPlotly phasesData={phasesData} chartRef=... buttonRef=... onExport=... />`
-2. `<TransitionMatrixPlotly transitionsData={transitionsData} chartRef=... buttonRef=... onExport=... />`
-3. `<h2 className="mt-8 mb-4">PPI pro Trial</h2><PPIBar ppiData={ppiData} />`
-4. `<h2 className="mt-8 mb-4">Sakkaden-Rate pro Trial</h2><SaccadeRateBar saccadeData={saccadeData} />`
+**Wichtig: bestehender Early-Return-Guard**
 
-Jeder neue Chart: Guard `if (!prop) return null` — kein Crash wenn Daten fehlen.
+Die aktuelle `EyeTrackingCharts.jsx` hat am Anfang:
+```jsx
+if (!chartData?.by_trial) {
+    return <div>Keine Eye-Tracking-Daten verfügbar.</div>;
+}
+```
+Dieser Guard muss **entfernt** werden. Stattdessen wird `chartData` nur als Guard
+für den AOI-Stacked-Bar-Abschnitt verwendet. Die neuen Sub-Charts haben eigene
+interne Guards (`if (!prop) return null`) und sollen auch rendern, wenn `chartData`
+keine Daten hat aber `phasesData`/`ppiData`/`saccadeData` geladen sind.
+
+**Neue Struktur des Return-Blocks:**
+```jsx
+return (
+    <div>
+        {/* Bestehender AOI-Stacked-Bar — nur wenn chartData vorhanden */}
+        {chartData?.by_trial && (
+            <>
+                {/* ... bestehende AOI-Tabelle und StackedBarChart ... */}
+            </>
+        )}
+
+        {/* Neue Charts — eigene Guards intern */}
+        <PhaseHeatmapPlotly
+            phasesData={phasesData}
+            chartRef={el => chartRefs.current["phaseHeatmap"] = el}
+            buttonRef={el => buttonRefs.current["phaseHeatmap"] = el}
+            onExport={() => handleExport("phaseHeatmap", "phase_heatmap.png")}
+        />
+        <TransitionMatrixPlotly
+            transitionsData={transitionsData}
+            chartRef={el => chartRefs.current["transitionMatrix"] = el}
+            buttonRef={el => buttonRefs.current["transitionMatrix"] = el}
+            onExport={() => handleExport("transitionMatrix", "transition_matrix.png")}
+        />
+        <h2 className="mt-8 mb-4">PPI pro Trial</h2>
+        <PPIBar ppiData={ppiData} />
+        <h2 className="mt-8 mb-4">Sakkaden-Rate pro Trial</h2>
+        <SaccadeRateBar saccadeData={saccadeData} />
+    </div>
+);
+```
 
 ### 9.2 ExperimentAnalysisPage.jsx
 
@@ -430,7 +507,12 @@ Jeder neue Chart: Guard `if (!prop) return null` — kein Crash wenn Daten fehle
    const { data: saccadeData, loading: saccadeLoading, error: saccadeError } =
        useSaccadeRate(experimentId, loadedTabs.has("eyetracking"));
    ```
-4. Loading/Error-States für Saccade Rate im ET-Tab ergänzen
+4. Loading/Error-States für Saccade Rate **in `ExperimentAnalysisPage.jsx`** im ET-Tab ergänzen,
+   direkt neben den bestehenden ET-Loading-States (nach `transError`):
+   ```jsx
+   {saccadeLoading && <LoadingSpinner message="Sakkaden-Rate berechnen..." />}
+   {saccadeError && <ErrorMessage error={saccadeError} />}
+   ```
 5. `<EyeTrackingCharts>` Props erweitern:
    ```jsx
    <EyeTrackingCharts
