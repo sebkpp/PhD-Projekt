@@ -128,11 +128,6 @@ export default function ExperimentAnalysisPage() {
                     {uxLoading && <LoadingSpinner message="Fragebogen-Daten laden..." />}
                     {uxError && <ErrorMessage error={uxError} />}
                     {uxMetrics && <QuestionnaireCharts chartData={uxMetrics} />}
-                    {/* SESSION B placeholders */}
-                    <PlaceholderChart label="NASA-TLX Subskalen pro Bedingung (kommt in Session B)" />
-                    <PlaceholderChart label="SUS-Score pro Bedingung (kommt in Session B)" />
-                    <PlaceholderChart label="AttrakDiff2 Portfolio-Matrix (kommt in Session B)" />
-                    <PlaceholderChart label="AttrakDiff2 Subskalen-Radar (kommt in Session B)" />
                 </TabPanel>
 
                 {/* === COMPARE === */}
