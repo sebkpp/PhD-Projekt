@@ -43,10 +43,11 @@ Handovers ohne vollständige Phasen-Zeitstempel. Da fehlerhafte Handovers oft ge
 Zeitstempel nicht haben, darf die Fehlerrate **nicht** aus `grouped_by_trial` abgeleitet
 werden — sondern aus den **rohen, ungefilterten** Handovers pro Trial.
 
-**Schritt 1:** Vor dem Timestamp-Filter-Loop eine separate Gruppierung anlegen:
+**Schritt 1:** Nach dem Early-Return-Guard (`if not handovers: return {}`) eine separate
+Gruppierung anlegen — d.h. nach Zeile 98, nicht direkt nach dem `handovers`-Assignment:
 
 ```python
-# NACH Zeile 96 (handovers = h_repo.get_handovers_by_experiment(experiment_id)):
+# NACH: if not handovers: return {}
 handovers_by_trial: dict[int, list] = defaultdict(list)
 for h in handovers:
     handovers_by_trial[h.trial_id].append(h)
