@@ -11,6 +11,8 @@ import {
 } from "recharts";
 import { Table } from "antd";
 import BoxplotPlotly from "@/features/Analysis/components/charts/BoxplotPlotly.jsx";
+import ViolinPlotPlotly from "@/features/Analysis/components/charts/ViolinPlotPlotly.jsx";
+import ErrorRateBar from "@/features/Analysis/components/experiment/ErrorRateBar.jsx";
 import StackedBarChart from "@/features/Analysis/components/charts/StackedBarChart.jsx";
 import {useChartExport} from "@/features/Analysis/hooks/useChartExport.js";
 
@@ -125,6 +127,13 @@ export default function PerformanceCharts({ chartData }) {
                 onExport={() => handleExport("boxplot", "boxplot.png")}
             />
 
+            <ViolinPlotPlotly
+                boxplotData={boxplotData}
+                chartRef={el => chartRefs.current["violin"] = el}
+                buttonRef={el => buttonRefs.current["violin"] = el}
+                onExport={() => handleExport("violin", "violinplot.png")}
+            />
+
             <h2 className="mt-8 mb-4">Statistische Kennzahlen pro Trial</h2>
             <div
                 style={{
@@ -152,6 +161,9 @@ export default function PerformanceCharts({ chartData }) {
                     scroll={{ x: "max-content" }}
                 />
             </div>
+
+            <h2 className="mt-8 mb-4">Fehlerrate pro Trial</h2>
+            <ErrorRateBar chartData={chartData} />
 
         </div>
     )

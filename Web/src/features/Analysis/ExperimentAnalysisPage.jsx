@@ -97,10 +97,6 @@ export default function ExperimentAnalysisPage() {
                     {perfLoading && <LoadingSpinner message="Performance-Daten laden..." />}
                     {perfError && <ErrorMessage error={perfError} />}
                     {performanceMetrics && <PerformanceCharts chartData={performanceMetrics} />}
-                    {/* SESSION B: PerformanceViolin */}
-                    <PlaceholderChart label="Violinplot pro Bedingung (kommt in Session B)" />
-                    {/* SESSION B: ErrorRateBar */}
-                    <PlaceholderChart label="Fehlerrate pro Bedingung (kommt in Session B)" />
                 </TabPanel>
 
                 {/* === EYE-TRACKING === */}
