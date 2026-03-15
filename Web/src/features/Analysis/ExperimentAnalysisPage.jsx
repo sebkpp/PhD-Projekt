@@ -41,12 +41,12 @@ function computeMetricsPerTrial(handovers) {
 export default function ExperimentAnalysisPage() {
     const { studyId, experimentId } = useParams();
 
-    const { experiment, loading, error} =  useExperiment(experimentId);
-    const { participants, loading : participant_loading,  error: participant_error} = useParticipantsForExperiment(experimentId);
-    const { handovers, loading: handoversLoading, error: handoversError } = useHandovers(experimentId);
-    const { data: uxMetrics, loading: uxLoading, error: uxError } = useUxMetrics(experimentId);
-    const { data: performanceMetrics, loading: performanceLoading, error: performanceError } = usePerformanceMetrics(experimentId);
-    const { data: eyeTrackingData, loading: eyeTrackingLoading, error: eyeTrackingError } = useEyeTrackingMetrics(experimentId);
+    const { experiment, loading, error: _error} =  useExperiment(experimentId);
+    const { participants: _participants, loading : participant_loading,  error: _participant_error} = useParticipantsForExperiment(experimentId);
+    const { handovers, loading: handoversLoading, error: _handoversError } = useHandovers(experimentId);
+    const { data: uxMetrics, loading: uxLoading, error: _uxError } = useUxMetrics(experimentId);
+    const { data: performanceMetrics, loading: performanceLoading, error: _performanceError } = usePerformanceMetrics(experimentId);
+    const { data: eyeTrackingData, loading: eyeTrackingLoading, error: _eyeTrackingError } = useEyeTrackingMetrics(experimentId);
 
     const breadcrumbItems = [
         { label: "Studienübersicht", to: "/" },
@@ -58,7 +58,7 @@ export default function ExperimentAnalysisPage() {
         return <div>Lädt...</div>;
     }
 
-    const metricsPerTrial = computeMetricsPerTrial(handovers);
+    const _metricsPerTrial = computeMetricsPerTrial(handovers);
 
     const experimentDetails = {
         study_id: experiment.study_id,

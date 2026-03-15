@@ -66,13 +66,13 @@ export default function EyeTrackingCharts({ chartData }) {
     }));
 
     // Build comparison table data
-    const tableData = aoiNames.map((aoiName, idx) => {
+    const tableData = aoiNames.map((aoiName) => {
         const row = {
             key: aoiName,
             aoi: aoiName,
             label: trials[0]?.[1]?.aoi_stats?.[aoiName]?.label || aoiName,
         };
-        trials.forEach(([, trialData], tIdx) => {
+        trials.forEach(([, trialData]) => {
             const stat = trialData.aoi_stats?.[aoiName];
             const trialNum = trialData.trial_number;
             row[`trial_${trialNum}_duration`] = stat ? stat.total_duration_ms?.toFixed(0) : "–";

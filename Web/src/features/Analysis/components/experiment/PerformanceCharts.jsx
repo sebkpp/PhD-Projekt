@@ -21,17 +21,6 @@ const COLORS = {
     phase3: "#ff7300"
 };
 
-const data = {
-    labels: ["Trial 1", "Trial 2"],
-    datasets: [{
-        label: "Gesamtdauer",
-        data: [
-            { min: 1, q1: 2, median: 3, q3: 4, max: 5 },
-            { min: 2, q1: 3, median: 4, q3: 5, max: 6 }
-        ],
-        backgroundColor: "#8884d8"
-    }]
-};
 
 function getTableData(chartData) {
     if (!chartData?.by_trial) return [];
@@ -43,11 +32,11 @@ function getTableData(chartData) {
 }
 
 export default function PerformanceCharts({ chartData }) {
-    if (!chartData?.by_trial) return null;
-
     const chartRefs = useRef({});
     const buttonRefs = useRef({});
     const exportChart = useChartExport();
+
+    if (!chartData?.by_trial) return null;
 
     const handleExport = (key, filename) => {
         exportChart(

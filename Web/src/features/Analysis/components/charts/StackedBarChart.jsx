@@ -33,7 +33,7 @@ function getPlotlyData(trialPhases) {
 }
 
 function getAnnotations(trialPhases) {
-    return trialPhases.map((d, i) => ({
+    return trialPhases.map((d) => ({
         x: d.trial,
         y: d.phase1 + d.phase2 + d.phase3,
         text: `Ø: ${d.total_mean}`,
@@ -41,7 +41,7 @@ function getAnnotations(trialPhases) {
         yshift: -20,
         font: { color: "#fff", size: 12 }
     })).concat(
-        trialPhases.map((d, i) => ({
+        trialPhases.map((d) => ({
             x: d.trial,
             y: d.phase1 + d.phase2 + d.phase3,
             text: `n=${d.n}`,
