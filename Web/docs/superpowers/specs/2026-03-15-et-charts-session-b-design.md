@@ -105,6 +105,11 @@ def analyze_experiment_saccade_rate(session, experiment_id: int) -> dict:
         giver_saccades = sum(calc_transitions(giver_seq).values())
         receiver_saccades = sum(calc_transitions(receiver_seq).values())
 
+        # calc_saccade_rate ist bereits im selben Service-File definiert (Zeile 12):
+        # def calc_saccade_rate(saccade_count: int, duration_ms: float) -> float | None:
+        #     if duration_ms <= 0: return None
+        #     return (saccade_count / duration_ms) * 1000
+        # Division-by-zero wird intern durch den `duration_ms <= 0`-Guard behandelt.
         stimuli = trial_stimuli_map.get(trial.trial_id, [])
         by_trial[trial.trial_id] = {
             "trial_number": trial.trial_number,
@@ -337,35 +342,25 @@ const xLabels = ["Phase 1", "Phase 2", "Phase 3"];
 // );
 ```
 
-### 7.4 Plotly-Konfiguration (Small Multiples)
+### 7.4 Plotly-Konfiguration (Small Multiples via mehrere Plot-Instanzen)
 
-- `make_subplots(rows=trials.length, cols=1)` — ein Subplot pro Trial
-- Jeder Subplot: `type: "heatmap"`, `x: xLabels`, `y: allAois`, `z: zMatrix`
-- `colorscale: "Blues"`, `zmin: 0`, `zmax: 100` (synchronisiert über alle Subplots)
-- `showscale: true` nur beim letzten Subplot (einheitliche Legende)
+**Gewählter Ansatz:** Mehrere `<Plot>`-Instanzen (eine pro Trial) statt `make_subplots` —
+kein zusätzlicher Plotly-Import, konsistent mit dem restlichen Plotly-Pattern im Projekt.
+
+Pro `<Plot>`-Instanz:
+- `data: [{ type: "heatmap", x: xLabels, y: allAois, z: zMatrix, colorscale: "Blues", zmin: 0, zmax: 100, showscale: i === trials.length - 1 }]`
+- `zmin: 0`, `zmax: 100` — identisch für alle Instanzen (synchronisierte Farbskala)
+- `showscale: true` nur bei der letzten Instanz
+- `layout.title.text: "Trial {trial_number}"`
 - Dunkles Design: `paper_bgcolor: "#23272f"`, `plot_bgcolor: "#23272f"`, `font: { color: "#fff" }`
-- Subplot-Titel: `Trial {trial_number}` (als `annotations` über `make_subplots`)
-- Gesamthöhe: `Math.max(300, trials.length * 220)` px
+- Höhe pro Instanz: `Math.max(200, allAois.length * 40)` px, `width: "100%"`
 - `dragmode: false`, `displayModeBar: false`
-- Container: identisch zu `ViolinPlotPlotly` (border, borderRadius, minWidth: 0 etc.)
+- Container pro Instanz: `marginBottom: "1rem"` (kein eigener Rahmen — gemeinsamer Rahmen außen)
+
+Äußerer Container (ein einziger für alle Trial-Subplots):
+- Identisches Styling zu `ViolinPlotPlotly`: border, borderRadius, background, padding, minWidth: 0
 - Titel: `<h3 className="export-hide">AOI-Verteilung pro Phase</h3>`
 - PNG-Export-Button: identisch zu `ViolinPlotPlotly`
-
-### 7.5 Wichtig: Plotly `make_subplots` in React
-
-`make_subplots` kommt aus `plotly.js` nicht aus `react-plotly.js`. Import:
-```js
-import Plotly from "plotly.js-dist-min";
-// oder aus dem bereits gebündelten react-plotly.js Paket:
-import { default as PlotlyLib } from "plotly.js/dist/plotly";
-```
-
-Einfacherer Ansatz ohne `make_subplots`: mehrere `<Plot>`-Instanzen in einer Schleife
-rendern (eine pro Trial). Jede Instanz ist ein eigenständiger Plotly-Chart mit identischen
-`zmin`/`zmax`-Werten. Weniger komplex, gleiche Vergleichbarkeit.
-
-**Gewählter Ansatz:** Mehrere `<Plot>`-Instanzen (eine pro Trial) — kein `make_subplots`
-Import nötig, konsistent mit dem restlichen Plotly-Pattern im Projekt.
 
 ---
 
@@ -445,8 +440,22 @@ import PPIBar from "@/features/Analysis/components/experiment/PPIBar.jsx";
 import SaccadeRateBar from "@/features/Analysis/components/experiment/SaccadeRateBar.jsx";
 ```
 
-PNG-Export-Pattern: identisch zu `PerformanceCharts.jsx` —
-`chartRefs = useRef({})`, `buttonRefs = useRef({})`, `exportChart = useChartExport()`.
+PNG-Export-Pattern: identisch zu `PerformanceCharts.jsx`. Am Anfang von `EyeTrackingCharts`:
+
+```jsx
+import { useRef } from "react";
+import { useChartExport } from "@/features/Analysis/hooks/useChartExport.js";
+
+// in der Komponente:
+const chartRefs = useRef({});
+const buttonRefs = useRef({});
+const exportChart = useChartExport();  // gibt eine plain function zurück, kein Objekt
+
+const handleExport = (key, filename) => {
+    exportChart(chartRefs.current[key], buttonRefs.current[key], filename);
+};
+```
+
 Keys: `"phaseHeatmap"`, `"transitionMatrix"`.
 
 **Wichtig: bestehende Early-Return-Guards**
