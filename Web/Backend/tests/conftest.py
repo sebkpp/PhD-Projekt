@@ -14,6 +14,7 @@ def verify_test_database():
 
 def _delete_all(session):
     from Backend.models.handover import Handover
+    from Backend.models.eyetracking import EyeTracking
     from Backend.models.questionnaire import Questionnaire, QuestionnaireItem, QuestionnaireResponse
     from Backend.models.trial.trial import Trial
     from Backend.models.participant import Participant
@@ -23,6 +24,7 @@ def _delete_all(session):
     from Backend.models.study.study_stimuli import StudyStimuli
     from Backend.models.study.study_config import StudyConfig
 
+    session.query(EyeTracking).delete()
     session.query(Handover).delete()
     session.query(QuestionnaireResponse).delete()
     session.query(QuestionnaireItem).delete()
