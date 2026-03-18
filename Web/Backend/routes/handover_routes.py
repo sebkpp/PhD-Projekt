@@ -33,10 +33,6 @@ class HandoverCreateRequest(BaseModel):
     giver: int
     receiver: int
     grasped_object: Optional[str] = None
-    giver_grasped_object: Optional[str] = None
-    receiver_touched_object: Optional[str] = None
-    receiver_grasped_object: Optional[str] = None
-    giver_released_object: Optional[str] = None
 
 class MessageResponse(BaseModel):
     message: str

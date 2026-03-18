@@ -1,4 +1,36 @@
+import pytest
 from starlette import status
+
+
+@pytest.fixture
+def trial_id(client, experiment_id):
+    """Creates a trial and returns its trial_id.
+
+    POST /experiments/{id}/trials returns {"status": "ok", "message": "..."}
+    — no trial_id. Use GET /experiments/{id}/trials to retrieve the created record.
+    """
+    resp = client.post(
+        f"/experiments/{experiment_id}/trials",
+        json={"trials": [{"trial_number": 1, "slots": []}], "questionnaires": []}
+    )
+    assert resp.status_code == 201, resp.text
+    trials = client.get(f"/experiments/{experiment_id}/trials").json()
+    assert len(trials) > 0, "No trials found after creation"
+    return trials[0]["trial_id"]
+
+
+@pytest.fixture
+def participant_ids(client):
+    """Creates two participants and returns their IDs."""
+    ids = []
+    for _ in range(2):
+        resp = client.post(
+            "/api/participants/",
+            json={"age": 25, "gender": "m", "handedness": "right"}
+        )
+        assert resp.status_code == 201, resp.text
+        ids.append(resp.json()["participant_id"])
+    return ids
 
 
 def _setup_trial(client, experiment_id: int, participant_id: int) -> int:
@@ -29,6 +61,27 @@ def _create_second_participant(client) -> int:
     resp = client.post("/api/participants/", json={"age": 30, "gender": "f", "handedness": "left"})
     assert resp.status_code == 201
     return resp.json()["participant_id"]
+
+
+def test_handover_init_creates_record(client, trial_id, participant_ids):
+    """POST creates a handover record and returns handover_id."""
+    resp = client.post(
+        f"/handovers/trials/{trial_id}",
+        json={"giver": participant_ids[0], "receiver": participant_ids[1], "grasped_object": "Cube"}
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+    data = resp.json()
+    assert "handover_id" in data
+    assert data["handover_id"] is not None
+
+
+def test_handover_init_missing_giver(client, trial_id):
+    """POST without giver returns 422."""
+    resp = client.post(
+        f"/handovers/trials/{trial_id}",
+        json={"receiver": 1}
+    )
+    assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_save_handover(client, experiment_id, participant_id):

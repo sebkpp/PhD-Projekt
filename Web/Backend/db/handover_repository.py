@@ -46,15 +46,6 @@ class HandoverRepository:
 
 
     def create_handover(self, handover_data: dict) -> Handover:
-        for key in [
-            "giver_grasped_object",
-            "receiver_touched_object",
-            "receiver_grasped_object",
-            "giver_released_object"
-        ]:
-            if key in handover_data:
-                handover_data[key] = parse_iso(handover_data[key])
-
         handover = Handover(**handover_data)
         self.session.add(handover)
         self.session.flush()
