@@ -11,6 +11,7 @@ def register_routes(app: FastAPI):
         analysis,
         handover_routes,
         avatar_visibility,
+        eyetracking,
     )
 
     modules = (
@@ -23,6 +24,7 @@ def register_routes(app: FastAPI):
         analysis,
         handover_routes,
         avatar_visibility,
+        eyetracking,
     )
 
     for mod in modules:
