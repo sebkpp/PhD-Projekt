@@ -4,11 +4,11 @@ class TrialSlotRepository:
     def __init__(self, session):
         self.session = session
 
-    def create(self, trial_id: int, slot_number: int, avatar_visibility:int) -> TrialSlot:
+    def create(self, trial_id: int, slot_number: int) -> TrialSlot:
         trial_slot = TrialSlot(
             trial_id=trial_id,
             slot=slot_number,
-            avatar_visibility_id = avatar_visibility
+            avatar_visibility_id=1,
         )
         self.session.add(trial_slot)
         self.session.flush()

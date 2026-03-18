@@ -24,14 +24,14 @@ def main():
             if existing:
                 existing.trial_id = s['trial_id']
                 existing.slot = s['slot']
-                existing.avatar_visibility_id = s['avatar_visibility_id']
+                existing.avatar_visibility_id = 1
                 print(f"🔄 Updated: TrialSlot {s['trial_slot_id']}")
             else:
                 slot = TrialSlot(
                     trial_slot_id=s['trial_slot_id'],
                     trial_id=s['trial_id'],
                     slot=s['slot'],
-                    avatar_visibility_id=s['avatar_visibility_id'],
+                    avatar_visibility_id=1,
                 )
                 db.add(slot)
                 print(f"🆕 Inserted: TrialSlot {s['trial_slot_id']}")
