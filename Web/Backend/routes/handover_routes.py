@@ -1,4 +1,5 @@
-﻿from typing import List, Optional
+﻿from datetime import datetime
+from typing import List, Optional
 from fastapi import APIRouter, HTTPException, status, Depends
 from pydantic import BaseModel
 
@@ -6,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from Backend.db_session import SessionLocal
 from Backend.services.experiment_service import get_experiment_by_id
-from Backend.services.handover_service import save_handover, get_handovers_for_trial, get_handovers_for_experiment
+from Backend.services.handover_service import save_handover, get_handovers_for_trial, get_handovers_for_experiment, update_handover_phases
 from Backend.services.trial_service import get_trial
 
 router = APIRouter(prefix="/handovers", tags=["handovers"])
@@ -37,6 +38,14 @@ class HandoverCreateRequest(BaseModel):
 class MessageResponse(BaseModel):
     message: str
     handover_id: Optional[int] = None
+
+class HandoverPhasePatchRequest(BaseModel):
+    giver_grasped_object: Optional[datetime] = None
+    receiver_touched_object: Optional[datetime] = None
+    receiver_grasped_object: Optional[datetime] = None
+    giver_released_object: Optional[datetime] = None
+    is_error: Optional[bool] = None
+    error_type: Optional[str] = None
 
 @router.get(
     "/trials/{trial_id}",
@@ -102,6 +111,32 @@ async def save_handover_route(
         new_handover = save_handover(db, data)
         db.commit()
         return MessageResponse(message="Handover saved", handover_id=new_handover.handover_id)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.patch(
+    "/{handover_id}/phases",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Update Handover phase timestamps",
+    description="Partially update phase timestamps and error state for an existing handover. Only non-null fields are written.",
+)
+async def patch_handover_phases(
+        handover_id: int,
+        payload: HandoverPhasePatchRequest,
+        db: Session = Depends(get_db)
+) -> MessageResponse:
+    try:
+        patch_data = payload.model_dump()
+        result = update_handover_phases(db, handover_id, patch_data)
+        if result is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Handover not found")
+        db.commit()
+        return MessageResponse(message="Handover phases updated", handover_id=result.handover_id)
+    except HTTPException:
+        raise
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

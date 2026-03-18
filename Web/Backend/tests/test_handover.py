@@ -134,3 +134,69 @@ def test_get_handovers_for_experiment_not_found(client):
     """GET /handovers/experiments/9999 → 404 for unknown experiment."""
     resp = client.get("/handovers/experiments/9999")
     assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_handover_patch_phases_updates_timestamps(client, trial_id, participant_ids):
+    """PATCH /phases sets timestamps; other fields remain NULL."""
+    # Init
+    init = client.post(
+        f"/handovers/trials/{trial_id}",
+        json={"giver": participant_ids[0], "receiver": participant_ids[1]}
+    )
+    assert init.status_code == 201
+    handover_id = init.json()["handover_id"]
+
+    # Patch one timestamp
+    resp = client.patch(
+        f"/handovers/{handover_id}/phases",
+        json={"giver_grasped_object": "2025-09-08T10:00:03.484"}
+    )
+    assert resp.status_code == status.HTTP_200_OK
+    data = resp.json()
+    assert data["handover_id"] == handover_id
+
+
+def test_handover_patch_partial_update(client, trial_id, participant_ids):
+    """PATCH with one field does not overwrite other fields."""
+    init = client.post(
+        f"/handovers/trials/{trial_id}",
+        json={"giver": participant_ids[0], "receiver": participant_ids[1]}
+    )
+    handover_id = init.json()["handover_id"]
+
+    # Set giver_grasped_object first
+    client.patch(
+        f"/handovers/{handover_id}/phases",
+        json={"giver_grasped_object": "2025-09-08T10:00:03.484"}
+    )
+
+    # Set receiver_touched_object in second call
+    resp = client.patch(
+        f"/handovers/{handover_id}/phases",
+        json={"receiver_touched_object": "2025-09-08T10:00:03.890"}
+    )
+    assert resp.status_code == status.HTTP_200_OK
+
+
+def test_handover_patch_not_found(client):
+    """PATCH on non-existing handover_id returns 404."""
+    resp = client.patch(
+        "/handovers/99999/phases",
+        json={"is_error": True}
+    )
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_handover_patch_sets_is_error(client, trial_id, participant_ids):
+    """PATCH can set is_error and error_type."""
+    init = client.post(
+        f"/handovers/trials/{trial_id}",
+        json={"giver": participant_ids[0], "receiver": participant_ids[1]}
+    )
+    handover_id = init.json()["handover_id"]
+
+    resp = client.patch(
+        f"/handovers/{handover_id}/phases",
+        json={"is_error": True, "error_type": "drop"}
+    )
+    assert resp.status_code == status.HTTP_200_OK
