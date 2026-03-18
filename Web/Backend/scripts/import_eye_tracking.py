@@ -23,7 +23,7 @@ def main():
 
             if existing:
                 existing.participant_id = r['participant_id']
-                existing.hanover_id = r['hanover_id']
+                existing.handover_id = r['handover_id']
                 existing.aoi_id = r['aoi_id']
                 existing.starttime = r['starttime']
                 existing.endtime = r['endtime']
@@ -33,7 +33,7 @@ def main():
                 et = EyeTracking(
                     eye_tracking_id=r['eye_tracking_id'],
                     participant_id=r['participant_id'],
-                    hanover_id=r['hanover_id'],
+                    handover_id=r['handover_id'],
                     aoi_id=r['aoi_id'],
                     starttime=r['starttime'],
                     endtime=r['endtime'],

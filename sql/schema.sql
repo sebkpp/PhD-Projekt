@@ -167,7 +167,7 @@ CREATE TABLE public.eye_tracking (
     endtime timestamp without time zone,
     duration integer,
     participant_id integer NOT NULL,
-    hanover_id integer NOT NULL,
+    handover_id integer NOT NULL,
     aoi_id integer NOT NULL,
     eye_tracking_id integer NOT NULL
 );
@@ -1266,7 +1266,7 @@ ALTER TABLE ONLY public.handover
 --
 
 ALTER TABLE ONLY public.eye_tracking
-    ADD CONSTRAINT handover_id_fk FOREIGN KEY (hanover_id) REFERENCES public.handover(handover_id);
+    ADD CONSTRAINT handover_id_fk FOREIGN KEY (handover_id) REFERENCES public.handover(handover_id);
 
 
 --
