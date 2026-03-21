@@ -74,9 +74,7 @@ def load_questionnaire_responses(study_id=None) -> pd.DataFrame:
     params = {}
     if study_id is not None:
         query += (
-            " JOIN trial_participant_slot tps "
-            "ON qr.trial_participant_slot_id = tps.trial_participant_slot_id "
-            "JOIN trial t ON tps.trial_id = t.trial_id "
+            " JOIN trial t ON qr.trial_id = t.trial_id "
             "WHERE t.experiment_id IN "
             "(SELECT experiment_id FROM experiment WHERE study_id = :study_id)"
         )
