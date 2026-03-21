@@ -24,6 +24,13 @@ dependencies = [
     "weasyprint>=68.1",
 ]
 
+[project.optional-dependencies]
+notebooks = [
+    "jupyterlab>=4.0",
+    "ipykernel>=6.0",
+    "seaborn>=0.13",
+]
+
 [tool.coverage.run]
 source = ["."]
 omit = [
