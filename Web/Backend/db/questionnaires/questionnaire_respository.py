@@ -5,20 +5,37 @@ class QuestionnaireRepository:
     def __init__(self, session):
         self.session = session
 
+    def get_by_id(self, questionnaire_id: int):
+        return self.session.query(Questionnaire).filter_by(questionnaire_id=questionnaire_id).first()
+
     def get_questionnaire_by_name(self, name: str):
         return self.session.query(Questionnaire).filter_by(name=name).first()
 
-    def create_questionnaire(self, name: str):
-        questionnaire = Questionnaire(name=name)
+    def create_questionnaire(self, name: str, scale_type: str = 'slider', scale_min: float = 0, scale_max: float = 100):
+        questionnaire = Questionnaire(name=name, scale_type=scale_type, scale_min=scale_min, scale_max=scale_max)
         self.session.add(questionnaire)
         self.session.flush()
         self.session.refresh(questionnaire)
         return questionnaire
 
-    def add_questionnaire_item(self, questionnaire_id: int, item_name: str):
+    def add_questionnaire_item(
+        self,
+        questionnaire_id: int,
+        item_name: str,
+        item_label: str = None,
+        item_description: str = None,
+        min_label: str = None,
+        max_label: str = None,
+        order_index: int = 0,
+    ):
         item = QuestionnaireItem(
             questionnaire_id=questionnaire_id,
-            item_name=item_name
+            item_name=item_name,
+            item_label=item_label,
+            item_description=item_description,
+            min_label=min_label,
+            max_label=max_label,
+            order_index=order_index,
         )
         self.session.add(item)
         self.session.flush()

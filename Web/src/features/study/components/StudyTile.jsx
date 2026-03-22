@@ -106,6 +106,20 @@ export default function StudyTile({ study, experimentCount, onDelete }) {
                     >
                         Study konfigurieren
                     </button>
+                    <button
+                        className={`py-2 rounded-lg shadow-md transition-colors ${
+                            study.status === "Entwurf"
+                                ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+                                : "bg-purple-700 hover:bg-purple-600 text-white"
+                        }`}
+                        onClick={() =>
+                            study.status !== "Entwurf" &&
+                            navigate(`/study/${study.study_id}/analysis`)
+                        }
+                        disabled={study.status === "Entwurf"}
+                    >
+                        Analyse
+                    </button>
                 </div>
             </div>
         </div>

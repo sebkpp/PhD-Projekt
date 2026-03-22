@@ -4,6 +4,10 @@ import {
     groupChartData
 } from "@/features/Analysis/utils/questionnaireUtils.js";
 import QuestionnaireChartGroup from "@/features/Analysis/components/experiment/QuestionnaireChartGroup.jsx";
+import NasaTlxBar from "@/features/Analysis/components/experiment/NasaTlxBar.jsx";
+import SusScoreBar from "@/features/Analysis/components/experiment/SusScoreBar.jsx";
+import AttrakDiffPortfolio from "@/features/Analysis/components/experiment/AttrakDiffPortfolio.jsx";
+import AttrakDiffRadar from "@/features/Analysis/components/experiment/AttrakDiffRadar.jsx";
 
 function getRangeForQuestionnaire(name) {
     const lower = name.toLowerCase();
@@ -26,6 +30,10 @@ export default function QuestionnaireCharts({ chartData }) {
 
     const grouped = groupChartData(chartData.trial_item_stats);
 
+    const hasQuestionnaire = (name) =>
+        Object.values(chartData.trial_item_stats ?? {})
+            .some(t => t.questionnaires?.[name]?.items?.length > 0);
+
     return (
         <div>
             <h2 className="mt-8 mb-4 text-xl font-semibold">UX-Metriken</h2>
@@ -42,6 +50,26 @@ export default function QuestionnaireCharts({ chartData }) {
                     questionnaireRange={getRangeForQuestionnaire(name)}
                 />
             ))}
+            {hasQuestionnaire("NASA-TLX") && (
+                <>
+                    <h2 className="mt-8 mb-4 text-xl font-semibold">NASA-TLX Subskalen</h2>
+                    <NasaTlxBar trialItemStats={chartData.trial_item_stats} />
+                </>
+            )}
+            {hasQuestionnaire("SUS") && (
+                <>
+                    <h2 className="mt-8 mb-4 text-xl font-semibold">SUS-Score pro Trial</h2>
+                    <SusScoreBar trialItemStats={chartData.trial_item_stats} />
+                </>
+            )}
+            {hasQuestionnaire("AttrakDiff2") && (
+                <>
+                    <h2 className="mt-8 mb-4 text-xl font-semibold">AttrakDiff2 Portfolio-Matrix</h2>
+                    <AttrakDiffPortfolio trialItemStats={chartData.trial_item_stats} />
+                    <h2 className="mt-8 mb-4 text-xl font-semibold">AttrakDiff2 Subskalen-Radar</h2>
+                    <AttrakDiffRadar trialItemStats={chartData.trial_item_stats} />
+                </>
+            )}
         </div>
     );
 }

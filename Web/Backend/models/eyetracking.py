@@ -22,7 +22,7 @@ class EyeTracking(Base):
     endtime = Column(DateTime)
     duration = Column(Integer)
     participant_id = Column(Integer, ForeignKey("participant.participant_id"), nullable=False)
-    hanover_id = Column(Integer, ForeignKey("handover.handover_id"), nullable=False)
+    handover_id = Column(Integer, ForeignKey("handover.handover_id"), nullable=False)
     aoi_id = Column(Integer, ForeignKey("area_of_interest.aoi_id"), nullable=False)
 
     participant = relationship("Participant", back_populates="eye_trackings")

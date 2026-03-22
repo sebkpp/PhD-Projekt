@@ -4,7 +4,7 @@
         const questionnaires = trialStats.questionnaires || {};
         Object.entries(questionnaires).forEach(([qName, qStats]) => {
             const items = qStats.items || {};
-            const data = Object.entries(items).map(([item, stats]) => ({
+            const data = Object.entries(items).map(([, stats]) => ({
                 item: stats.item_name,
                 mean: Math.round(stats.mean * 10) / 10,
                 std: Math.round(stats.std * 10) / 10

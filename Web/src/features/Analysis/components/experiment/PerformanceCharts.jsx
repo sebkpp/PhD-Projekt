@@ -11,6 +11,8 @@ import {
 } from "recharts";
 import { Table } from "antd";
 import BoxplotPlotly from "@/features/Analysis/components/charts/BoxplotPlotly.jsx";
+import ViolinPlotPlotly from "@/features/Analysis/components/charts/ViolinPlotPlotly.jsx";
+import ErrorRateBar from "@/features/Analysis/components/experiment/ErrorRateBar.jsx";
 import StackedBarChart from "@/features/Analysis/components/charts/StackedBarChart.jsx";
 import {useChartExport} from "@/features/Analysis/hooks/useChartExport.js";
 
@@ -21,17 +23,6 @@ const COLORS = {
     phase3: "#ff7300"
 };
 
-const data = {
-    labels: ["Trial 1", "Trial 2"],
-    datasets: [{
-        label: "Gesamtdauer",
-        data: [
-            { min: 1, q1: 2, median: 3, q3: 4, max: 5 },
-            { min: 2, q1: 3, median: 4, q3: 5, max: 6 }
-        ],
-        backgroundColor: "#8884d8"
-    }]
-};
 
 function getTableData(chartData) {
     if (!chartData?.by_trial) return [];
@@ -43,11 +34,11 @@ function getTableData(chartData) {
 }
 
 export default function PerformanceCharts({ chartData }) {
-    if (!chartData?.by_trial) return null;
-
     const chartRefs = useRef({});
     const buttonRefs = useRef({});
     const exportChart = useChartExport();
+
+    if (!chartData?.by_trial) return null;
 
     const handleExport = (key, filename) => {
         exportChart(
@@ -136,6 +127,13 @@ export default function PerformanceCharts({ chartData }) {
                 onExport={() => handleExport("boxplot", "boxplot.png")}
             />
 
+            <ViolinPlotPlotly
+                boxplotData={boxplotData}
+                chartRef={el => chartRefs.current["violin"] = el}
+                buttonRef={el => buttonRefs.current["violin"] = el}
+                onExport={() => handleExport("violin", "violinplot.png")}
+            />
+
             <h2 className="mt-8 mb-4">Statistische Kennzahlen pro Trial</h2>
             <div
                 style={{
@@ -163,6 +161,9 @@ export default function PerformanceCharts({ chartData }) {
                     scroll={{ x: "max-content" }}
                 />
             </div>
+
+            <h2 className="mt-8 mb-4">Fehlerrate pro Trial</h2>
+            <ErrorRateBar chartData={chartData} />
 
         </div>
     )

@@ -76,7 +76,18 @@ export default function QuestionnaireSelector({ selectedQuestionnaires, onChange
                                                 : 'border-gray-600 hover:border-green-400 hover:bg-green-800'
                                         }`}
                                     >
-                                        {q.name}
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span>{q.name}</span>
+                                            <a
+                                                href={`/questionnaires/${q.questionnaire_id}/preview`}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                onClick={e => e.stopPropagation()}
+                                                className="text-xs text-blue-400 hover:underline shrink-0"
+                                            >
+                                                Vorschau
+                                            </a>
+                                        </div>
                                     </div>
                                 )
                             })}

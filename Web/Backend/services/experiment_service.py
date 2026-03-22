@@ -30,8 +30,7 @@ def create_experiment(session, data):
             trial = t_repo.create(experiment_id, idx)
             trial_id = trial.trial_id
             for slot_idx, (slot_name, slot_data) in enumerate(slots.items(), start=1):
-                avatar_visibility_id = 1
-                trial_slot = ts_repo.create(trial_id, slot_idx, avatar_visibility_id)
+                trial_slot = ts_repo.create(trial_id, slot_idx)
                 active_stimuli = slot_data.get("active_stimuli", [])
                 for stim_type, stim_data in active_stimuli.items():
                     stimulus_id = int(stim_data.get("selected_stimuli_id"))

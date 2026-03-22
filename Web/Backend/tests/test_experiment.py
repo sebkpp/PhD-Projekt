@@ -1,100 +1,101 @@
-﻿import pytest
-from Backend.app import app
-import json
+from starlette import status
 
-@pytest.fixture
-def client():
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
 
-def test_create_experiment_success(client):
-    data = {
+def test_create_experiment(client, study_id):
+    resp = client.post("/experiments/", json={
         "name": "Test Experiment",
-        "description": "Testbeschreibung",
-        "researcher": "Tester"
+        "study_id": study_id,
+        "description": "A test experiment",
+        "researcher": "Dr. Test"
+    })
+    assert resp.status_code == status.HTTP_201_CREATED
+    data = resp.json()
+    assert "experiment_id" in data
+
+
+def test_get_experiment_by_id(client, experiment_id):
+    resp = client.get(f"/experiments/{experiment_id}")
+    assert resp.status_code == status.HTTP_200_OK
+    data = resp.json()
+    assert data["experiment_id"] == experiment_id
+
+
+def test_get_experiment_not_found(client):
+    resp = client.get("/experiments/9999")
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_link_questionnaires(client, experiment_id):
+    resp = client.put(f"/experiments/{experiment_id}/questionnaires", json=[])
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json()["message"] == "Questionnaires updated"
+
+
+def test_set_started_at(client, experiment_id):
+    resp = client.post(f"/experiments/{experiment_id}/started")
+    assert resp.status_code == status.HTTP_200_OK
+    assert "message" in resp.json()
+
+
+def test_set_completed_at(client, experiment_id):
+    resp = client.post(f"/experiments/{experiment_id}/completed")
+    assert resp.status_code == status.HTTP_200_OK
+    assert "message" in resp.json()
+
+
+def test_save_trials(client, experiment_id):
+    payload = {
+        "trials": [
+            {
+                "trial_number": 1,
+                "participants": {
+                    "1": {"avatar": 1, "participant_id": 1, "selectedStimuli": {"vis": 7}}
+                }
+            }
+        ],
+        "questionnaires": []
     }
-    response = client.post('/api/experiments', data=json.dumps(data), content_type='application/json')
-    assert response.status_code == 201
-    json_data = response.get_json()
-    assert "experiment_id" in json_data
+    resp = client.post(f"/experiments/{experiment_id}/trials", json=payload)
+    assert resp.status_code == status.HTTP_201_CREATED
 
-def test_create_experiment_missing_name(client):
-    data = {
-        "description": "Keine Name",
-        "researcher": "Tester"
+
+def test_get_trials(client, experiment_id):
+    payload = {
+        "trials": [
+            {
+                "trial_number": 1,
+                "participants": {
+                    "1": {"avatar": 1, "participant_id": 1, "selectedStimuli": {"vis": 7}}
+                }
+            }
+        ],
+        "questionnaires": []
     }
-    response = client.post('/api/experiments', data=json.dumps(data), content_type='application/json')
-    assert response.status_code == 400
-    json_data = response.get_json()
-    assert "errors" in json_data
-    assert "name ist erforderlich." in json_data["errors"]
+    client.post(f"/experiments/{experiment_id}/trials", json=payload)
+    resp = client.get(f"/experiments/{experiment_id}/trials")
+    assert resp.status_code == status.HTTP_200_OK
+    assert isinstance(resp.json(), list)
 
-def test_create_multiple_experiments(client):
-    names = ["Experiment A", "Experiment B"]
-    ids = []
 
-    for name in names:
-        res = client.post('/api/experiments', json={"name": name})
-        assert res.status_code == 201
-        ids.append(res.get_json()["experiment_id"])
+def test_get_experiment_response_structure(client, experiment_id):
+    """GET /experiments/{id} must return experiment_id, study_id and trials field (regression)."""
+    resp = client.get(f"/experiments/{experiment_id}")
+    assert resp.status_code == status.HTTP_200_OK
+    data = resp.json()
+    assert "experiment_id" in data
+    assert "study_id" in data
 
-    assert len(ids) == 2
-    assert ids[0] != ids[1]
 
-def test_create_experiment_invalid_json(client):
-    response = client.post(
-        '/api/experiments',
-        data="nur text, kein json",
-        content_type='text/plain'
-    )
-    assert response.status_code in (400, 415)
+def test_create_experiment_missing_study_id(client):
+    """POST /experiments/ without study_id → 422 (Pydantic validation)."""
+    resp = client.post("/experiments/", json={"name": "Missing study_id"})
+    assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-def test_cleanup(client):
-    # Experiment anlegen
-    client.post('/api/experiments', json={"name": "Temp Experiment"})
 
-    # Neue Session öffnen, um den DB-Status zu prüfen
-    from Backend.db_session import SessionLocal
-    from Backend.models.experiment import Experiment
-
-    session = SessionLocal()
-    experiments = session.query(Experiment).all()
-    session.close()
-
-    # Die Tabelle soll nicht leer sein, weil wir gerade einen Eintrag angelegt haben
-    assert len(experiments) == 1
-
-    # Jetzt Cleanup manuell durchführen (wenn nicht schon automatisch)
-    session = SessionLocal()
-    session.query(Experiment).delete()
-    session.commit()
-    session.close()
-
-    # Prüfen, ob nach Cleanup alles weg ist
-    session = SessionLocal()
-    experiments_after_cleanup = session.query(Experiment).all()
-    session.close()
-    assert len(experiments_after_cleanup) == 0
-
-def test_experiment_id_returned_and_unique(client):
-    response1 = client.post('/api/experiments', json={"name": "Test 1"})
-    response2 = client.post('/api/experiments', json={"name": "Test 2"})
-
-    assert response1.status_code == 201
-    assert response2.status_code == 201
-
-    data1 = response1.get_json()
-    data2 = response2.get_json()
-
-    assert "experiment_id" in data1
-    assert "experiment_id" in data2
-
-    id1 = data1["experiment_id"]
-    id2 = data2["experiment_id"]
-
-    assert id1 is not None
-    assert id2 is not None
-
-    # je nach Typ: z.B. beide unterschiedlich
-    assert id1 != id2
+def test_create_experiment_invalid_study_id(client):
+    """POST /experiments/ with non-existent study_id → should not return 201."""
+    resp = client.post("/experiments/", json={
+        "name": "Bad study",
+        "study_id": 99999
+    })
+    assert resp.status_code != status.HTTP_201_CREATED

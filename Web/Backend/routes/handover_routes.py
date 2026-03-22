@@ -1,60 +1,142 @@
-﻿from flask import Blueprint, request, jsonify
+﻿from datetime import datetime
+from typing import List, Optional
+from fastapi import APIRouter, HTTPException, status, Depends
+from pydantic import BaseModel
+
+from sqlalchemy.orm import Session
+
 from Backend.db_session import SessionLocal
-from Backend.services.handover_service import save_handover, get_handovers_for_trial, get_handovers_for_experiment
-import traceback
+from Backend.services.experiment_service import get_experiment_by_id
+from Backend.services.handover_service import save_handover, get_handovers_for_trial, get_handovers_for_experiment, update_handover_phases
+from Backend.services.trial_service import get_trial
 
-handover_bp = Blueprint("handover", __name__)
+router = APIRouter(prefix="/handovers", tags=["handovers"])
 
-@handover_bp.route('/trials/<int:trial_id>/handovers', methods=['GET'])
-def get_handovers_route(trial_id):
-    session = SessionLocal()
+def get_db():
+    db = SessionLocal()
     try:
-        handovers = get_handovers_for_trial(session, trial_id)
-        handover_list = [h.to_dict() for h in handovers]
-        return jsonify(handover_list), 200
-
-    except Exception as e:
-        print("❌ Fehler beim Abrufen der Handovers:")
-        traceback.print_exc()
-        return jsonify({"error": "Ein Fehler ist aufgetreten.", "details": str(e)}), 500
-
+        yield db
     finally:
-        session.close()
+        db.close()
 
-@handover_bp.route('/experiments/<int:experiment_id>/handovers', methods=['GET'])
-def get_handovers_for_experiment_route(experiment_id):
-    session = SessionLocal()
+class HandoverResponse(BaseModel):
+    handover_id: int
+    trial_id: int
+    giver: int
+    receiver: int
+    timestamp: Optional[str] = None
+    # weitere Felder nach Bedarf
+
+    class Config:
+        orm_mode = True
+
+class HandoverCreateRequest(BaseModel):
+    giver: int
+    receiver: int
+    grasped_object: Optional[str] = None
+
+class MessageResponse(BaseModel):
+    message: str
+    handover_id: Optional[int] = None
+
+class HandoverPhasePatchRequest(BaseModel):
+    giver_grasped_object: Optional[datetime] = None
+    receiver_touched_object: Optional[datetime] = None
+    receiver_grasped_object: Optional[datetime] = None
+    giver_released_object: Optional[datetime] = None
+    is_error: Optional[bool] = None
+    error_type: Optional[str] = None
+
+@router.get(
+    "/trials/{trial_id}",
+    response_model=List[HandoverResponse],
+    status_code=status.HTTP_200_OK,
+    summary="Get Handovers for Trial",
+    description="Retrieve all handovers associated with a specific trial."
+)
+async def get_handovers_for_trial_route(
+        trial_id: int,
+        db: Session = Depends(get_db)
+) -> List[HandoverResponse]:
     try:
-        handovers = get_handovers_for_experiment(session, experiment_id)
-        handover_list = [h.to_dict() for h in handovers]
-        return jsonify(handover_list), 200
+        trial = get_trial(db, trial_id)
+        if trial is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trial not found")
+        handovers = get_handovers_for_trial(db, trial_id)
+        return handovers
+    except HTTPException:
+        raise
     except Exception as e:
-        print("❌ Fehler beim Abrufen der Handovers für Experiment:")
-        traceback.print_exc()
-        return jsonify({"error": "Ein Fehler ist aufgetreten.", "details": str(e)}), 500
-    finally:
-        session.close()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-@handover_bp.route('/trials/<int:trial_id>/handovers', methods=['POST'])
-def save_handover_route(trial_id):
-    session = SessionLocal()
+
+@router.get(
+    "/experiments/{experiment_id}",
+    response_model=List[HandoverResponse],
+    status_code=status.HTTP_200_OK,
+    summary="Get Handovers for Experiment",
+    description="Retrieve all handovers associated with a specific experiment."
+)
+async def get_handovers_for_experiment_route(
+        experiment_id: int,
+        db: Session = Depends(get_db)
+) -> List[HandoverResponse]:
     try:
-        data = request.get_json(force=True)
-        if not data:
-            return jsonify({"error": "Kein JSON gesendet"}), 400
-
-        print("Received handover data:", data)
-        # trial_id aus URL übernehmen, Sicherheit
-        data['trial_id'] = trial_id
-
-        new_handover = save_handover(session, data)
-        session.commit()
-        return jsonify({"message": "Handover gespeichert", "handover_id": new_handover.handover_id}), 201
-
+        experiment = get_experiment_by_id(db, experiment_id)
+        if experiment is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Experiment not found")
+        handovers = get_handovers_for_experiment(db, experiment_id)
+        return handovers
+    except HTTPException:
+        raise
     except Exception as e:
-        session.rollback()
-        print("Fehler beim Speichern des Handovers:")
-        return jsonify({"error": "Ein interner Fehler ist aufgetreten.", "details": str(e)}), 500
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-    finally:
-        session.close()
+
+@router.post(
+    "/trials/{trial_id}",
+    response_model=MessageResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Save Handover for Trial",
+    description="Save a new handover associated with a specific trial."
+)
+async def save_handover_route(
+        trial_id: int,
+        payload: HandoverCreateRequest,
+        db: Session = Depends(get_db)
+) -> MessageResponse:
+    try:
+        data = payload.model_dump()
+        data["trial_id"] = trial_id
+        new_handover = save_handover(db, data)
+        db.commit()
+        return MessageResponse(message="Handover saved", handover_id=new_handover.handover_id)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.patch(
+    "/{handover_id}/phases",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Update Handover phase timestamps",
+    description="Partially update phase timestamps and error state for an existing handover. Only non-null fields are written.",
+)
+async def patch_handover_phases(
+        handover_id: int,
+        payload: HandoverPhasePatchRequest,
+        db: Session = Depends(get_db)
+) -> MessageResponse:
+    try:
+        patch_data = payload.model_dump()
+        result = update_handover_phases(db, handover_id, patch_data)
+        if result is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Handover not found")
+        db.commit()
+        return MessageResponse(message="Handover phases updated", handover_id=result.handover_id)
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

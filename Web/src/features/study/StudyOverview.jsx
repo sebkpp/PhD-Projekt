@@ -56,7 +56,7 @@ export default function StudyOverview() {
                             <StudyTile
                                 key={study.study_id}
                                 study={study}
-                                experimentCount={study.experiments.length}
+                                experimentCount={study.experiments?.length ?? 0}
                                 onDelete={() => askDelete(study.study_id)}
                             />
                         ))

@@ -110,6 +110,8 @@ def update_study(session, study_id, data):
     return study
 
 def delete_study(session, study_id):
+    from Backend.models.study.study_config import StudyConfig
+    session.query(StudyConfig).filter_by(study_id=study_id).delete()
     repo = StudyRepository(session)
     return repo.delete(study_id)
 

@@ -1,120 +1,122 @@
-﻿from flask import Blueprint, request, jsonify
+﻿from typing import Optional
+
+from fastapi import APIRouter, HTTPException, status, Depends
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from Backend.db_session import SessionLocal
-from Backend.services.trial_service import save_trials, get_trials_for_experiment, finish_trial, \
-    save_experiment_questionnaires, get_trial, start_trial, get_participants_for_trial
-import traceback
+from Backend.services.trial_service import finish_trial, \
+    get_trial, start_trial, get_participants_for_trial
 
-trial_bp = Blueprint('trial', __name__)
+router = APIRouter(prefix="/trials", tags=["trials"])
 
-@trial_bp.route('/experiments/<int:experiment_id>/trials', methods=['POST'])
-def save_trials_route(experiment_id):
-    session = SessionLocal()
+def get_db():
+    db = SessionLocal()
     try:
-        data = request.get_json(force=False, silent=True)  # <-- so wird None zurückgegeben statt Exception
-        if data is None:
-            return jsonify({"error": "Ungültiges oder fehlendes JSON"}), 400
-
-        trials = data.get("trials")
-        selected_questionnaires_raw = data.get("questionnaires", [])
-        selected_questionnaires = [q["questionnaire_id"] for q in selected_questionnaires_raw]
-
-        if not trials:
-            return jsonify({"error": "trials ist erforderlich"}), 400
-
-        if selected_questionnaires is None:
-            return jsonify({"error": "selectedQuestionnaires ist erforderlich"}), 400
-
-        result = save_trials(session, experiment_id, trials, selected_questionnaires)
-
-        save_experiment_questionnaires(session, experiment_id, selected_questionnaires)
-
-        session.commit()
-        return jsonify(result), 201
-
-    except Exception as e:
-        session.rollback()
-        print("❌ Fehler beim Speichern der Trial-Konfiguration:")
-        traceback.print_exc()
-        return jsonify({"error": "Ein interner Fehler ist aufgetreten.", "details": str(e)}), 500
-
+        yield db
     finally:
-        session.close()
+        db.close()
 
 
-@trial_bp.route('/experiments/<int:experiment_id>/trials', methods=['GET'])
-def get_trials_route(experiment_id):
-    session = SessionLocal()
-    try:
-        trials = get_trials_for_experiment(session, experiment_id)
-        print("Get Trials for experiment", experiment_id, ":", trials)
-        return jsonify(trials), 200
+class MessageResponse(BaseModel):
+    message: str
 
-    except Exception as e:
-        print("❌ Fehler beim Abrufen der Trials:")
-        traceback.print_exc()
-        return jsonify({"error": "Ein Fehler ist aufgetreten.", "details": str(e)}), 500
+class StatusResponse(BaseModel):
+    status: str
+    message: Optional[str] = None
 
-    finally:
-        session.close()
+current_trial_id: Optional[int] = None
 
-current_trial_id = None
 
-@trial_bp.route('/trial/<int:trial_id>/start', methods=['POST'])
-def start_trial_route(trial_id):
-    session = SessionLocal()
+
+@router.post(
+    "/{trial_id}/start",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Start a trial",
+    description="Mark a trial as started."
+)
+async def start_trial_route(
+        trial_id: int,
+        db: Session = Depends(get_db)
+) -> MessageResponse:
     global current_trial_id
     try:
-        print("Trial started:", trial_id)
-        start_trial(session, trial_id)
+        start_trial(db, trial_id)
         current_trial_id = trial_id
-        # send_start_signal_to_unity(trial_id)
-        session.commit()
-        return jsonify({"message": "Trial started"}), 200
+        db.commit()
+        return MessageResponse(message="Trial started")
     except Exception as e:
-        print("Fehler beim Starten des Trials:", e)
-        return jsonify({"error": str(e)}), 500
-    finally:
-        session.close()
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-@trial_bp.route('/trial/<int:trial_id>/end', methods=['POST'])
-def end_trial(trial_id):
-    session = SessionLocal()
+
+@router.post(
+    "/{trial_id}/end",
+    response_model=StatusResponse,
+    status_code=status.HTTP_200_OK,
+    summary="End a trial",
+    description="Mark a trial as finished."
+)
+async def end_trial_route(
+        trial_id: int,
+        db: Session = Depends(get_db)
+) -> StatusResponse:
     global current_trial_id
     try:
-        print("Trial ended:", trial_id)
-        finish_trial(session, trial_id)
+        finish_trial(db, trial_id)
         current_trial_id = None
-        session.commit()
-        return jsonify({"status": "ok", "message": f"Trial {trial_id} marked as finished"}), 200
+        db.commit()
+        return StatusResponse(status="ok", message=f"Trial {trial_id} marked as finished")
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
-    finally:
-        session.close()
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-@trial_bp.route('/trial/current_trial', methods=['GET'])
-def get_current_trial():
-    return jsonify(trial_id=current_trial_id)
 
-@trial_bp.route('/trial/<int:trial_id>', methods=['GET'])
-def get_trial_route(trial_id):
-    session = SessionLocal()
+@router.get(
+    "/current",
+    status_code=status.HTTP_200_OK,
+    summary="Get current trial",
+    description="Retrieve the currently active trial ID."
+)
+async def get_current_trial_route():
+    return {"trial_id": current_trial_id}
+
+
+@router.get(
+    "/{trial_id}",
+    status_code=status.HTTP_200_OK,
+    summary="Get trial by ID",
+    description="Retrieve a trial by its ID."
+)
+async def get_trial_route(
+        trial_id: int,
+        db: Session = Depends(get_db)
+):
     try:
-        trial = get_trial(session, trial_id)
-        return jsonify(trial.to_dict()), 200
+        trial = get_trial(db, trial_id)
+        if trial is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trial not found")
+        return trial.to_dict()
+    except HTTPException:
+        raise
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
-    finally:
-        session.close()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-@trial_bp.route('/trial/<int:trial_id>/participants', methods=['GET'])
-def get_trial_participants(trial_id):
-    session = SessionLocal()
+
+@router.get(
+    "/{trial_id}/participants",
+    status_code=status.HTTP_200_OK,
+    summary="Get participants for a trial",
+    description="Retrieve all participants for a given trial."
+)
+async def get_trial_participants_route(
+        trial_id: int,
+        db: Session = Depends(get_db)
+):
     try:
-        participants = get_participants_for_trial(session, trial_id)
-        return jsonify([p.to_dict() for p in participants]), 200
+        participants = get_participants_for_trial(db, trial_id)
+        return [p.to_dict() for p in participants]
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
-    finally:
-        session.close()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 

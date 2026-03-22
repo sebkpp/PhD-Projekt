@@ -1,5 +1,7 @@
 ﻿from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text, Table
 from sqlalchemy.orm import relationship
+from pydantic import BaseModel
+from typing import Optional, List
 from datetime import datetime
 from Backend.db_session import Base
 
@@ -41,3 +43,17 @@ class Experiment(Base):
             "study_id": self.study_id,
             "trials": [trial.to_dict() for trial in self.trials]
         }
+
+
+class ExperimentResponse(BaseModel):
+    experiment_id: int
+    description: Optional[str] = None
+    created_at: Optional[datetime] = None
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    researcher: Optional[str] = None
+    study_id: int
+    trials: Optional[List] = None
+
+    class Config:
+        orm_mode = True

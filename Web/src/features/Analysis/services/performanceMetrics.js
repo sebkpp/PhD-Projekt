@@ -68,7 +68,7 @@ export async function fetchPerformanceMetrics(experimentId) {
         const response = await fetch(`/api/analysis/experiment/${experimentId}/performance`);
         if (!response.ok) return null;
         return await response.json();
-    } catch (e) {
+    } catch {
         return null;
     }
 }

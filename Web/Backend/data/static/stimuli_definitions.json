@@ -1,0 +1,99 @@
+[
+  {
+    "stimulus_id": 1,
+    "name": "inner_hand",
+    "type": "visual"
+  },
+  {
+    "stimulus_id": 2,
+    "name": "outer_hand",
+    "type": "visual"
+  },
+  {
+    "stimulus_id": 3,
+    "name": "finger_color",
+    "type": "visual"
+  },
+  {
+    "stimulus_id": 4,
+    "name": "object_color",
+    "type": "visual"
+  },
+  {
+    "stimulus_id": 5,
+    "name": "low_subtil",
+    "type": "auditory",
+    "frequency": 50,
+    "volume": 10
+  },
+  {
+    "stimulus_id": 6,
+    "name": "low_medium",
+    "type": "auditory",
+    "frequency": 50,
+    "volume": 50
+  },
+  {
+    "stimulus_id": 7,
+    "name": "low_loud",
+    "type": "auditory",
+    "frequency": 50,
+    "volume": 100
+  },
+  {
+    "stimulus_id": 8,
+    "name": "high_subtil",
+    "type": "auditory",
+    "frequency": 255,
+    "volume": 10
+  },
+  {
+    "stimulus_id": 9,
+    "name": "high_medium",
+    "type": "auditory",
+    "frequency": 255,
+    "volume": 50
+  },
+  {
+    "stimulus_id": 10,
+    "name": "high_loud",
+    "type": "auditory",
+    "frequency": 255,
+    "volume": 100
+  },
+  {
+    "stimulus_id": 11,
+    "name": "pulse_50",
+    "type": "tactile",
+    "pattern": "pulse",
+    "intensity": 50
+  },
+  {
+    "stimulus_id": 12,
+    "name": "pulse_255",
+    "type": "tactile",
+    "pattern": "pulse",
+    "intensity": 255
+  },
+  {
+    "stimulus_id": 13,
+    "name": "fade_50",
+    "type": "tactile",
+    "pattern": "fade",
+    "intensity": 50
+  },
+  {
+    "stimulus_id": 14,
+    "name": "fade_255",
+    "type": "tactile",
+    "pattern": "fade",
+    "intensity": 255
+  },
+  {
+    "stimulus_id": 15,
+    "name": "continuous_100",
+    "type": "tactile",
+    "pattern": "continuous",
+    "intensity": 100
+  }
+]

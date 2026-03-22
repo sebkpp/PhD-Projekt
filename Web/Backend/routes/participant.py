@@ -1,4 +1,8 @@
-﻿from flask import Blueprint, request, jsonify
+﻿from typing import List
+
+from fastapi import APIRouter, HTTPException, status, Depends
+from pydantic import BaseModel
+
 from Backend.services.participant_service import (
     register_participant,
     submit_participant_to_slot,
@@ -9,111 +13,173 @@ from Backend.services.connection_service import (
     get_connection_status,
     player_joined
 )
+from Backend.models.participant import ParticipantResponse
+
+from sqlalchemy.orm import Session
 from Backend.db_session import SessionLocal
 
-participant_bp = Blueprint('participant', __name__, url_prefix='/api/participants')
-
-@participant_bp.route("/join", methods=["POST"])
-def player_join():
-    data = request.get_json()
-    player_id = data.get("player_id")
-    if not player_joined(player_id):
-        return jsonify({"status": "error", "message": "Ungültige player_id"}), 400
-
-    return jsonify({"status": "joined", "player_id": player_id})
+router = APIRouter(prefix="/api/participants", tags=["participants"])
 
 
-@participant_bp.route("/heartbeat", methods=["POST"])
-def player_heartbeat():
-    player_id = request.json.get("player_id")
-    if not update_heartbeat(player_id):
-        return jsonify({"status": "error", "message": "Ungültige player_id"}), 400
-    return jsonify({"status": "heartbeat", "player_id": player_id})
+class PlayerJoinRequest(BaseModel):
+    player_id: str
 
-@participant_bp.route("/connection_status", methods=["GET"])
-def connection_status():
-    status = get_connection_status()
-    return jsonify(status)
+class HeartbeatRequest(BaseModel):
+    player_id: str
 
+class ReadinessRequest(BaseModel):
+    slot: str
+    ready: bool
+
+class ParticipantCreate(BaseModel):
+    age: int
+    gender: str
+    handedness: str
+
+class SubmitParticipantRequest(BaseModel):
+    experiment_id: int
+    slot: int
+    participant_id: int
 
 readiness_status = {}
 
-@participant_bp.route("/readiness_status", methods=["GET"])
-def get_readiness_status():
-    # Gibt den Bereitschaftsstatus aller Teilnehmer zurück
-    return jsonify(readiness_status), 200
-
-@participant_bp.route("/readiness_status", methods=["POST"])
-def set_readiness_status():
-    data = request.get_json()
-    slot = str(data.get("slot"))
-    ready = bool(data.get("ready"))
-    readiness_status[slot] = ready
-    return jsonify({"slot": slot, "ready": ready}), 200
-
-@participant_bp.route('/', methods=['POST'], strict_slashes=False)
-def register_participant_route():
-    data = request.get_json()
-    age = data.get("age")
-    gender = data.get("gender")
-    handedness = data.get("handedness")
-
-    if not age or not gender or not handedness:
-        return jsonify({"error": "Unvollständige Daten"}), 400
-
+def get_db():
     db = SessionLocal()
     try:
-        participant = register_participant(db, age, gender, handedness)
-        db.commit()
-        return jsonify({"participant_id": participant.participant_id}), 201
-    except Exception as e:
-        db.rollback()
-        return jsonify({"error": str(e)}), 500
+        yield db
     finally:
         db.close()
 
-@participant_bp.route("/submit", methods=["POST"])
-def submit_participant_to_slot_route():
+@router.post(
+    "/join",
+    status_code=status.HTTP_200_OK,
+    summary="Participant join",
+    description="Set a participant as joined in the system."
+)
+async def player_join(
+        payload: PlayerJoinRequest
+):
+    if not player_joined(payload.player_id):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Participant ID")
+    return {"status": "joined", "player_id": payload.player_id}
 
-    print("Received request to submit participant to slot")
-    data = request.get_json()
-    experiment_id = data.get("experiment_id")
-    slot = data.get("slot")
-    participant_id = data.get("participant_id")
+@router.post(
+    "/heartbeat",
+    status_code=status.HTTP_200_OK,
+    summary="Participant Heartbeat",
+    description="Notify the system that a participant is still active."
+)
+async def player_heartbeat(
+        payload: HeartbeatRequest
+):
+    if not update_heartbeat(payload.player_id):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Participant ID")
+    return {"status": "heartbeat", "player_id": payload.player_id}
 
-    print("Data received:", data)
-    session = SessionLocal()
+
+@router.get(
+    "/connection_status",
+    status_code=status.HTTP_200_OK,
+    summary="Get Connection Status",
+    description="Retrieve the current connection status of participants."
+)
+async def connection_status():
+    status_data = get_connection_status()
+    return status_data
+
+@router.get(
+    "/readiness_status",
+    status_code=status.HTTP_200_OK,
+    summary="Get Readiness Status",
+    description="Retrieve the readiness status of all slots."
+
+)
+async def get_readiness_status():
+    return readiness_status
+
+@router.post(
+    "/readiness_status",
+    status_code=status.HTTP_200_OK,
+    summary="Set Readiness Status",
+    description="Set the readiness status for a specific slot."
+)
+async def set_readiness_status(
+        payload: ReadinessRequest
+):
+    readiness_status[payload.slot] = payload.ready
+    return {"slot": payload.slot, "ready": payload.ready}
+
+@router.post(
+    "/",
+    response_model=dict,
+    status_code=status.HTTP_201_CREATED,
+    summary="Register a new participant",
+    description="Register a new participant with age , gender, and handedness."
+)
+async def register_participant_route(
+        payload: ParticipantCreate,
+        db: Session = Depends(get_db)
+):
     try:
-        submit_participant_to_slot(session, experiment_id, slot, participant_id)
-        session.commit()
-        return jsonify({"status": "ok"}), 200
+        participant = register_participant(db, payload.age, payload.gender, payload.handedness)
+        db.commit()
+        return {"participant_id": participant.participant_id}
     except Exception as e:
-        session.rollback()
-        return jsonify({"error": str(e)}), 500
-    finally:
-        session.close()
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
-@participant_bp.route("/status/<int:experiment_id>/<int:slot>", methods=["GET"])
-def get_submit_status(experiment_id, slot):
-
-    session = SessionLocal()
+@router.post(
+    "/submit",
+    response_model=dict,
+    status_code=status.HTTP_200_OK,
+    summary="Submit participant to experiment slot",
+    description="Assign a participant to a specific slot in an experiment."
+)
+async def submit_participant_to_slot_route(
+        payload: SubmitParticipantRequest,
+        db: Session = Depends(get_db)
+):
     try:
-        status = get_submission_status(session, experiment_id, slot)
-        return jsonify(status), 200
+        submit_participant_to_slot(db, payload.experiment_id, payload.slot, payload.participant_id)
+        db.commit()
+        return {"status": "ok"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+@router.get(
+    "/status/{experiment_id}/{slot}",
+    response_model=dict,
+    status_code=status.HTTP_200_OK,
+    summary="Get submission status",
+    description="Retrieve the submission status of participants for a specific experiment and slot."
+)
+async def get_submit_status(
+        experiment_id: int,
+        slot: int,
+        db: Session = Depends(get_db)
+):
+    try:
+        status_data = get_submission_status(db, experiment_id, slot)
+        return status_data
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-    finally:
-        session.close()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
-@participant_bp.route("/experiment/<int:experiment_id>", methods=["GET"])
-def get_participants_by_experiment_route(experiment_id):
-    session = SessionLocal()
+
+@router.get(
+    "/experiment/{experiment_id}",
+    response_model=List[ParticipantResponse],
+    status_code=status.HTTP_200_OK,
+    summary="Get participants by experiment",
+    description="Retrieve all participants associated with a specific experiment."
+)
+async def get_participants_by_experiment_route(
+        experiment_id: int,
+        db: Session = Depends(get_db)
+) -> List[ParticipantResponse]:
     try:
-        participants = get_participants_by_experiment(session, experiment_id)
-        result = [p.to_dict() for p in participants]
-        return jsonify(result), 200
+        participants = get_participants_by_experiment(db, experiment_id)
+        return participants
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        session.close()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

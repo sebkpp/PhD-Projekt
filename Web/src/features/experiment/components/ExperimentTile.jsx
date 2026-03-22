@@ -101,7 +101,7 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
             )}
 
             {/* Trial Übersicht */}
-            {trials.length > 0 && (
+            {trials?.length > 0 && (
                 <div className="mb-4">
                     <h3 className="text-gray-300 text-xs mb-1 font-medium flex items-center gap-1">
                         <Layers className="w-3 h-3 text-yellow-400"/>
@@ -118,6 +118,7 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
                                 Trial {trial.trial_number}
                             </div>
                             <div className="flex gap-2">
+                                {trial.slots?.[0] && (
                                 <div className="flex-1 flex flex-col gap-1">
     <span className="font-medium text-gray-400 text-[10px]">
       Slot {trial.slots[0].slot}:
@@ -134,6 +135,9 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
                                         ))}
                                     </div>
                                 </div>
+                                )}
+                                {trial.slots?.[1] && (
+                                <>
                                 <div className="w-px bg-gray-500 mx-2 my-1"></div>
                                 <div className="flex-1 flex flex-col gap-1">
     <span className="font-medium text-gray-400 text-[10px]">
@@ -151,6 +155,8 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
                                         ))}
                                     </div>
                                 </div>
+                                </>
+                                )}
                             </div>
                         </div>
                     ))}

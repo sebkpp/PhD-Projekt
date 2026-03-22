@@ -13,7 +13,7 @@ import {
     Tooltip,
     ResponsiveContainer
 } from "recharts";
-import { getMaxValue} from "@/features/Analysis/utils/questionnaireUtils.js";
+import "@/features/Analysis/utils/questionnaireUtils.js";
 import RadarChartPlotly from "@/features/Analysis/components/charts/RadarChartPlotly.jsx";
 import BarChartPlotly from "@/features/Analysis/components/charts/BarChartPlotly.jsx";
 
@@ -66,7 +66,7 @@ export default function QuestionnaireChartGroup({name, trials = [], chartRefs, b
         const items = trials[0][1]?.map(row => row.item) || [];
         items.forEach(item => {
             const entry = {item};
-            trials.forEach(([trial_id, data], idx) => {
+            trials.forEach(([, data], idx) => {
                 const mean = data.find(row => row.item === item)?.mean ?? 0;
                 entry[`trial${idx + 1}`] = mean;
             });
