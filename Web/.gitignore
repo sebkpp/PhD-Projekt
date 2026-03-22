@@ -25,3 +25,6 @@ dist-ssr
 
 Backend\.env
 Backend\.env.test
+# Claude Code
+.claude/
+docs/superpowers/
