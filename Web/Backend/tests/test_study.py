@@ -116,3 +116,110 @@ def test_get_participants_by_study_not_found(client):
     """GET /studies/9999/participants → 404 for unknown study."""
     resp = client.get("/studies/9999/participants")
     assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+# ---------------------------------------------------------------------------
+# study_service direct tests — stimuli and questionnaire paths
+# ---------------------------------------------------------------------------
+
+def test_create_study_with_stimuli(db_session):
+    """create_study stores stimuli links when stimuli list is provided."""
+    from Backend.models.stimulus import StimulusType
+    from Backend.models.study.study_stimuli import StudyStimuli
+    from Backend.db_session import SessionLocal
+    from Backend.services.study_service import create_study
+
+    st = StimulusType(type_name="test_condition")
+    db_session.add(st)
+    db_session.commit()
+
+    data = {"status": "Aktiv", "stimuli": [{"stimuli_type_id": st.stimulus_type_id}]}
+    session = SessionLocal()
+    study = create_study(session, data)
+    session.commit()
+    study_id = study.study_id
+    stimuli_rows = session.query(StudyStimuli).filter_by(study_id=study_id).all()
+    session.close()
+
+    assert len(stimuli_rows) == 1, f"Expected 1 row, found {len(stimuli_rows)}"
+    assert stimuli_rows[0].stimuli_type_id == st.stimulus_type_id
+
+
+def test_create_study_with_questionnaires(db_session):
+    """create_study stores questionnaire links when questionnaires list is provided."""
+    from Backend.models.questionnaire import Questionnaire
+    from Backend.models.study.study_questionnaire import StudyQuestionnaire
+    from Backend.db_session import SessionLocal
+    from Backend.services.study_service import create_study
+
+    q = Questionnaire(name="Test-Q-Create")
+    db_session.add(q)
+    db_session.commit()
+
+    data = {"status": "Aktiv", "questionnaires": [{"questionnaire_id": q.questionnaire_id}]}
+    session = SessionLocal()
+    study = create_study(session, data)
+    session.commit()
+    study_id = study.study_id
+    sq_rows = session.query(StudyQuestionnaire).filter_by(study_id=study_id).all()
+    session.close()
+
+    assert len(sq_rows) == 1, f"Expected 1 row, found {len(sq_rows)}"
+    assert sq_rows[0].questionnaire_id == q.questionnaire_id
+
+
+def test_update_study_questionnaires_replace(db_session, study_id):
+    """update_study deletes old questionnaire links and creates new ones."""
+    from Backend.models.questionnaire import Questionnaire
+    from Backend.models.study.study_questionnaire import StudyQuestionnaire
+    from Backend.db_session import SessionLocal
+    from Backend.services.study_service import update_study
+
+    q1 = Questionnaire(name="Q-Old")
+    q2 = Questionnaire(name="Q-New")
+    db_session.add_all([q1, q2])
+    db_session.commit()
+
+    # Initial: link q1
+    session = SessionLocal()
+    update_study(session, study_id, {"questionnaires": [{"questionnaire_id": q1.questionnaire_id}]})
+    session.commit()
+    session.close()
+
+    # Replace: link q2
+    session = SessionLocal()
+    update_study(session, study_id, {"questionnaires": [{"questionnaire_id": q2.questionnaire_id}]})
+    session.commit()
+    sq_rows = session.query(StudyQuestionnaire).filter_by(study_id=study_id).all()
+    session.close()
+
+    assert len(sq_rows) == 1, f"Expected 1 row after replace, found {len(sq_rows)}"
+    assert sq_rows[0].questionnaire_id == q2.questionnaire_id
+
+
+def test_update_study_stimuli_replace(db_session, study_id):
+    """update_study deletes old stimuli links and creates new ones."""
+    from Backend.models.stimulus import StimulusType
+    from Backend.models.study.study_stimuli import StudyStimuli
+    from Backend.db_session import SessionLocal
+    from Backend.services.study_service import update_study
+
+    st1 = StimulusType(type_name="cond_old")
+    st2 = StimulusType(type_name="cond_new")
+    db_session.add_all([st1, st2])
+    db_session.commit()
+
+    # Initial
+    session = SessionLocal()
+    update_study(session, study_id, {"stimuli": [{"stimuli_type_id": st1.stimulus_type_id}]})
+    session.commit()
+    session.close()
+
+    # Replace
+    session = SessionLocal()
+    update_study(session, study_id, {"stimuli": [{"stimuli_type_id": st2.stimulus_type_id}]})
+    session.commit()
+    stim_rows = session.query(StudyStimuli).filter_by(study_id=study_id).all()
+    session.close()
+
+    assert len(stim_rows) == 1, f"Expected 1 row after replace, found {len(stim_rows)}"
+    assert stim_rows[0].stimuli_type_id == st2.stimulus_type_id
