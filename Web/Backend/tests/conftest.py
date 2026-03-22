@@ -17,18 +17,23 @@ def _delete_all(session):
     from Backend.models.eyetracking import EyeTracking
     from Backend.models.questionnaire import Questionnaire, QuestionnaireItem, QuestionnaireResponse
     from Backend.models.trial.trial import Trial
+    from Backend.models.trial.trial_slot_stimulus import TrialSlotStimulus
+    from Backend.models.trial.trial_slot import TrialSlot
     from Backend.models.participant import Participant
     from Backend.models.experiment import Experiment
     from Backend.models.study.study import Study
     from Backend.models.study.study_questionnaire import StudyQuestionnaire
     from Backend.models.study.study_stimuli import StudyStimuli
     from Backend.models.study.study_config import StudyConfig
+    from Backend.models.stimulus import Stimulus, StimulusType
 
     session.query(EyeTracking).delete()
     session.query(Handover).delete()
     session.query(QuestionnaireResponse).delete()
     session.query(QuestionnaireItem).delete()
     session.query(Questionnaire).delete()
+    session.query(TrialSlotStimulus).delete()
+    session.query(TrialSlot).delete()
     session.query(Trial).delete()
     session.query(Participant).delete()
     session.query(Experiment).delete()
@@ -36,6 +41,8 @@ def _delete_all(session):
     session.query(StudyStimuli).delete()
     session.query(StudyConfig).delete()
     session.query(Study).delete()
+    session.query(Stimulus).delete()
+    session.query(StimulusType).delete()
     session.commit()
 
 
@@ -106,20 +113,22 @@ def seed_aoi(verify_test_database):
     clean_db does not delete area_of_interest rows, so these persist
     across all test functions without re-insertion.
     The verify_test_database parameter ensures this runs after DB verification.
+    Uses upsert semantics: inserts each required AOI only if not already present.
     """
     from Backend.db_session import SessionLocal
     from Backend.models.eyetracking import AreaOfInterest
     session = SessionLocal()
-    if not session.query(AreaOfInterest).first():
-        for aoi, label in [
-            ("partner_face", "Gesicht"),
-            ("object", "Objekt"),
-            ("own_hand", "Eigene Hand"),
-            ("partner_hand", "Partnerhand"),
-            ("environment", "Umgebung"),
-        ]:
-            session.add(AreaOfInterest(aoi=aoi, label=label))
-        session.commit()
+    required = [
+        ("partner_face", "Gesicht"),
+        ("object", "Objekt"),
+        ("own_hand", "Eigene Hand"),
+        ("partner_hand", "Partnerhand"),
+        ("environment", "Umgebung"),
+    ]
+    for aoi_name, label in required:
+        if not session.query(AreaOfInterest).filter_by(aoi=aoi_name).first():
+            session.add(AreaOfInterest(aoi=aoi_name, label=label))
+    session.commit()
     session.close()
 
 
