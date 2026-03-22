@@ -93,7 +93,7 @@ def test_get_experiments_by_study_trials_with_slots(client, study_id, experiment
     assert resp.status_code == status.HTTP_200_OK
     data = resp.json()
     exp = next(e for e in data if e["experiment_id"] == experiment_id)
-    assert len(exp["trials"]) == 1
+    assert len(exp["trials"]) == 1, f"Expected 1 trial in experiment, found {len(exp['trials'])}"
     trial = exp["trials"][0]
     assert "slots" in trial
     assert isinstance(trial["slots"], list)
