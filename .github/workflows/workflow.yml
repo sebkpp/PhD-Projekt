@@ -74,6 +74,12 @@ jobs:
       run: |
         uv run pytest Backend/tests/ --cov=Backend --cov-report=xml
 
+    - name: Coverage Summary
+      working-directory: ./Web
+      run: |
+        echo "## Test Coverage" >> $GITHUB_STEP_SUMMARY
+        uv run coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+
     - name: Upload Coverage
       uses: codecov/codecov-action@v4
       with:
