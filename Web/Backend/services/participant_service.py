@@ -5,9 +5,6 @@ from ..db.trial.trial import TrialRepository
 from ..db.trial.trial_participant_slot import TrialParticipantSlotRepository
 from ..db.trial.trial_slot_repository import TrialSlotRepository
 from ..models.participant import Participant
-from .participant_submission_service import (
-    submit_participant_to_slot as internal_submit,
-)
 
 
 def register_participant(session: Session, age: int, gender: str, handedness: str) -> Participant:
