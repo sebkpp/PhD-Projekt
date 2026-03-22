@@ -37,7 +37,7 @@ Additionally, several files were identified as dead code to be deleted rather th
 The following code is unreachable from any active HTTP route and should be deleted rather than tested. Deleting dead code removes noise from the coverage report and eliminates confusion for future developers.
 
 ### `Backend/db/trial_repository.py`
-Entire file body is commented out. 0% coverage because there is nothing to instrument. Safe to delete.
+All function definitions are commented out (lines 5–45). The file has three live import lines at the top but no callable functions. No other module imports from this file (verified via grep). Safe to delete.
 
 ### `Backend/services/participant_submission_service.py`
 Manages in-memory state that was superseded by the DB-backed approach in `participant_service.py`. The call into this service is commented out (line 37 of `participant_service.py`). **However, the import on line 8 of `participant_service.py` is still active:**
@@ -49,9 +49,9 @@ from .participant_submission_service import (
 Both the module deletion and this import removal must happen together, otherwise `participant_service.py` will fail to import at startup.
 
 ### `trialConfig` block in `Backend/services/experiment_service.py` (lines 24–37)
-The `POST /experiments/` route uses a Pydantic model (`ExperimentCreateRequest`) that only declares `name`, `study_id`, `description`, `researcher`. Pydantic silently strips any additional fields before calling `create_experiment`, so `settings.get("trialConfig", {})` always returns `{}`. The `if trial_config:` block is unreachable through any active HTTP route.
+The `POST /experiments/` route uses a Pydantic model (`ExperimentCreateRequest`) that only declares `name`, `study_id`, `description`, `researcher`. Pydantic silently strips any additional fields before calling `create_experiment`, so `settings.get("trialConfig", {})` always returns `{}`. The `trial_config` variable assignment on line 24 and the entire `if trial_config:` block (lines 25–37) are unreachable through any active HTTP route.
 
-The block and its associated repository calls (`TrialSlotRepository`, `TrialSlotStimulusRepository`) should be deleted from `experiment_service.py`. This also explains why `db/trial/trial_slot_repository.py` (46%) and `db/trial/trial_slot_stimulus.py` (32%) have low coverage — their `create` methods are only called from this dead block.
+Both the variable assignment (line 24) and the `if trial_config:` block (lines 25–37) should be deleted, along with the now-unused imports of `TrialRepository` (line 8), `TrialSlotRepository` (line 9), and `TrialSlotStimulusRepository` (line 10). This also explains why `db/trial/trial_slot_repository.py` (46%) and `db/trial/trial_slot_stimulus.py` (32%) have low coverage — their `create` methods are only called from this dead block.
 
 ---
 
@@ -91,8 +91,8 @@ On the **success path**, test setup calls `session.commit()` to persist data, th
 ### Test Data Pattern
 
 Each integration test builds a minimal data chain via a mix of:
-- **API fixtures** (existing): `study_id`, `experiment_id`, `trial_id`, `handover_id`
-- **Direct ORM inserts** (via `db_session`): `EyeTracking`, `AreaOfInterest`, `QuestionnaireResponse`, `QuestionnaireItem`, `Questionnaire` — for fine-grained data that has no API endpoint or requires specific field values
+- **API fixtures** (existing): `study_id`, `experiment_id`, `participant_id`
+- **Direct ORM inserts** (via `db_session`): `Trial`, `Handover`, `EyeTracking`, `AreaOfInterest`, `QuestionnaireResponse`, `QuestionnaireItem`, `Questionnaire` — for fine-grained data that has no API endpoint or requires specific field values. Add `trial_id` and `handover_id` fixtures to `conftest.py` via API calls.
 
 Minimal data chain:
 ```
@@ -232,8 +232,8 @@ This fix must be applied alongside the integration test that covers this path.
 | `Backend/db/trial_repository.py` | **Delete** (dead code) |
 | `Backend/services/participant_submission_service.py` | **Delete** (dead code) |
 | `Backend/services/participant_service.py` | Remove dead import of `participant_submission_service` (line 8) |
-| `Backend/services/experiment_service.py` | Delete unreachable `trialConfig` block (lines 24–37) and unused imports of `TrialSlotRepository`, `TrialSlotStimulusRepository` |
-| `Backend/tests/conftest.py` | Add `db_session` fixture |
+| `Backend/services/experiment_service.py` | Delete `trial_config` assignment (line 24) + `if trial_config:` block (lines 25–37); remove unused imports `TrialRepository` (line 8), `TrialSlotRepository` (line 9), `TrialSlotStimulusRepository` (line 10) |
+| `Backend/tests/conftest.py` | Add `db_session` fixture; add `trial_id` and `handover_id` API-based fixtures |
 | `Backend/tests/test_eye_tracking_analysis.py` | Add unit tests (`_assign_phase`, `_compute_aoi_stats`) + integration tests |
 | `Backend/tests/test_questionnaire_analysis.py` | Add unit tests (pandas helpers) + integration tests |
 | `Backend/tests/test_performance_analysis.py` | Add `calc_stats` unit tests + integration tests |
