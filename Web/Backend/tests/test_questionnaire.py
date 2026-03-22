@@ -177,3 +177,130 @@ def test_get_questionnaire_not_found(client):
     """GET /questionnaires/9999 → 404 für unbekannte questionnaire_id."""
     resp = client.get("/questionnaires/9999")
     assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+# ---------------------------------------------------------------------------
+# Questionnaire response service — seeded data paths
+# ---------------------------------------------------------------------------
+
+def test_are_all_questionnaires_in_trial_done_true(db_session, study_id, experiment_id, participant_id):
+    """Returns True when all questionnaire items for a trial have responses."""
+    from Backend.models.trial.trial import Trial
+    from Backend.models.questionnaire import Questionnaire, QuestionnaireItem, QuestionnaireResponse
+    from Backend.models.study.study_questionnaire import StudyQuestionnaire
+    from Backend.db_session import SessionLocal
+    from Backend.services.questionnaire_response_service import are_all_questionnaires_in_trial_done
+
+    trial = Trial(experiment_id=experiment_id, trial_number=1)
+    db_session.add(trial)
+    db_session.flush()
+    q = Questionnaire(name="Q-Done-Test")
+    db_session.add(q)
+    db_session.flush()
+    # Link questionnaire to study so get_by_trial_id can find it
+    db_session.add(StudyQuestionnaire(study_id=study_id, questionnaire_id=q.questionnaire_id))
+    db_session.flush()
+    item = QuestionnaireItem(questionnaire_id=q.questionnaire_id, item_name="item1", order_index=0)
+    db_session.add(item)
+    db_session.flush()
+    db_session.add(QuestionnaireResponse(
+        trial_id=trial.trial_id,
+        participant_id=participant_id,
+        questionnaire_item_id=item.questionnaire_item_id,
+        response_value=75.0,
+    ))
+    db_session.commit()
+
+    session = SessionLocal()
+    result = are_all_questionnaires_in_trial_done(session, participant_id, trial.trial_id)
+    session.close()
+    assert result is True
+
+
+def test_are_all_questionnaires_done_true(db_session, study_id, experiment_id, participant_id):
+    """Returns True when all trials in an experiment are fully answered."""
+    from Backend.models.trial.trial import Trial
+    from Backend.models.questionnaire import Questionnaire, QuestionnaireItem, QuestionnaireResponse
+    from Backend.models.study.study_questionnaire import StudyQuestionnaire
+    from Backend.db_session import SessionLocal
+    from Backend.services.questionnaire_response_service import are_all_questionnaires_done
+
+    trial = Trial(experiment_id=experiment_id, trial_number=1)
+    db_session.add(trial)
+    db_session.flush()
+    q = Questionnaire(name="Q-AllDone")
+    db_session.add(q)
+    db_session.flush()
+    # Link questionnaire to study so get_by_trial_id can find it
+    db_session.add(StudyQuestionnaire(study_id=study_id, questionnaire_id=q.questionnaire_id))
+    db_session.flush()
+    item = QuestionnaireItem(questionnaire_id=q.questionnaire_id, item_name="item1", order_index=0)
+    db_session.add(item)
+    db_session.flush()
+    db_session.add(QuestionnaireResponse(
+        trial_id=trial.trial_id,
+        participant_id=participant_id,
+        questionnaire_item_id=item.questionnaire_item_id,
+        response_value=60.0,
+    ))
+    db_session.commit()
+
+    session = SessionLocal()
+    result = are_all_questionnaires_done(session, participant_id, experiment_id)
+    session.close()
+    assert result is True
+
+
+def test_get_questionnaire_responses_for_experiment_with_data(
+    db_session, experiment_id, participant_id
+):
+    """get_questionnaire_responses_for_experiment returns participant data when responses exist."""
+    from Backend.models.trial.trial import Trial
+    from Backend.models.questionnaire import Questionnaire, QuestionnaireItem, QuestionnaireResponse
+    from Backend.db_session import SessionLocal
+    from Backend.services.questionnaire_response_service import get_questionnaire_responses_for_experiment
+
+    trial = Trial(experiment_id=experiment_id, trial_number=1)
+    db_session.add(trial)
+    db_session.flush()
+    q = Questionnaire(name="Q-ForExp")
+    db_session.add(q)
+    db_session.flush()
+    item = QuestionnaireItem(questionnaire_id=q.questionnaire_id, item_name="item1", order_index=0)
+    db_session.add(item)
+    db_session.flush()
+    db_session.add(QuestionnaireResponse(
+        trial_id=trial.trial_id,
+        participant_id=participant_id,
+        questionnaire_item_id=item.questionnaire_item_id,
+        response_value=55.0,
+    ))
+    db_session.commit()
+
+    session = SessionLocal()
+    result = get_questionnaire_responses_for_experiment(session, experiment_id)
+    session.close()
+    assert "participants" in result
+    assert len(result["participants"]) == 1
+
+
+# ---------------------------------------------------------------------------
+# GET /questionnaires/{id} — 200 path
+# ---------------------------------------------------------------------------
+
+def test_get_questionnaire_by_id_200(client):
+    """GET /questionnaires/{id} returns 200 when questionnaire exists."""
+    # Create via POST
+    resp = client.post("/questionnaires/", json={
+        "name": "Test-Q-ById",
+        "scale_type": "slider",
+        "scale_min": 0,
+        "scale_max": 100,
+        "items": ["item_one"]
+    })
+    assert resp.status_code == 201
+    q_id = resp.json()["questionnaire_id"]
+
+    # Fetch by ID
+    resp2 = client.get(f"/questionnaires/{q_id}")
+    assert resp2.status_code == 200
+    assert resp2.json()["questionnaire_id"] == q_id
