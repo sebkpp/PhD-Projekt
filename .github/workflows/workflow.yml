@@ -2,7 +2,7 @@ name: API Tests
 
 on:
   push:
-    branches: [ main, development ]
+    branches: [ main ]
     paths:
       - 'Web/Backend/**'
       - 'sql/**'
