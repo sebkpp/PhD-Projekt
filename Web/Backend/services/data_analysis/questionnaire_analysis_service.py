@@ -251,6 +251,8 @@ def analyze_experiment_questionnaires(session, experiment_id):
     responses = qr_repo.get_questionnaire_responses_for_trials(trial_ids)
 
     df = build_response_dataframe(responses)
+    if df.empty:
+        return {"experiment_id": experiment_id, "participants": {}, "trial_item_stats": {}, "mean_diffs": {}}
     stats = compute_trial_item_stats(df, trial_stimuli_map, trial_number_map)
     mean_diffs = compute_mean_diffs(stats)
     result = build_participant_result(responses)
