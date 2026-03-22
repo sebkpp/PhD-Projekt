@@ -6,12 +6,16 @@ on:
     paths:
       - 'Web/Backend/**'
       - 'sql/**'
+      - 'Web/pyproject.toml'
+      - 'Web/uv.lock'
       - '.github/workflows/workflow.yml'
   pull_request:
     branches: [ main, development ]
     paths:
       - 'Web/Backend/**'
       - 'sql/**'
+      - 'Web/pyproject.toml'
+      - 'Web/uv.lock'
       - '.github/workflows/workflow.yml'
 
 jobs:
@@ -44,10 +48,13 @@ jobs:
 
     - name: Install uv
       uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "Web/uv.lock"
 
     - name: Install Dependencies
       working-directory: ./Web
-      run: uv sync
+      run: uv sync --frozen
 
     - name: Create .env.test
       working-directory: ./Web/Backend
