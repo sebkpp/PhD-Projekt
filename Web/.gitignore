@@ -23,8 +23,18 @@ dist-ssr
 *.sln
 *.sw?
 
-Backend\.env
-Backend\.env.test
+Backend/.env
+Backend/.env.test
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Test & coverage artefacts
+.coverage
+htmlcov/
+.pytest_cache/
+
 # Claude Code
 .claude/
 docs/superpowers/
