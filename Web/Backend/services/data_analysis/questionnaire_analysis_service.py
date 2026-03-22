@@ -190,11 +190,12 @@ def compute_trial_item_stats(df, trial_stimuli_map, trial_number_map=None):
         # Sortiere und baue Array
         items_sorted = group.sort_values("questionnaire_item_id")
         for _, row in items_sorted.iterrows():
+            std_val = row["std"]
             stats[t_id]["questionnaires"][q_name]["items"].append({
                 "item_name": row["item_name"],
                 "questionnaire_item_id": int(row["questionnaire_item_id"]),
                 "mean": float(row["mean"]),
-                "std": float(row["std"])
+                "std": None if pd.isna(std_val) else float(std_val)
             })
     return stats
 
