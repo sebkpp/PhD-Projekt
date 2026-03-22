@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 from unittest.mock import MagicMock, patch
 import numpy as np
 
+import pytest
+
 from Backend.services.data_analysis.performance_analysis_service import analyze_study_performance
 
 
@@ -128,6 +130,7 @@ def test_analyze_study_performance_two_conditions():
     inferential = result["performance"]["inferential"]
     assert isinstance(inferential, dict)
     # With 10 experiments (n=10 > 3), run_inferential_analysis should return a result
+    assert inferential["total"] is not None, "total metric must have inferential result with n=10"
     for metric in ("total", "phase1", "phase2", "phase3"):
         assert metric in inferential
         if inferential[metric] is not None:
@@ -196,7 +199,7 @@ def test_analyze_study_performance_three_conditions():
 
     inferential = result["performance"]["inferential"]
     assert isinstance(inferential, dict)
-
+    assert inferential["total"] is not None, "total metric must have inferential result with n=10"
     for metric in ("total", "phase1", "phase2", "phase3"):
         assert metric in inferential
         if inferential[metric] is not None:
@@ -217,4 +220,93 @@ def test_analyze_study_performance_empty_study():
     session.query.return_value.filter_by.return_value.all.return_value = []
 
     result = analyze_study_performance(session, 999)
+    assert result == {}
+
+
+# ---------------------------------------------------------------------------
+# calc_stats unit tests
+# ---------------------------------------------------------------------------
+
+from Backend.services.data_analysis.performance_analysis_service import (
+    calc_stats,
+    analyze_experiment_performance,
+)
+
+
+def test_calc_stats_normal():
+    data = [
+        {"phase1": 1.0, "phase2": 0.5, "phase3": 0.3, "total": 1.8},
+        {"phase1": 1.2, "phase2": 0.6, "phase3": 0.4, "total": 2.2},
+        {"phase1": 0.9, "phase2": 0.4, "phase3": 0.2, "total": 1.5},
+        {"phase1": 1.1, "phase2": 0.55, "phase3": 0.35, "total": 2.0},
+    ]
+    result = calc_stats(data)
+    assert "phase1_mean" in result
+    assert "total_mean" in result
+    assert isinstance(result["phase1_mean"], float)
+    # Shapiro-Wilk requires n > 3
+    assert result["phase1_normality_p"] is not None
+
+
+def test_calc_stats_single_row():
+    """With n=1 row, std/CI/skew return None/NaN paths -- no exception."""
+    data = [{"phase1": 1.0, "phase2": 0.5, "phase3": 0.3, "total": 1.8}]
+    result = calc_stats(data)
+    assert result["phase1_mean"] == pytest.approx(1.0)
+    # Shapiro-Wilk needs n > 3 -> normality_p is None
+    assert result["phase1_normality_p"] is None
+
+
+# ---------------------------------------------------------------------------
+# analyze_experiment_performance integration test
+# ---------------------------------------------------------------------------
+
+def test_analyze_experiment_performance_empty(experiment_id):
+    """Returns {} when experiment has no trials with handover data."""
+    from Backend.db_session import SessionLocal
+    session = SessionLocal()
+    result = analyze_experiment_performance(session, experiment_id)
+    session.close()
+    assert result == {}
+
+
+def test_analyze_experiment_performance_happy(
+    db_session, experiment_id, participant_id
+):
+    """Happy path: one trial with one handover returns performance stats."""
+    from datetime import datetime, timedelta
+    from Backend.models.trial.trial import Trial
+    from Backend.models.handover import Handover
+    from Backend.db_session import SessionLocal
+
+    t0 = datetime(2024, 1, 1, 10, 0, 0)
+    trial = Trial(experiment_id=experiment_id, trial_number=1)
+    db_session.add(trial)
+    db_session.flush()
+    db_session.add(Handover(
+        trial_id=trial.trial_id,
+        giver=participant_id,
+        receiver=participant_id,
+        grasped_object="scalpel",
+        giver_grasped_object=t0,
+        receiver_touched_object=t0 + timedelta(seconds=1),
+        receiver_grasped_object=t0 + timedelta(seconds=1, milliseconds=500),
+        giver_released_object=t0 + timedelta(seconds=2),
+    ))
+    db_session.commit()
+
+    session = SessionLocal()
+    result = analyze_experiment_performance(session, experiment_id)
+    session.close()
+
+    assert "by_trial" in result
+    assert trial.trial_id in result["by_trial"]
+
+
+def test_analyze_study_performance_empty_smoke(study_id):
+    """Smoke test: analyze_study_performance returns {} for a study with no experiments."""
+    from Backend.db_session import SessionLocal
+    session = SessionLocal()
+    result = analyze_study_performance(session, study_id)
+    session.close()
     assert result == {}
