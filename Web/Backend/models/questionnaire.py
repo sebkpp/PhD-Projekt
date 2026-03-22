@@ -7,13 +7,16 @@ class Questionnaire(Base):
 
     questionnaire_id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
+    scale_type = Column(String(20), default='slider')
+    scale_min = Column(Float, default=0)
+    scale_max = Column(Float, default=100)
 
     experiments = relationship(
         "Experiment",
         secondary="experiment_questionnaire",
         back_populates="questionnaires"
     )
-    items = relationship("QuestionnaireItem", back_populates="questionnaire")
+    items = relationship("QuestionnaireItem", back_populates="questionnaire", order_by="QuestionnaireItem.order_index")
     study_questionnaires = relationship(
         "StudyQuestionnaire",
         back_populates="questionnaire",
@@ -24,6 +27,10 @@ class Questionnaire(Base):
         return {
             "questionnaire_id": self.questionnaire_id,
             "name": self.name,
+            "scale_type": self.scale_type,
+            "scale_min": self.scale_min,
+            "scale_max": self.scale_max,
+            "items": [item.to_dict() for item in self.items],
         }
 
 
@@ -34,6 +41,11 @@ class QuestionnaireItem(Base):
     questionnaire_id = Column(Integer, ForeignKey('questionnaire.questionnaire_id'), nullable=False)
 
     item_name = Column(String, nullable=False)  # z.B. 'mental_demand'
+    item_label = Column(String(255))
+    item_description = Column(String)
+    min_label = Column(String(100))
+    max_label = Column(String(100))
+    order_index = Column(Integer, default=0)
 
     questionnaire = relationship("Questionnaire", back_populates="items")
     responses = relationship("QuestionnaireResponse", back_populates="questionnaire_item")
@@ -42,7 +54,11 @@ class QuestionnaireItem(Base):
         return {
             "questionnaire_item_id": self.questionnaire_item_id,
             "item_name": self.item_name,
-            "questionnaire": self.questionnaire.to_dict() if self.questionnaire else None
+            "item_label": self.item_label,
+            "item_description": self.item_description,
+            "min_label": self.min_label,
+            "max_label": self.max_label,
+            "order_index": self.order_index,
         }
 
 

@@ -1,93 +1,194 @@
-﻿from flask import Blueprint, request, jsonify
+﻿from typing import List, Optional
+from fastapi import APIRouter, HTTPException, status, Depends
+from pydantic import BaseModel
 
+from sqlalchemy.orm import Session
+
+from Backend.models.trial.trial import TrialCreateRequest
 from Backend.services.experiment_service import create_experiment, get_experiment_by_id, \
     save_experiment_questionnaires, set_experiment_started_at, set_experiment_completed_at
 from Backend.db_session import SessionLocal
+from Backend.services.trial_service import save_trials, get_trials_for_experiment
 
-experiment_bp = Blueprint('experiment', __name__)
+router = APIRouter(prefix="/experiments", tags=["experiments"])
 
-@experiment_bp.route('/', methods=['POST'], strict_slashes=False)
-def create_experiment_route():
-
-    data = request.get_json()
-
-    if not data:
-        return jsonify({"error": "Ungültige JSON-Daten."}), 400
-
-    session = SessionLocal()
+def get_db():
+    db = SessionLocal()
     try:
-        print("Received data for experiment creation:", data)
-        experiment = create_experiment(session, data)
-        session.commit()
-        return jsonify({"experiment_id": experiment.experiment_id}), 201
-    except Exception as e:
-        session.rollback()
-        print("Fehler beim Anlegen eines Experiments:", e)
-        return jsonify({"error": "Interner Serverfehler"}), 500
+        yield db
     finally:
-        session.close()
+        db.close()
+
+class ExperimentCreateRequest(BaseModel):
+    name: str
+    study_id: int
+    description: Optional[str] = None
+    researcher: Optional[str] = None
+
+class ExperimentResponse(BaseModel):
+    experiment_id: int
+    description: Optional[str] = None
+    researcher: Optional[str] = None
+    study_id: Optional[int] = None
+
+    class Config:
+        from_attributes = True
+
+class ExperimentIdResponse(BaseModel):
+    experiment_id: int
+
+class MessageResponse(BaseModel):
+    message: str
+
+class ErrorResponse(BaseModel):
+    error: str
 
 
-@experiment_bp.route('/<int:experiment_id>', methods=['GET'], strict_slashes=False)
-def get_experiment_route(experiment_id):
-    session = SessionLocal()
+@router.post(
+    "/",
+    response_model=ExperimentIdResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create Experiment",
+    description="Create a new experiment in the system."
+)
+async def create_experiment_route(
+        payload: ExperimentCreateRequest,
+        db: Session = Depends(get_db)
+) -> ExperimentIdResponse:
     try:
-        experiment = get_experiment_by_id(session, experiment_id)
+        data = {"experimentSettings": payload.model_dump()}
+        experiment = create_experiment(db, data)
+        db.commit()
+        return ExperimentIdResponse(experiment_id=experiment.experiment_id)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
+
+
+
+@router.get(
+    "/{experiment_id}",
+    response_model=ExperimentResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get Experiment by ID",
+    description="Retrieve an experiment by its ID."
+)
+async def get_experiment_route(
+        experiment_id: int,
+        db: Session = Depends(get_db)
+) -> ExperimentResponse:
+    try:
+        experiment = get_experiment_by_id(db, experiment_id)
         if not experiment:
-            return jsonify({"error": "Experiment Not Found"}), 404
-        return jsonify(experiment.to_dict()), 201
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Experiment not found")
+        return experiment
+    except HTTPException:
+        raise
     except Exception as e:
-        session.rollback()
-        return jsonify({"error": str(e)}), 500
-    finally:
-        session.close()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-@experiment_bp.route('/<int:experiment_id>/questionnaires', methods=['PUT'])
-def update_linked_questionnaires(experiment_id):
-    session = SessionLocal
+@router.put(
+    "/{experiment_id}/questionnaires",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Update Linked Questionnaires",
+    description="Update the questionnaires linked to a specific experiment."
+)
+async def update_linked_questionnaires(
+        experiment_id: int,
+        questionnaire_ids: List[int],
+        db: Session = Depends(get_db)
+) -> MessageResponse:
+    experiment = get_experiment_by_id(db, experiment_id)
+    if not experiment:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Experiment not found")
     try:
-        data = request.get_json()
-        if not isinstance(data, list):
-            return jsonify({"error": "Expected a list of questionnaire IDs"}), 400
-
-        experiment = get_experiment_by_id(session, experiment_id)
-        if not experiment:
-            return jsonify({"error": "Experiment not found"}), 404
-
-        save_experiment_questionnaires(session, experiment_id, data)
-        session.commit()
-
-        return jsonify({"message": "Questionnaires updated"}), 200
-
+        save_experiment_questionnaires(db, experiment_id, questionnaire_ids)
+        db.commit()
+        return MessageResponse(message="Questionnaires updated")
     except Exception as e:
-        session.rollback()
-        return jsonify({"error": str(e)}), 500
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-    finally:
-        session.close()
 
-@experiment_bp.route('/<int:experiment_id>/started', methods=['POST'])
-def set_experiment_started(experiment_id):
-    session = SessionLocal()
+@router.post(
+    "/{experiment_id}/started",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Set Experiment Started",
+    description="Set the started_at timestamp for a specific experiment."
+)
+async def set_experiment_started(
+        experiment_id: int,
+        db: Session = Depends(get_db)
+) -> MessageResponse:
     try:
-        set_experiment_started_at(session, experiment_id)
-        session.commit()
-        return jsonify({"message": "Experiment started_at gesetzt"}), 200
+        set_experiment_started_at(db, experiment_id)
+        db.commit()
+        return MessageResponse(message="Experiment started_at set")
     except Exception as e:
-        session.rollback()
-        return jsonify({"error": str(e)}), 500
-    finally:
-        session.close()
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-@experiment_bp.route('/<int:experiment_id>/completed', methods=['POST'])
-def set_experiment_completed(experiment_id):
-    session = SessionLocal()
+
+@router.post(
+    "/{experiment_id}/completed",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Set Experiment Completed",
+    description="Set the completed_at timestamp for a specific experiment."
+)
+async def set_experiment_completed(
+        experiment_id: int,
+        db: Session = Depends(get_db)
+) -> MessageResponse:
     try:
-        set_experiment_completed_at(session, experiment_id)
-        session.commit()
-        return jsonify({"message": "Experiment completed_at gesetzt"}), 200
+        set_experiment_completed_at(db, experiment_id)
+        db.commit()
+        return MessageResponse(message="Experiment completed_at set")
     except Exception as e:
-        session.rollback()
-        return jsonify({"error": str(e)}), 500
-    finally:
-        session.close()
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+@router.post(
+    "/{experiment_id}/trials",
+    status_code=status.HTTP_201_CREATED,
+    summary="Save trials for an experiment",
+    description="Save trial configuration and associated questionnaires for a given experiment."
+)
+async def save_trials_route(
+        experiment_id: int,
+        payload: TrialCreateRequest,
+        db: Session = Depends(get_db)
+):
+    try:
+        if not payload.trials:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail="`trials` is required")
+
+        selected_questionnaires = [q["questionnaire_id"] for q in payload.questionnaires or []]
+        result = save_trials(db, experiment_id, payload.trials, selected_questionnaires)
+        save_experiment_questionnaires(db, experiment_id, selected_questionnaires)
+
+        db.commit()
+        return result
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+
+@router.get(
+    "/{experiment_id}/trials",
+    status_code=status.HTTP_200_OK,
+    summary="Get trials for an experiment",
+    description="Retrieve all trials for a given experiment."
+)
+async def get_trials_route(
+        experiment_id: int,
+        db: Session = Depends(get_db)
+):
+    try:
+        trials = get_trials_for_experiment(db, experiment_id)
+        return trials
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

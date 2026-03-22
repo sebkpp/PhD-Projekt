@@ -1,15 +1,17 @@
 ﻿from Backend.db_session import Base
 
+from .study.study import Study
+from .study.study_config import StudyConfig
+from .study.study_stimuli import StudyStimuli
+from .study.study_questionnaire import StudyQuestionnaire
+
 # Importiert alle Modelle damit SQLAlchemy sie registriert
 from .experiment import Experiment
 from .eyetracking import AreaOfInterest, EyeTracking
 from .participant import Participant
 from .stimulus import StimuliCombination, StimulusType, Stimulus, StimulusCombinationItem, StimulusVisual, \
     StimulusAuditiv, StimulusTactile
-from Backend.models.study.study_questionnaire import StudyQuestionnaire
-from .study.study_config import StudyConfig
-from .study.study_stimuli import StudyStimuli
-from Backend.models.trial.trial import Trial
+from .trial.trial import Trial
 from .handover import Handover
 from .questionnaire import Questionnaire, QuestionnaireItem, QuestionnaireResponse
 from .avatar_visibility import AvatarVisibility

@@ -1,5 +1,5 @@
 ﻿# models/handover.py
-from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, TIMESTAMP
 from Backend.db_session import Base
 from sqlalchemy.orm import relationship
 
@@ -12,6 +12,8 @@ class Handover(Base):
     receiver_touched_object = Column(TIMESTAMP)
     receiver_grasped_object = Column(TIMESTAMP)
     giver_released_object = Column(TIMESTAMP)
+    is_error = Column(Boolean, default=False)
+    error_type = Column(String(100), nullable=True)
     trial_id = Column(Integer, ForeignKey("trial.trial_id"), nullable=False)
     giver = Column(Integer, ForeignKey("participant.participant_id"), nullable=False)
     receiver = Column(Integer, ForeignKey("participant.participant_id"))
@@ -30,6 +32,8 @@ class Handover(Base):
             "receiver_touched_object": self.receiver_touched_object.isoformat() if self.receiver_touched_object else None,
             "receiver_grasped_object": self.receiver_grasped_object.isoformat() if self.receiver_grasped_object else None,
             "giver_released_object": self.giver_released_object.isoformat() if self.giver_released_object else None,
+            "is_error": self.is_error,
+            "error_type": self.error_type,
             "trial_id": self.trial_id,
             "giver": self.giver,
             "receiver": self.receiver

@@ -19,3 +19,8 @@ def get_handovers_for_experiment(session, experiment_id):
         handovers = get_handovers_for_trial(session, trial.trial_id)
         all_handovers.extend(handovers)
     return all_handovers
+
+
+def update_handover_phases(session, handover_id: int, patch_data: dict):
+    repo = HandoverRepository(session)
+    return repo.update_handover_phases(handover_id, patch_data)

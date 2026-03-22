@@ -1,16 +1,13 @@
 ﻿from Backend.db.handover_repository import HandoverRepository
+from Backend.db.stimuli_repository import StimuliRepository
+from Backend.db.trial.trial import TrialRepository
+from Backend.models import Experiment
+from Backend.utils.stats_utils import sanitize_stats
+from Backend.services.data_analysis.inferential_service import run_inferential_analysis
 import pandas as pd
 from collections import defaultdict
 import scipy.stats as stats
-import math
-
-def sanitize_stats(stats):
-    for k, v in stats.items():
-        if isinstance(v, float) and (math.isnan(v) or math.isinf(v)):
-            stats[k] = None
-        if isinstance(v, tuple):
-            stats[k] = tuple(None if (isinstance(x, float) and (math.isnan(x) or math.isinf(x))) else x for x in v)
-    return stats
+import numpy as np
 
 def calc_stats(data):
     df = pd.DataFrame(data)
@@ -100,6 +97,12 @@ def analyze_experiment_performance(session, experiment_id):
     if not handovers:
         return {}
 
+    # Pre-filter grouping: ALL handovers per trial (incl. errored/incomplete ones)
+    # Used for error rate — must be built before the timestamp-filter loop below.
+    handovers_by_trial: dict[int, list] = defaultdict(list)
+    for h in handovers:
+        handovers_by_trial[h.trial_id].append(h)
+
     # Objektunabhängig gruppieren
     grouped_by_trial = defaultdict(list)
     # Objektabhängig gruppieren
@@ -142,10 +145,18 @@ def analyze_experiment_performance(session, experiment_id):
 
     stats_by_trial = {}
     for trial_id, data in grouped_by_trial.items():
-        stats = calc_stats(data)
-        stats_by_trial[trial_id] = sanitize_stats(stats)
-        stats["total_values"] = [d["total"] for d in data]
-        stats_by_trial[trial_id] = stats
+        trial_stats = calc_stats(data)
+        trial_stats["total_values"] = [d["total"] for d in data]
+        # Error rate from ALL handovers in this trial (including filtered/errored ones)
+        trial_handovers = handovers_by_trial[trial_id]
+        trial_stats["error_count"] = sum(1 for h in trial_handovers if h.is_error)
+        trial_stats["total_count"] = len(trial_handovers)
+        trial_stats["error_rate"] = (
+            trial_stats["error_count"] / trial_stats["total_count"]
+            if trial_stats["total_count"] > 0
+            else 0.0
+        )
+        stats_by_trial[trial_id] = sanitize_stats(trial_stats)
 
     stats_by_trial_and_object = {}
     for trial_id, obj_dict in grouped_by_trial_and_object.items():
@@ -159,4 +170,114 @@ def analyze_experiment_performance(session, experiment_id):
         "by_trial_and_object": stats_by_trial_and_object,
         "by_giver": stats_by_giver,
         "by_receiver": stats_by_receiver
+    }
+
+
+def analyze_study_performance(session, study_id: int) -> dict:
+    """
+    Aggregate handover performance across all experiments in a study,
+    grouped by stimulus condition, and run paired inferential tests.
+    """
+    experiments = (
+        session.query(Experiment).filter_by(study_id=study_id).all()
+    )
+    if not experiments:
+        return {}
+
+    t_repo = TrialRepository(session)
+    h_repo = HandoverRepository(session)
+    s_repo = StimuliRepository(session)
+
+    # condition → list of per-experiment means
+    condition_phase1: dict[str, list] = defaultdict(list)
+    condition_phase2: dict[str, list] = defaultdict(list)
+    condition_phase3: dict[str, list] = defaultdict(list)
+    condition_total: dict[str, list] = defaultdict(list)
+
+    for experiment in experiments:
+        trials = t_repo.get_by_experiment_id(experiment.experiment_id)
+        if not trials:
+            continue
+        trial_ids = [t.trial_id for t in trials]
+        trial_stimuli_map = s_repo.get_stimuli_for_trials(trial_ids)
+
+        # For this experiment, group per condition → collect all handover values
+        exp_condition_data: dict[str, dict[str, list]] = defaultdict(
+            lambda: {"phase1": [], "phase2": [], "phase3": [], "total": []}
+        )
+
+        for trial in trials:
+            stimuli = trial_stimuli_map.get(trial.trial_id, [])
+            if not stimuli:
+                continue
+            condition_name = stimuli[0]["name"]
+
+            handovers = h_repo.get_handovers_for_trial(trial.trial_id)
+            for h in handovers:
+                if not all([
+                    h.giver_grasped_object,
+                    h.receiver_touched_object,
+                    h.receiver_grasped_object,
+                    h.giver_released_object,
+                ]):
+                    continue
+                phase1 = (h.receiver_touched_object - h.giver_grasped_object).total_seconds()
+                phase2 = (h.receiver_grasped_object - h.receiver_touched_object).total_seconds()
+                phase3 = (h.giver_released_object - h.receiver_grasped_object).total_seconds()
+                total = (h.giver_released_object - h.giver_grasped_object).total_seconds()
+                exp_condition_data[condition_name]["phase1"].append(phase1)
+                exp_condition_data[condition_name]["phase2"].append(phase2)
+                exp_condition_data[condition_name]["phase3"].append(phase3)
+                exp_condition_data[condition_name]["total"].append(total)
+
+        # Compute per-experiment mean per condition and accumulate
+        for cond_name, data in exp_condition_data.items():
+            if data["total"]:
+                condition_phase1[cond_name].append(float(np.mean(data["phase1"])))
+                condition_phase2[cond_name].append(float(np.mean(data["phase2"])))
+                condition_phase3[cond_name].append(float(np.mean(data["phase3"])))
+                condition_total[cond_name].append(float(np.mean(data["total"])))
+
+    if not condition_total:
+        return {}
+
+    conditions = sorted(condition_total.keys())
+
+    # Build descriptive stats per condition using calc_stats (expects list of dicts)
+    def _build_records(cond: str) -> list:
+        p1 = condition_phase1.get(cond, [])
+        p2 = condition_phase2.get(cond, [])
+        p3 = condition_phase3.get(cond, [])
+        tot = condition_total.get(cond, [])
+        n = min(len(p1), len(p2), len(p3), len(tot))
+        return [{"phase1": p1[i], "phase2": p2[i], "phase3": p3[i], "total": tot[i]} for i in range(n)]
+
+    by_condition = {}
+    for cond in conditions:
+        records = _build_records(cond)
+        if records:
+            by_condition[cond] = sanitize_stats(calc_stats(records))
+        else:
+            by_condition[cond] = {}
+
+    # Inferential tests (N conditions, one value per experiment per condition)
+    inferential = {}
+    if len(conditions) >= 2:
+        for metric, bucket in [
+            ("total", condition_total),
+            ("phase1", condition_phase1),
+            ("phase2", condition_phase2),
+            ("phase3", condition_phase3),
+        ]:
+            cond_dict = {cond: bucket[cond] for cond in conditions}
+            inferential[metric] = run_inferential_analysis(cond_dict)
+
+    return {
+        "study_id": study_id,
+        "n_experiments": len(experiments),
+        "conditions": conditions,
+        "performance": {
+            "by_condition": by_condition,
+            "inferential": inferential,
+        },
     }

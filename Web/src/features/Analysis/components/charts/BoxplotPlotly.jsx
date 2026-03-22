@@ -1,6 +1,5 @@
-﻿import React, { useRef } from "react";
+﻿import React from "react";
 import Plot from "react-plotly.js";
-import { useChartExport } from "@/features/Analysis/hooks/useChartExport.js";
 
 const COLORS = [
     "#8884d8", // blau-lila
@@ -12,8 +11,6 @@ const COLORS = [
 ];
 
 export default function BoxplotPlotly({ boxplotData, chartRef, buttonRef, onExport }) {
-    const exportChart = useChartExport();
-
     if (!boxplotData || boxplotData.length === 0) return null;
 
     const traces = boxplotData.map((d, i) => ({
@@ -40,7 +37,7 @@ export default function BoxplotPlotly({ boxplotData, chartRef, buttonRef, onExpo
 
     const allTraces = [...traces, ...legendTraces];
 
-    const annotations = boxplotData.flatMap((d, i) => [
+    const annotations = boxplotData.flatMap((d) => [
         {
             x: d.name, y: d.min, text: `Min: ${d.min}`,
             showarrow: false, font: { color: "#fff", size: 12 }, yshift: 10
