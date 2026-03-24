@@ -1,4 +1,4 @@
-using Experiment.Utils.Extensions;
+using Application.Scripts.Utils.Extensions;
 using Fusion;
 using Application.Scripts.Avatar;
 using Network.Grasp;
