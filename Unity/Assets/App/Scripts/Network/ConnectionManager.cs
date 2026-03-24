@@ -31,7 +31,7 @@ namespace Connection
         [SerializeField] private GameMode _gameMode = GameMode.Shared;
         [SerializeField] private string _room = "OP";
         [SerializeField] private bool _connectOnStart = true;
-        [SerializeField] private LogType logLevel = LogType.Error;
+        [SerializeField] private LogType _logLevel = LogType.Error;
 
         [Header("Room selection criteria")]
         [SerializeField] private ConnectionCriterias _connectionCriterias = ConnectionCriterias.RoomName;
@@ -55,55 +55,59 @@ namespace Connection
             _runner.ProvideInput = true;
         }
 
-        private Dictionary<string, SessionProperty> AllConnectionSessionProperties
+        private Dictionary<string, SessionProperty> BuildSessionProperties()
         {
-            get
+            actualSessionProperties = new List<StringSessionProperty>();
+            var propDict = new Dictionary<string, SessionProperty>();
+            if (_sessionProperties != null)
             {
-                var propDict = new Dictionary<string, SessionProperty>();
-                actualSessionProperties = new List<StringSessionProperty>();
-                if (_sessionProperties != null)
+                foreach (var prop in _sessionProperties)
                 {
-                    foreach (var prop in _sessionProperties)
-                    {
-                        propDict.Add(prop.Key, prop.Value);
-                        actualSessionProperties.Add(new StringSessionProperty { propertyName = prop.Key, value = prop.Value.ToString() });
-                    }
+                    propDict.Add(prop.Key, prop.Value);
+                    actualSessionProperties.Add(new StringSessionProperty { propertyName = prop.Key, value = prop.Value.ToString() });
                 }
-                if (_additionalSessionProperties != null)
-                {
-                    foreach (var p in _additionalSessionProperties)
-                    {
-                        propDict[p.propertyName] = p.value;
-                        actualSessionProperties.Add(p);
-                    }
-                }
-                return propDict;
             }
+            if (_additionalSessionProperties != null)
+            {
+                foreach (var p in _additionalSessionProperties)
+                {
+                    propDict[p.propertyName] = p.value;
+                    actualSessionProperties.Add(p);
+                }
+            }
+            return propDict;
         }
 
         private async void Start()
         {
             if (!_connectOnStart) return;
-            if (onWillConnect != null) onWillConnect.Invoke();
-
-            var startGameArgs = new StartGameArgs()
+            try
             {
-                GameMode = _gameMode,
-                Scene = CurrentSceneInfo(),
-                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
-            };
+                onWillConnect?.Invoke();
 
-            bool useRoomName = (_connectionCriterias & ConnectionCriterias.RoomName) != 0;
-            bool useSessionProps = (_connectionCriterias & ConnectionCriterias.SessionProperties) != 0;
+                var startGameArgs = new StartGameArgs()
+                {
+                    GameMode = _gameMode,
+                    Scene = CurrentSceneInfo(),
+                    SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
+                };
 
-            if (useRoomName) startGameArgs.SessionName = _room;
-            if (useSessionProps) startGameArgs.SessionProperties = AllConnectionSessionProperties;
-            if (_playerCount > 0) startGameArgs.PlayerCount = _playerCount;
+                bool useRoomName = (_connectionCriterias & ConnectionCriterias.RoomName) != 0;
+                bool useSessionProps = (_connectionCriterias & ConnectionCriterias.SessionProperties) != 0;
 
-            var result = await _runner.StartGame(startGameArgs);
-            if (!result.Ok)
+                if (useRoomName) startGameArgs.SessionName = _room;
+                if (useSessionProps) startGameArgs.SessionProperties = BuildSessionProperties();
+                if (_playerCount > 0) startGameArgs.PlayerCount = _playerCount;
+
+                var result = await _runner.StartGame(startGameArgs);
+                if (!result.Ok)
+                {
+                    Debug.LogError($"Couldn't start network Session, Reason: {result.ShutdownReason}");
+                }
+            }
+            catch (Exception ex)
             {
-                Debug.LogError($"Couldn't start network Session, Reason: {result.ShutdownReason}");
+                Debug.LogException(ex);
             }
         }
 
