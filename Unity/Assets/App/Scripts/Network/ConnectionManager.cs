@@ -5,18 +5,18 @@ using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
-using LogType = Fusion.LogType;
+using LogLevel = Fusion.LogLevel;
 
 namespace Connection
 {
-    [System.Flags]
+    [Flags]
     public enum ConnectionCriterias
     {
         RoomName = 1,
         SessionProperties = 2
     }
 
-    [System.Serializable]
+    [Serializable]
     public struct StringSessionProperty
     {
         public string propertyName;
@@ -31,7 +31,7 @@ namespace Connection
         [SerializeField] private GameMode _gameMode = GameMode.Shared;
         [SerializeField] private string _room = "OP";
         [SerializeField] private bool _connectOnStart = true;
-        [SerializeField] private LogType _logLevel = LogType.Error;
+        [SerializeField] private LogLevel _logLevel = LogLevel.Error;
 
         [Header("Room selection criteria")]
         [SerializeField] private ConnectionCriterias _connectionCriterias = ConnectionCriterias.RoomName;
@@ -40,7 +40,7 @@ namespace Connection
         private Dictionary<string, SessionProperty> _sessionProperties;
 
         [Header("Room configuration (extended)")]
-        [SerializeField] private int _playerCount = 0;
+        [SerializeField] private int _playerCount;
 
         [Header("Events")]
         public UnityEvent onWillConnect = new();
@@ -128,7 +128,7 @@ namespace Connection
             var sceneInfo = new NetworkSceneInfo();
             if (sceneRef.IsValid)
             {
-                sceneInfo.AddSceneRef(sceneRef, LoadSceneMode.Single);
+                sceneInfo.AddSceneRef(sceneRef);
             }
             return sceneInfo;
         }
