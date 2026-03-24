@@ -167,7 +167,7 @@ namespace Application.Scripts.Network.Input
             Color color = enable
                 ? (IsLocalNetworkRig ? Color.red : Color.blue)
                 : _savedHandColor;
-            handMesh.material.SetColor(HandColorProperty, color);
+            handMesh.sharedMaterial.SetColor(HandColorProperty, color);
         }
     }
 }
