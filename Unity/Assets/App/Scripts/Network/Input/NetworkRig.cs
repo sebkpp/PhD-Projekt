@@ -56,11 +56,10 @@ namespace Application.Scripts.Network.Input
 
         [Header("Debug")]
         [SerializeField] private SkinnedMeshRenderer handMesh;
-
-        [Networked] public bool DebugMode { get; set; }
-
         private static readonly int HandColorProperty = Shader.PropertyToID("_c1");
         private Color _savedHandColor;
+
+        [Networked] public bool DebugMode { get; set; }
 
         private AvatarConfig _avatarConfig;
         
@@ -84,7 +83,7 @@ namespace Application.Scripts.Network.Input
                 Debug.LogWarning($"{nameof(NetworkRig)} on {gameObject.name} has no AvatarConfig assigned!", this);
             }
 
-            if (handMesh != null) _savedHandColor = handMesh.material.GetColor(HandColorProperty);
+            if (handMesh != null) _savedHandColor = handMesh.sharedMaterial.GetColor(HandColorProperty);
         }
 
         /// <summary>
@@ -160,12 +159,12 @@ namespace Application.Scripts.Network.Input
         /// Enables or disables debug visualization on the hand mesh.
         /// In debug mode, the local rig's hand is colored red and remote rigs are colored blue.
         /// </summary>
-        /// <param name="enabledDebug">True to enable debug coloring, false to restore the original color.</param>
-        public void EnableDebug(bool enabledDebug)
+        /// <param name="enable">True to enable debug coloring, false to restore the original color.</param>
+        public void EnableDebug(bool enable)
         {
-            DebugMode = enabledDebug;
+            DebugMode = enable;
             if (handMesh == null) return;
-            Color color = enabledDebug
+            Color color = enable
                 ? (IsLocalNetworkRig ? Color.red : Color.blue)
                 : _savedHandColor;
             handMesh.material.SetColor(HandColorProperty, color);
