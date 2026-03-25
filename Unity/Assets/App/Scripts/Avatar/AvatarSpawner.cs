@@ -5,7 +5,7 @@ using Application.Scripts.Network.Input;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Avatar
+namespace Application.Scripts.Avatar
 {
     /// <summary>
     /// Spawns player networked avatars in scene

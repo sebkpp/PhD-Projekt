@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UtilsFingerOffsets = Application.Scripts.Avatar.Utils.FingerOffsets;
 
-namespace Avatar
+namespace Application.Scripts.Avatar
 {
     [Serializable]
     public class AvatarFingerJointMap

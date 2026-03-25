@@ -1,10 +1,9 @@
 using System.Collections;
-using Avatar;
 using UtilsAvatarConfig = Application.Scripts.Avatar.Utils.AvatarConfig;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace StudyPlayer
+namespace Application.Scripts.Avatar
 {
     public class AvatarMapping : MonoBehaviour
     {

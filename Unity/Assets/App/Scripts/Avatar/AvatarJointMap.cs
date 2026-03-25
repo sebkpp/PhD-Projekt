@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Application.Scripts.Avatar.Utils;
 
-namespace Avatar
+namespace Application.Scripts.Avatar
 {
     [Serializable]
     public class AvatarJointMap

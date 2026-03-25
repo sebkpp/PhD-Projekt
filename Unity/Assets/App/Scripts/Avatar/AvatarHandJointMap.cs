@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UtilsHandOffsets = Application.Scripts.Avatar.Utils.HandOffsets;
 
-namespace Avatar
+namespace Application.Scripts.Avatar
 {
     [Serializable]
     public class AvatarHandJointMap : AvatarJointMap
