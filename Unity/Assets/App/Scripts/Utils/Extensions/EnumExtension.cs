@@ -1,7 +1,7 @@
 using Application.Scripts.Avatar;
 using VirtualGrasp;
 
-namespace Experiment.Utils.Extensions
+namespace Application.Scripts.Utils.Extensions
 {
     public static class EnumExtension
     {

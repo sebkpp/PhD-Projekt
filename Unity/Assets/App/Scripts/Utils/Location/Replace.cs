@@ -2,7 +2,7 @@ using System.Collections;
 using Application.Scripts.Avatar;
 using UnityEngine;
 
-namespace Experiment.Utils.Location
+namespace Application.Scripts.Utils.Location
 {
     public class Replace : MonoBehaviour
     {
