@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Fusion;
 using Application.Scripts.Network.Input;
 using Application.Scripts.Network.Interaction;
