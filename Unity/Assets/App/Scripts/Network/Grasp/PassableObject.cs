@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using Application.Scripts.Network.Input;
-using Network.Grasp;
+using Application.Scripts.Network.Interaction;
+using Application.Scripts.Network.Interactable;
 using UnityEngine;
 
 namespace Application.Scripts.Network.Grasp
 {
-    [RequireComponent(typeof(NetworkedGraspable))]
+    [RequireComponent(typeof(NetworkedGrabbable))]
     public class PassableObject : NetworkBehaviour
     {
         [Networked] public NetworkRig Giver { get; set; }
@@ -18,15 +19,15 @@ namespace Application.Scripts.Network.Grasp
         [Networked] private bool IsGraspedByReceiver { get; set; }
 
 
-        private NetworkedGraspable _networkedGraspable;
+        private NetworkedGrabbable _networkedGrabbable;
 
         private int _graspCounter;
 
         private void Awake()
         {
-            _networkedGraspable = GetComponent<NetworkedGraspable>();
-            _networkedGraspable.onDidGrab.AddListener(OnGrasp);
-            _networkedGraspable.onDidRelease.AddListener(OnRelease);
+            _networkedGrabbable = GetComponent<NetworkedGrabbable>();
+            _networkedGrabbable.onDidGrab.AddListener(OnGrasp);
+            _networkedGrabbable.onDidUngrab.AddListener(OnRelease);
         }
 
         public override void Spawned()
@@ -35,12 +36,12 @@ namespace Application.Scripts.Network.Grasp
 
             if (Object.HasStateAuthority)
             {
-                Giver = null; // Use PlayerRef.None to represent no holder
+                Giver = null;
                 Receiver = null;
             }
         }
 
-        public void OnGrasp(NetworkGrab grabHand)
+        public void OnGrasp(NetworkedGrabber grabHand)
         {
             if (Object.HasStateAuthority)
             {
@@ -60,7 +61,7 @@ namespace Application.Scripts.Network.Grasp
             }
         }
 
-        public void OnRelease(NetworkGrab grabHand)
+        public void OnRelease()
         {
             if (Object.HasStateAuthority)
             {
