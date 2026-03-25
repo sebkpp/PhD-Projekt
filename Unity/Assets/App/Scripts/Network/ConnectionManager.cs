@@ -7,7 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using LogLevel = Fusion.LogLevel;
 
-namespace Connection
+namespace Application.Scripts.Network
 {
     [Flags]
     public enum ConnectionCriterias
