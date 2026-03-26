@@ -7,7 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using LogLevel = Fusion.LogLevel;
 
-namespace Application.Scripts.Network
+namespace Application.Scripts.Network.Connection
 {
     [Flags]
     public enum ConnectionCriterias
@@ -44,43 +44,26 @@ namespace Application.Scripts.Network
 
         [Header("Events")]
         public UnityEvent onWillConnect = new();
-        public UnityEvent<GameObject> playerSpawned = new();
+        public UnityEvent onConnected = new();
+        public UnityEvent onDisconnected = new();
+        public UnityEvent<string> onConnectFailed = new();
 
         [Header("Info")]
         public List<StringSessionProperty> actualSessionProperties = new();
 
         private void Awake()
         {
-            if(_runner == null) _runner = GetComponent<NetworkRunner>();
+            if (_runner == null) _runner = GetComponent<NetworkRunner>();
             _runner.ProvideInput = true;
         }
 
-        private Dictionary<string, SessionProperty> BuildSessionProperties()
+        private void Start()
         {
-            actualSessionProperties = new List<StringSessionProperty>();
-            var propDict = new Dictionary<string, SessionProperty>();
-            if (_sessionProperties != null)
-            {
-                foreach (var prop in _sessionProperties)
-                {
-                    propDict.Add(prop.Key, prop.Value);
-                    actualSessionProperties.Add(new StringSessionProperty { propertyName = prop.Key, value = prop.Value.ToString() });
-                }
-            }
-            if (_additionalSessionProperties != null)
-            {
-                foreach (var p in _additionalSessionProperties)
-                {
-                    propDict[p.propertyName] = p.value;
-                    actualSessionProperties.Add(p);
-                }
-            }
-            return propDict;
+            if (_connectOnStart) Connect();
         }
 
-        private async void Start()
+        public async void Connect(string sessionName = null)
         {
-            if (!_connectOnStart) return;
             try
             {
                 onWillConnect?.Invoke();
@@ -95,7 +78,7 @@ namespace Application.Scripts.Network
                 bool useRoomName = (_connectionCriterias & ConnectionCriterias.RoomName) != 0;
                 bool useSessionProps = (_connectionCriterias & ConnectionCriterias.SessionProperties) != 0;
 
-                if (useRoomName) startGameArgs.SessionName = _room;
+                if (useRoomName) startGameArgs.SessionName = sessionName ?? _room;
                 if (useSessionProps) startGameArgs.SessionProperties = BuildSessionProperties();
                 if (_playerCount > 0) startGameArgs.PlayerCount = _playerCount;
 
@@ -109,6 +92,39 @@ namespace Application.Scripts.Network
             {
                 Debug.LogException(ex);
             }
+        }
+
+        public void Disconnect()
+        {
+            if (_runner != null && _runner.IsRunning)
+                _ = _runner.Shutdown();
+        }
+
+        private Dictionary<string, SessionProperty> BuildSessionProperties()
+        {
+            actualSessionProperties = new List<StringSessionProperty>();
+            var propDict = new Dictionary<string, SessionProperty>();
+            if (_sessionProperties != null)
+            {
+                foreach (var prop in _sessionProperties)
+                {
+                    propDict.Add(prop.Key, prop.Value);
+                    actualSessionProperties.Add(new StringSessionProperty
+                    {
+                        propertyName = prop.Key,
+                        value = prop.Value.ToString()
+                    });
+                }
+            }
+            if (_additionalSessionProperties != null)
+            {
+                foreach (var p in _additionalSessionProperties)
+                {
+                    propDict[p.propertyName] = p.value;
+                    actualSessionProperties.Add(p);
+                }
+            }
+            return propDict;
         }
 
         public virtual NetworkSceneInfo CurrentSceneInfo()
@@ -127,33 +143,31 @@ namespace Application.Scripts.Network
 
             var sceneInfo = new NetworkSceneInfo();
             if (sceneRef.IsValid)
-            {
                 sceneInfo.AddSceneRef(sceneRef);
-            }
+
             return sceneInfo;
         }
 
-        #region INetworkRunnerCallbacks (debug log only)
+        #region INetworkRunnerCallbacks
         public void OnConnectedToServer(NetworkRunner runner)
         {
             Debug.Log("<color=#ADD8E6>[Network]</color> OnConnectedToServer");
+            onConnected?.Invoke();
+        }
+        public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
+        {
+            Debug.Log($"<color=#ADD8E6>[Network]</color> OnDisconnectedFromServer: {reason}");
+            onDisconnected?.Invoke();
+        }
+        public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
+        {
+            Debug.Log($"<color=#ADD8E6>[Network]</color> OnConnectFailed: {reason}");
+            onConnectFailed?.Invoke(reason.ToString());
         }
         public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
         {
             Debug.Log("<color=#ADD8E6>[Network]</color> Shutdown: " + shutdownReason);
         }
-        public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
-        {
-            Debug.Log("<color=#ADD8E6>[Network]</color> OnDisconnectedFromServer: " + reason);
-        }
-        public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
-        {
-            Debug.Log("<color=#ADD8E6>[Network]</color> OnConnectFailed: " + reason);
-        }
-        #endregion
-
-        #region Unused INetworkRunnerCallbacks
-
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) { }
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
