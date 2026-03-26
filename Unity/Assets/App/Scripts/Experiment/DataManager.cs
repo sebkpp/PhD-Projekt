@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Application.Scripts;
 using UnityEngine;
 
 namespace Application.Scripts.Experiment
@@ -9,13 +8,18 @@ namespace Application.Scripts.Experiment
     public class DataManager : MonoBehaviour
     {
         [SerializeField] private TrialDataController trial;
-        [SerializeField] private GameManager gameManager;
 
         private List<EyeTrackingData> _eyeTrackingDataList = new();
+        private int _localPlayerId = -1;
+
+        public void SetLocalPlayerId(int id)
+        {
+            _localPlayerId = id;
+        }
 
         public void OnEyesTracked(TrackedLayers layers)
         {
-            int playerId = gameManager.LocalPlayerObject.PlayerId;
+            int playerId = _localPlayerId;
             EyeTrackingData trackingData = new()
             {
                 TrialId = trial.TrialId,
@@ -36,8 +40,8 @@ namespace Application.Scripts.Experiment
             EyeTrackingDataRoot eyeTrackingRoot = new()
             {
                 Data = _eyeTrackingDataList.ToArray()
-            };    
-        
+            };
+
             string path = Path.Combine(UnityEngine.Application.persistentDataPath, "EyeTrackingData.json");
             string data = JsonUtility.ToJson(eyeTrackingRoot);
 
