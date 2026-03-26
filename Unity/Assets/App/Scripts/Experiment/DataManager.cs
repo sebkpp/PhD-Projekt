@@ -19,6 +19,7 @@ namespace Application.Scripts.Experiment
 
         public void OnEyesTracked(TrackedLayers layers)
         {
+            if (_localPlayerId < 0) return;
             int playerId = _localPlayerId;
             EyeTrackingData trackingData = new()
             {
