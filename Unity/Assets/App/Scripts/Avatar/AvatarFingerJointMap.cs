@@ -18,6 +18,13 @@ namespace Application.Scripts.Avatar
             distal.SetIKTarget(fingerSkeleton.distal.transform);
         }
         
+        public void MapTarget(FingerOffsets fingerOffsetsOffsets, Quaternion offsetAxis)
+        {
+            proximal.MapTarget(fingerOffsetsOffsets.proximal, offsetAxis);
+            intermediate.MapTarget(fingerOffsetsOffsets.intermediate, offsetAxis);
+            distal.MapTarget(fingerOffsetsOffsets.distal, offsetAxis);
+        }
+
         public void MapTarget(UtilsFingerOffsets fingerOffsets, Quaternion offsetAxis)
         {
             proximal.MapTarget(fingerOffsets.proximal, offsetAxis);

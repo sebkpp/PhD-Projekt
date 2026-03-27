@@ -1,8 +1,8 @@
 using System;
-using Application.Scripts;
 using Application.Scripts.Utils.Extensions;
 using Application.Scripts.Experiment;
 using Application.Scripts.ScriptableObjects;
+using Fusion;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -23,7 +23,7 @@ namespace Application.Scripts.Avatar
         private GameObject _avatar;
         private AvatarSkeleton _skeleton;
         private AvatarMapping _mapping;
-        private PlayerObject _playerObject;
+        private NetworkObject _networkObject;
 
         
         #region PROPERTIES
@@ -43,6 +43,7 @@ namespace Application.Scripts.Avatar
         #region setup 
         private void Awake()
         {
+            _networkObject = GetComponent<NetworkObject>();
             _mapping = GetComponent<AvatarMapping>();
 
             availableAvatars = Resources.LoadAll<AvatarScriptableObject>("Avatars");
@@ -62,11 +63,6 @@ namespace Application.Scripts.Avatar
 
             //Start state
             // SetAvatarOptions(-1, AvatarOptions.Hands);
-            //_playerObject = GetComponent<PlayerObject>();
-            // if (!_playerObject.IsLocalPlayer && !_playerObject.IsManager) //onboarding - only local player visible
-            // {
-            //     SetAvatarVisibility(false);
-            // }
             SetAvatarVisibility(avatarVisibility);
 
         }
@@ -162,12 +158,9 @@ namespace Application.Scripts.Avatar
 
         private void SetGender(int playerId, Gender gender)
         {
-            // local player should change
-            if (!_playerObject.IsLocalPlayer && _playerObject.PlayerId == playerId) return;
-            // remote player should change
-            if (_playerObject.IsLocalPlayer && _playerObject.PlayerId != playerId) return;
+            if (_networkObject == null || _networkObject.InputAuthority.IsNone) return;
+            if (_networkObject.InputAuthority.PlayerId != playerId) return;
 
-            //Change
             foreach (AvatarScriptableObject a in availableAvatars)
             {
                 if (a.Gender == gender)

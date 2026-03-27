@@ -1,3 +1,4 @@
+using System.Collections;
 using Application.Scripts.Avatar;
 using Fusion;
 using UnityEngine;
@@ -11,25 +12,46 @@ namespace Application.Scripts.Experiment
         public int ExperimentId { get; private set; }
 
         [SerializeField] private DataManager dataManager;
-        [SerializeField] private GameManager gameManager;
+
+        [Header("Player Positions")]
+        [SerializeField] private Transform localPlayerRig;
+        [SerializeField] private Transform onboardingPosition;
+        [SerializeField] private Transform experimentPositionOne;
+        [SerializeField] private Transform experimentPositionTwo;
 
 
         //Events
         public delegate void GenderChange(int playerId, Gender gender);
-        public static event GenderChange OnChangeGender;      
+        public static event GenderChange OnChangeGender;
 
         public delegate void AvatarChange(int playerId, AvatarOptions opt = AvatarOptions.None);
         public static event AvatarChange OnChangeAvatarOptions; //Hands vs Full-Body
 
         public static UnityEvent OnStartExperiment = new();
 
+        private void OnEnable()
+        {
+            OnStartExperiment.AddListener(TransitionToExperiment);
+        }
+
+        private void OnDisable()
+        {
+            OnStartExperiment.RemoveListener(TransitionToExperiment);
+        }
+
         private void Start()
         {
             ExperimentId = -1;
         }
 
+        public override void Spawned()
+        {
+            if (dataManager != null)
+                dataManager.SetLocalPlayerId(Runner.LocalPlayer.PlayerId);
+        }
+
         /// <summary>
-        /// Sets the experiment id if the experiment didn't start. It returns if the id was valid and saved or not. 
+        /// Sets the experiment id if the experiment didn't start. It returns if the id was valid and saved or not.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -63,26 +85,45 @@ namespace Application.Scripts.Experiment
             OnStartExperiment?.Invoke();
         }
 
+        private void TransitionToExperiment()
+        {
+            StartCoroutine(TransitionToExperiment_Coroutine());
+        }
+
+        private IEnumerator TransitionToExperiment_Coroutine()
+        {
+            if (localPlayerRig == null) yield break;
+
+            Fader fader = localPlayerRig.GetComponentInChildren<Fader>();
+            if (fader != null)
+            {
+                fader.FadeTransition();
+                yield return new WaitUntil(() => fader.FadedIn);
+            }
+
+            // PlayerId 1 → position one, PlayerId 2 → position two
+            Transform expPosition = Runner.LocalPlayer.PlayerId == 1
+                ? experimentPositionOne
+                : experimentPositionTwo;
+
+            if (expPosition != null)
+                localPlayerRig.SetPositionAndRotation(expPosition.position, expPosition.rotation);
+        }
+
         #region ChangeVisualsServer
 
         public void ChangePlayerGender(PlayerRef player, Gender newGender)
         {
-            if (!Runner.IsServer) return; //call only by server/host
-
             if (player.IsNone) return;
 
             RPC_ChangeGender(player, newGender); //RPC all players
         }
         public void ChangeAvatarOptions(AvatarOptions opt)
         {
-            if (!Runner.IsServer) return;
-
             RPC_ChangeAvatarOptions(opt);
         }
         public void ChangeHandVisuals(HandVisuals opt)
         {
-            if (!Runner.IsServer) return;
-
             RPC_ChangeHandVisuals(opt);
         }
 

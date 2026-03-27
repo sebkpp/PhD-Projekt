@@ -24,6 +24,17 @@ namespace Application.Scripts.Avatar
             little.SetIKTarget(handSkeleton.little);
         }
 
+        public void MapTarget(HandOffsets offsetsOffsets)
+        {
+            MapTarget(offsetsOffsets.wrist, offsetsOffsets.OffsetAxis);
+
+            thumb.MapTarget(offsetsOffsets.thumb, offsetsOffsets.thumb.OffsetAxis);
+            index.MapTarget(offsetsOffsets.index, offsetsOffsets.index.OffsetAxis);
+            middle.MapTarget(offsetsOffsets.middle, offsetsOffsets.middle.OffsetAxis);
+            ring.MapTarget(offsetsOffsets.ring, offsetsOffsets.ring.OffsetAxis);
+            little.MapTarget(offsetsOffsets.little, offsetsOffsets.little.OffsetAxis);
+        }
+
         public void MapTarget(UtilsHandOffsets handOffsets)
         {
             MapTarget(handOffsets.wrist, Quaternion.identity);
