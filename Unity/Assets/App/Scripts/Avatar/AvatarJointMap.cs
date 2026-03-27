@@ -33,11 +33,6 @@ namespace Application.Scripts.Avatar
                 VRSource.rotation * Quaternion.Inverse(rotationOffset));
         }
         
-        public virtual void MapTarget(MapOffsets mapOffsets, Quaternion axisRotation)
-        {
-            MapTarget(mapOffsets.trackingPositionOffset,  Quaternion.Euler(mapOffsets.trackingRotationOffset) * axisRotation);
-        }
-
         public virtual void MapTarget(TrackingOffsets offsets, Quaternion axisRotation)
         {
             MapTarget(offsets.position, Quaternion.Euler(offsets.rotation) * axisRotation);
