@@ -1,0 +1,118 @@
+using Application.Scripts.Avatar;
+using Fusion;
+using UnityEngine;
+using UnityEngine.Events;
+
+namespace Application.Scripts.Experiment
+{
+    [RequireComponent(typeof(NetworkObject))]
+    public class ExperimentController : NetworkBehaviour
+    {
+        public int ExperimentId { get; private set; }
+
+        [SerializeField] private DataManager dataManager;
+        [SerializeField] private GameManager gameManager;
+
+
+        //Events
+        public delegate void GenderChange(int playerId, Gender gender);
+        public static event GenderChange OnChangeGender;      
+
+        public delegate void AvatarChange(int playerId, AvatarOptions opt = AvatarOptions.None);
+        public static event AvatarChange OnChangeAvatarOptions; //Hands vs Full-Body
+
+        public static UnityEvent OnStartExperiment = new();
+
+        private void Start()
+        {
+            ExperimentId = -1;
+        }
+
+        /// <summary>
+        /// Sets the experiment id if the experiment didn't start. It returns if the id was valid and saved or not. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool SetExperimentId(int id)
+        {
+            if (id > 0)
+            {
+                ExperimentId = id;
+                return true;
+            }
+            else
+            {
+                Debug.LogError("Invalid ID");
+                return false;
+            }
+        }
+        public void StartExperiment()
+        {
+            if (ExperimentId == -1)
+            {
+                Debug.LogError("Set experiment id to start experiment");
+            }
+            else
+            {
+                RPC_StartStudy();
+            }
+        }
+        [Rpc]
+        private void RPC_StartStudy()
+        {
+            OnStartExperiment?.Invoke();
+        }
+
+        #region ChangeVisualsServer
+
+        public void ChangePlayerGender(PlayerRef player, Gender newGender)
+        {
+            if (!Runner.IsServer) return; //call only by server/host
+
+            if (player.IsNone) return;
+
+            RPC_ChangeGender(player, newGender); //RPC all players
+        }
+        public void ChangeAvatarOptions(AvatarOptions opt)
+        {
+            if (!Runner.IsServer) return;
+
+            RPC_ChangeAvatarOptions(opt);
+        }
+        public void ChangeHandVisuals(HandVisuals opt)
+        {
+            if (!Runner.IsServer) return;
+
+            RPC_ChangeHandVisuals(opt);
+        }
+
+        #endregion
+
+        #region ChangeVisualsClients
+        [Rpc]
+        private void RPC_ChangeGender(PlayerRef player, Gender newGender)
+        {
+            OnChangeGender?.Invoke(player.PlayerId, newGender);
+        }
+        [Rpc]
+        private void RPC_ChangeAvatarOptions(AvatarOptions opt)
+        {
+            if (!Runner.IsPlayer) return;
+
+            Debug.Log("Changing Avatar to " + opt);
+            OnChangeAvatarOptions?.Invoke(-1, opt);
+        }
+        [Rpc]
+        private void RPC_ChangeHandVisuals(HandVisuals opt)
+        {
+            if (!Runner.IsPlayer) return;
+
+            Debug.Log("Changing visualisation to " + opt);
+            //TODO
+        }
+
+
+        #endregion
+    }
+
+}
