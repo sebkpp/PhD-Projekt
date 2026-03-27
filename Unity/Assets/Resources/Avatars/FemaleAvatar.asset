@@ -1,0 +1,186 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9887cf3efc133e748953b46edce1de45, type: 3}
+  m_Name: FemaleAvatar
+  m_EditorClassIdentifier: 
+  gender: 1
+  avatarGO: {fileID: 919132149155446097, guid: c3f466fe808fe524cbac1b1cae66b8ad, type: 3}
+  animator: {fileID: 5866666021909216657, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+    type: 3}
+  avatarSkeleton: {fileID: 9000000, guid: c3f466fe808fe524cbac1b1cae66b8ad, type: 3}
+  skeleton:
+    _serializedList:
+    - Key: Hips
+      Value: {fileID: -6408438495188353694, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Spine
+      Value: {fileID: 4788847417403042390, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Chest
+      Value: {fileID: -7030842900008749454, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: UpperChest
+      Value: {fileID: -2442636655555998630, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: RightShoulder
+      Value: {fileID: -664089166917668688, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: RightUpperArm
+      Value: {fileID: -1779189076924345279, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: RightLowerArm
+      Value: {fileID: -4264971868578908972, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: RightHand
+      Value: {fileID: -1053969105356817561, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: LeftShoulder
+      Value: {fileID: 3575426672308487556, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: LeftUpperArm
+      Value: {fileID: 5153340875697489697, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: LeftLowerArm
+      Value: {fileID: 1939532216183682315, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: LeftHand
+      Value: {fileID: -7117087287859456363, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Neck
+      Value: {fileID: 1686076462441692164, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Head
+      Value: {fileID: 8804637712421891867, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Jaw
+      Value: {fileID: -1652406960350432645, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: LeftEye
+      Value: {fileID: 3068023569106413502, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: RightEye
+      Value: {fileID: 7111799819806522977, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: LeftUpperLeg
+      Value: {fileID: 7684447406021319453, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: LeftLowerLeg
+      Value: {fileID: 6818310431954228449, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: LeftFoot
+      Value: {fileID: -4375156026687115049, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: LeftToes
+      Value: {fileID: 5142676365727513432, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: RightUpperLeg
+      Value: {fileID: 4249738979395038418, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: RightLowerLeg
+      Value: {fileID: 3614841602827385169, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: RightFoot
+      Value: {fileID: 2431326288382060947, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: RightToes
+      Value: {fileID: 4848067970944702844, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Thumb Proximal
+      Value: {fileID: -8630147904690138850, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Thumb Intermediate
+      Value: {fileID: -4525938344970366958, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Thumb Distal
+      Value: {fileID: 5973050418686275052, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Index Proximal
+      Value: {fileID: 251636672884760203, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Index Intermediate
+      Value: {fileID: 5377865117316900252, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Index Distal
+      Value: {fileID: 4841117934945774636, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Middle Proximal
+      Value: {fileID: 4294385099523232757, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Middle Intermediate
+      Value: {fileID: 6423406193296961221, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Middle Distal
+      Value: {fileID: 5829544483386662886, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Ring Proximal
+      Value: {fileID: -4867782491754226951, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Ring Intermediate
+      Value: {fileID: 6802025257613644123, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Ring Distal
+      Value: {fileID: -6576828863535033265, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Little Proximal
+      Value: {fileID: -7462696502294767953, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Little Intermediate
+      Value: {fileID: -3850888066256404225, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Left Little Distal
+      Value: {fileID: -2531141197009590418, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Thumb Proximal
+      Value: {fileID: 4724892786210431149, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Thumb Intermediate
+      Value: {fileID: -4960948874162647632, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Thumb Distal
+      Value: {fileID: -4570625926062655540, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Index Proximal
+      Value: {fileID: -7129856231059500803, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Index Intermediate
+      Value: {fileID: -885831587358844454, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Index Distal
+      Value: {fileID: 610651830076779453, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Middle Proximal
+      Value: {fileID: 2468534050718454824, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Middle Intermediate
+      Value: {fileID: -2258026697953283096, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Middle Distal
+      Value: {fileID: 9177160907046977651, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Ring Proximal
+      Value: {fileID: 4629391320434982497, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Ring Intermediate
+      Value: {fileID: 7247732508468320380, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Ring Distal
+      Value: {fileID: 3416976421138108096, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Little Proximal
+      Value: {fileID: -3814847762278655429, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Little Intermediate
+      Value: {fileID: 8615878337037491362, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}
+    - Key: Right Little Distal
+      Value: {fileID: -9091616722568096849, guid: c3f466fe808fe524cbac1b1cae66b8ad,
+        type: 3}

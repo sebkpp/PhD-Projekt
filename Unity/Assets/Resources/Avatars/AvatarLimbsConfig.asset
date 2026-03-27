@@ -1,0 +1,161 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c3d9370a5fcd9468ae83154489763c, type: 3}
+  m_Name: AvatarLimbsConfig
+  m_EditorClassIdentifier: 
+  head:
+    trackingPositionOffset: {x: 0, y: 0, z: 0}
+    trackingRotationOffset: {x: 0, y: 0, z: 0}
+  leftHand:
+    inputHandPalmUp: 4
+    inputHandForward: 1
+    wrist:
+      trackingPositionOffset: {x: 0, y: 0, z: 0}
+      trackingRotationOffset: {x: -10.31, y: 10.05, z: -4.81}
+    thumb:
+      inputFingerUp: 1
+      inputFingerForward: 5
+      proximal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      intermediate:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      distal:
+        trackingPositionOffset: {x: 0, y: 0.0001, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+    index:
+      inputFingerUp: 1
+      inputFingerForward: 5
+      proximal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      intermediate:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      distal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+    middle:
+      inputFingerUp: 1
+      inputFingerForward: 5
+      proximal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      intermediate:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      distal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+    ring:
+      inputFingerUp: 1
+      inputFingerForward: 5
+      proximal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      intermediate:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      distal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+    little:
+      inputFingerUp: 1
+      inputFingerForward: 5
+      proximal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      intermediate:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      distal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+  rightHand:
+    inputHandPalmUp: 4
+    inputHandForward: 1
+    wrist:
+      trackingPositionOffset: {x: 0, y: 0, z: 0}
+      trackingRotationOffset: {x: 17.23, y: -12.34, z: 0}
+    thumb:
+      inputFingerUp: 0
+      inputFingerForward: 4
+      proximal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      intermediate:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      distal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+    index:
+      inputFingerUp: 0
+      inputFingerForward: 4
+      proximal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      intermediate:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      distal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+    middle:
+      inputFingerUp: 0
+      inputFingerForward: 4
+      proximal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      intermediate:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      distal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+    ring:
+      inputFingerUp: 0
+      inputFingerForward: 4
+      proximal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      intermediate:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      distal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+    little:
+      inputFingerUp: 0
+      inputFingerForward: 4
+      proximal:
+        trackingPositionOffset: {x: -0.0001, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: -0, z: 0}
+      intermediate:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+      distal:
+        trackingPositionOffset: {x: 0, y: 0, z: 0}
+        trackingRotationOffset: {x: 0, y: 0, z: 0}
+  leftLowerLeg:
+    trackingPositionOffset: {x: 0, y: 0, z: 0}
+    trackingRotationOffset: {x: 0, y: 0, z: 100}
+  leftUpperLeg:
+    trackingPositionOffset: {x: 0, y: 0, z: 0}
+    trackingRotationOffset: {x: 180, y: 0, z: 80}
+  rightLowerLeg:
+    trackingPositionOffset: {x: 0, y: 0, z: 0}
+    trackingRotationOffset: {x: 0, y: 0, z: 100}
+  rightUpperLeg:
+    trackingPositionOffset: {x: 0, y: 0, z: 0}
+    trackingRotationOffset: {x: 180, y: 0, z: 80}
