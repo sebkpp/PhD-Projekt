@@ -1,5 +1,4 @@
-﻿using Application.Scripts.Avatar;
-using Application.Scripts.Avatar.Utils;
+using Application.Scripts.Avatar.Driver;
 using Application.Scripts.Interaction.States;
 using Application.Scripts.Network.Input.States;
 using Fusion;
@@ -18,45 +17,34 @@ namespace Application.Scripts.Network.Input
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public const int EXECUTION_ORDER = NetworkRig.EXECUTION_ORDER + 10;
-        
-        
-        [SerializeField] private RigPart side;
-        
-        /// <summary>
-        /// Reference to the hand tracking data component that applies visual hand poses.
-        /// </summary>
-        [SerializeField] public HandTrackingData handTrackingData;
 
-        [SerializeField] private Transform avatarHand;
-        
+
+        [SerializeField] private RigPart side;
+
+        [SerializeField] private Application.Scripts.Avatar.Driver.AvatarDriver avatarDriver;
+
         /// <summary>
         /// The network-synchronized hand pose state.
         /// Updated on the owner client and replicated to others.
         /// </summary>
         [Networked] public HandStateNetworked HandState { get; set; }
-        
+
         private NetworkRig _rig;
         private ChangeDetector _changeDetector;
-        private HandOffsets _offsetsConfig;
 
         /// <summary>
         /// Returns true if this hand belongs to the local user (i.e., the local network authority).
         /// </summary>
         public bool IsLocalNetworkRig => _rig.IsLocalNetworkRig;
-        
-        /// <summary>
-        /// Gets the transform of the avatar's visual hand representation.
-        /// </summary>
-        public Transform AvatarHand => avatarHand;
-        
+
         /// <summary>
         /// Gets the local hardware hand (e.g., XR controller) that corresponds to this network hand.
         /// Only available if the hand belongs to the local rig.
         /// </summary>
         public HardwareHand LocalHardwareHand => IsLocalNetworkRig ? (side == RigPart.LeftController ? _rig?.hardwareRig?.leftHand : _rig?.hardwareRig?.rightHand)
             : null;
-        
-        
+
+
         private void Awake()
         {
             _rig = GetComponentInParent<NetworkRig>();
@@ -74,40 +62,37 @@ namespace Application.Scripts.Network.Input
 
         /// <summary>
         /// Called every render frame.
-        /// For the local user: applies extrapolated hand pose data.
-        /// For remote users: updates visuals based on received network data.
+        /// For the local user: applies extrapolated hand pose data via AvatarDriver.
+        /// For remote users: updates visuals based on received network data via AvatarDriver.
         /// </summary>
         public override void Render()
         {
             base.Render();
+
+            if (avatarDriver == null) return;
+
+            XRInputState state;
+
             if (IsLocalNetworkRig)
             {
-                // Extrapolate for local user : we want to have the visual at the good position as soon as possible, so we force the visuals to follow the most fresh hand pose
-                HandState handPose = LocalHardwareHand.HandTrackingData.GetHandPose();
-                
-                _offsetsConfig = side == RigPart.LeftController
-                    ? _rig.AvatarConfig.LeftHand
-                    : _rig.AvatarConfig.RightHand;
-                
-                handTrackingData.SetHandPose(handPose, _offsetsConfig);
-                
+                state = _rig.hardwareRig.RigState;
             }
             else
             {
-                foreach (var changedNetworkedVarName in _changeDetector.DetectChanges(this))
+                // Convert networked hand state for remote player.
+                // HandStateNetworked has an implicit operator to local HandState.
+                HandState localHandState = (HandState)HandState;
+
+                state = new XRInputState
                 {
-                    if (changedNetworkedVarName != nameof(HandState)) continue;
-                    
-                    // Will be called when the local user change the hand pose structure
-                    // We trigger here the actual animation update
-                    HandState handPose = HandState;
-                    _offsetsConfig = side == RigPart.LeftController
-                        ? _rig.AvatarConfig.LeftHand
-                        : _rig.AvatarConfig.RightHand;
-                        
-                    handTrackingData.SetHandPose(handPose, _offsetsConfig);
-                }
+                    PlayArea  = new TransformState { Position = _rig.transform.position,        Rotation = _rig.transform.rotation },
+                    Head      = new TransformState { Position = _rig.headset.transform.position, Rotation = _rig.headset.transform.rotation },
+                    LeftHand  = side == RigPart.LeftController  ? localHandState : default,
+                    RightHand = side == RigPart.RightController ? localHandState : default,
+                };
             }
+
+            avatarDriver.Apply(state);
         }
     }
 }
