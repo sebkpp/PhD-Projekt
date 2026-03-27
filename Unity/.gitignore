@@ -80,3 +80,15 @@ crashlytics-build.properties
 # Gleechi Virtual Grasp SDK not included in repository
 **/com.gleechi.unity.virtualgrasp/
 **/com.gleechi.unity.virtualgrasp.meta
+
+# Third-party commercial and licensed assets (not for public repo)
+Assets/Third Party/Commercial/
+Assets/Third Party/Commercial.meta
+Assets/Third Party/Rocketbox/
+Assets/Third Party/Rocketbox.meta
+
+# Internal planning/brainstorming docs
+docs/superpowers/
+
+# Unity replay/crash logs
+*.log
