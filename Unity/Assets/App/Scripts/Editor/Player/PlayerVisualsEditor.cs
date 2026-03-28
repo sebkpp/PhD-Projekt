@@ -11,6 +11,7 @@ namespace Application.Scripts.Editor.Player
         private SerializedProperty _avatarConfigReference;
         private SerializedProperty _hmdCameraTransform;
         private SerializedProperty _avatarVisibility;
+        private SerializedProperty _avatarInitialized;
 
         private void OnEnable()
         {
@@ -19,6 +20,7 @@ namespace Application.Scripts.Editor.Player
             _avatarConfigReference = serializedObject.FindProperty("_avatarConfigReference");
             _hmdCameraTransform    = serializedObject.FindProperty("_hmdCameraTransform");
             _avatarVisibility      = serializedObject.FindProperty("_avatarVisibility");
+            _avatarInitialized     = serializedObject.FindProperty("_avatarInitialized");
         }
 
         public override void OnInspectorGUI()
@@ -29,7 +31,7 @@ namespace Application.Scripts.Editor.Player
             EditorGUILayout.PropertyField(_avatarConfigReference);
             EditorGUILayout.PropertyField(_hmdCameraTransform);
             EditorGUILayout.PropertyField(_avatarVisibility);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("_avatarInitialized"));
+            EditorGUILayout.PropertyField(_avatarInitialized);
             serializedObject.ApplyModifiedProperties();
         }
     }

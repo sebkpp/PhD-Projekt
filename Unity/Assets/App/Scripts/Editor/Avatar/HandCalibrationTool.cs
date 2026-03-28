@@ -2,7 +2,6 @@
 using Application.Scripts.Avatar.Driver;
 using Application.Scripts.Avatar.Mapping;
 using Application.Scripts.Avatar.Utils;
-using Application.Scripts.ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.XR.Hands;
@@ -23,7 +22,6 @@ namespace Application.Scripts.Editor.Avatar
     /// </summary>
     public class HandCalibrationTool : EditorWindow
     {
-        private AvatarScriptableObject _avatarAsset;
         private AvatarConfig _config;
         private GameObject _sceneAvatar;
 
@@ -42,8 +40,6 @@ namespace Application.Scripts.Editor.Avatar
             EditorGUILayout.LabelField("Avatar Hand Calibration", EditorStyles.boldLabel);
             EditorGUILayout.Space();
 
-            _avatarAsset = (AvatarScriptableObject)EditorGUILayout.ObjectField(
-                "Avatar Asset", _avatarAsset, typeof(AvatarScriptableObject), false);
             _config = (AvatarConfig)EditorGUILayout.ObjectField(
                 "AvatarConfig", _config, typeof(AvatarConfig), false);
             _sceneAvatar = (GameObject)EditorGUILayout.ObjectField(
@@ -92,7 +88,7 @@ namespace Application.Scripts.Editor.Avatar
 
         private void CaptureOffsets(Handedness handedness, ref Vector3[,] offsets, ref bool captured)
         {
-            if (_sceneAvatar == null || _avatarAsset == null) { Debug.LogWarning("[Calibration] Assign scene avatar and asset first."); return; }
+            if (_sceneAvatar == null) { Debug.LogWarning("[Calibration] Assign scene avatar first."); return; }
 
             var subs = new System.Collections.Generic.List<XRHandSubsystem>();
             SubsystemManager.GetSubsystems(subs);
