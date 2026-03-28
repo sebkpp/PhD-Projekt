@@ -144,11 +144,15 @@ namespace Application.Scripts.Network.Interactable
             }
             
             if (!IsGrabbed) return;
-            
+
             // Follow grabber, adding position/rotation offsets
             if (CurrentGrabber != null)
-                grabbable.Follow(followedTransform: CurrentGrabber.hand.AvatarHand, LocalPositionOffset,
-                    LocalRotationOffset);
+            {
+                Transform followTarget = CurrentGrabber.hand?.AvatarHand != null
+                    ? CurrentGrabber.hand.AvatarHand
+                    : CurrentGrabber.transform;
+                grabbable.Follow(followedTransform: followTarget, LocalPositionOffset, LocalRotationOffset);
+            }
         }
         
         /// <summary>
@@ -156,13 +160,13 @@ namespace Application.Scripts.Network.Interactable
         /// </summary>
         public void OnDrawGizmos()
         {
-            if (CurrentGrabber != null)
-            {
-                Gizmos.color = Color.green;
-                Vector3 worldPos = CurrentGrabber.hand.AvatarHand.TransformPoint(LocalPositionOffset);
-                Debug.Log($"Networked: {CurrentGrabber.hand.AvatarHand.position.ToString("F5")}");
-                Gizmos.DrawSphere(worldPos, 0.05f);
-            }
+            if (CurrentGrabber == null) return;
+            if (CurrentGrabber.hand?.AvatarHand == null) return;
+
+            Gizmos.color = Color.green;
+            Vector3 worldPos = CurrentGrabber.hand.AvatarHand.TransformPoint(LocalPositionOffset);
+            Debug.Log($"Networked: {CurrentGrabber.hand.AvatarHand.position.ToString("F5")}");
+            Gizmos.DrawSphere(worldPos, 0.05f);
         }
 
         /// <summary>

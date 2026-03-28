@@ -1,0 +1,12 @@
+{
+    "name": "Avatar.Tests.EditMode",
+    "references": [
+        "GUID:f1e2d3c4b5a697880123456789abcdef"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ]
+}

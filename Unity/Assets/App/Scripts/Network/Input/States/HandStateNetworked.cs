@@ -6,25 +6,30 @@ namespace Application.Scripts.Network.Input.States
 {
     /// <summary>
     /// Represents the network-synchronized transform states of a single finger,
-    /// including its proximal, intermediate, and distal joints.
+    /// including its metacarpal, proximal, intermediate, and distal joints.
     /// </summary>
     public struct FingerStateNetworked : INetworkStruct
     {
         /// <summary>
+        /// The transform state of the metacarpal joint of the finger.
+        /// </summary>
+        public TransformStateNetworked Metacarpal;
+
+        /// <summary>
         /// The transform state of the proximal (base) joint of the finger.
         /// </summary>
         public TransformStateNetworked Proximal;
-        
+
         /// <summary>
         /// The transform state of the intermediate (middle) joint of the finger.
         /// </summary>
         public TransformStateNetworked Intermediate;
-        
+
         /// <summary>
         /// The transform state of the distal (tip) joint of the finger.
         /// </summary>
         public TransformStateNetworked Distal;
-        
+
         /// <summary>
         /// Converts the networked finger state into a local <see cref="FingerState"/> representation.
         /// </summary>
@@ -33,9 +38,10 @@ namespace Application.Scripts.Network.Input.States
         {
             return new FingerState
             {
-                Proximal = new TransformState { Position = Proximal.Position, Rotation = Proximal.Rotation },
+                Metacarpal   = new TransformState { Position = Metacarpal.Position,   Rotation = Metacarpal.Rotation },
+                Proximal     = new TransformState { Position = Proximal.Position,     Rotation = Proximal.Rotation },
                 Intermediate = new TransformState { Position = Intermediate.Position, Rotation = Intermediate.Rotation },
-                Distal = new TransformState { Position = Distal.Position, Rotation = Distal.Rotation }
+                Distal       = new TransformState { Position = Distal.Position,       Rotation = Distal.Rotation },
             };
         }
 
@@ -48,9 +54,10 @@ namespace Application.Scripts.Network.Input.States
         {
             return new FingerStateNetworked
             {
-                Proximal = new TransformStateNetworked { Position = fingerState.Proximal.Position, Rotation = fingerState.Proximal.Rotation },
+                Metacarpal   = new TransformStateNetworked { Position = fingerState.Metacarpal.Position,   Rotation = fingerState.Metacarpal.Rotation },
+                Proximal     = new TransformStateNetworked { Position = fingerState.Proximal.Position,     Rotation = fingerState.Proximal.Rotation },
                 Intermediate = new TransformStateNetworked { Position = fingerState.Intermediate.Position, Rotation = fingerState.Intermediate.Rotation },
-                Distal = new TransformStateNetworked { Position = fingerState.Distal.Position, Rotation = fingerState.Distal.Rotation }
+                Distal       = new TransformStateNetworked { Position = fingerState.Distal.Position,       Rotation = fingerState.Distal.Rotation },
             };
         }
     }

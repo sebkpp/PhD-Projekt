@@ -1,4 +1,5 @@
 ﻿using Application.Scripts.Avatar;
+using Application.Scripts.Avatar.Hardware;
 using Application.Scripts.InteractableObject;
 using Application.Scripts.Network.Interaction;
 using Application.Scripts.Utils.Extensions;
@@ -42,7 +43,7 @@ namespace Application.Scripts.Interaction
         /// <summary>
         /// Indicates whether the hand is currently performing a grab action.
         /// </summary>
-        protected virtual bool IsGrabbing => _hand && _hand.isGrabbing;
+        protected virtual bool IsGrabbing => _hand && _hand.IsGrabbing;
         
         /// <summary>
         /// Initializes the grabber by locating the associated <see cref="HardwareHand"/>.
@@ -82,7 +83,7 @@ namespace Application.Scripts.Interaction
         {
             grabbable.Grab(this);
             grabbedObject = grabbable;
-            _hand.isGrabbing = true;
+            _hand.IsGrabbing = true;
         }
         
         /// <summary>
@@ -94,7 +95,7 @@ namespace Application.Scripts.Interaction
             if (grabbedObject == null) return;
             grabbedObject.Ungrab();
             grabbedObject = null;
-            _hand.isGrabbing = false;
+            _hand.IsGrabbing = false;
         }
         
         /// <summary>
@@ -105,7 +106,7 @@ namespace Application.Scripts.Interaction
         private void GraspObject(VG_HandStatus graspInfo)
         {
             // Check if the ones who is sending the event has the same handedness as us
-            if (graspInfo.m_side.ToRigPart() != _hand.side) return;
+            if (graspInfo.m_side.ToRigPart() != _hand.Side) return;
             
             Grabbable graspable = graspInfo.m_selectedObject.gameObject.GetComponentInParent<Grabbable>();
             
@@ -129,7 +130,7 @@ namespace Application.Scripts.Interaction
         private void ReleaseObject(VG_HandStatus graspInfo)
         {
             // Check if the ones who is sending the event has the same handedness as us
-            if (graspInfo.m_side.ToRigPart() != _hand.side) return;
+            if (graspInfo.m_side.ToRigPart() != _hand.Side) return;
 
             Grabbable releasedObject = graspInfo.m_selectedObject.gameObject.GetComponentInParent<Grabbable>();
             

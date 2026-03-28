@@ -2,10 +2,15 @@
 {
     /// <summary>
     /// Represents the transform states of a single finger,
-    /// including its proximal, intermediate, and distal joints.
+    /// including its metacarpal, proximal, intermediate, and distal joints.
     /// </summary>
     public struct FingerState
     {
+        /// <summary>
+        /// The transform state of the metacarpal (palm) bone of the finger.
+        /// </summary>
+        public TransformState Metacarpal;
+
         /// <summary>
         /// The transform state of the proximal (base) joint of the finger.
         /// </summary>
