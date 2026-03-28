@@ -76,23 +76,52 @@ def test_get_next_experiment_returns_oldest_open():
 def test_get_next_experiment_skips_started():
     db = SessionLocal()
     try:
+        av_id = _get_or_create_avatar_visibility(db)
         study = Study(status="Aktiv")
         db.add(study)
         db.flush()
+
+        # Create a started experiment (should be skipped)
         started_exp = Experiment(
             study_id=study.study_id,
             researcher="test",
             started_at=datetime.now(timezone.utc)
         )
         db.add(started_exp)
-        db.commit()
+        db.flush()
         started_exp_id = started_exp.experiment_id
+
+        # Create an open experiment with participants (should be returned)
+        open_exp = Experiment(study_id=study.study_id, researcher="test")
+        db.add(open_exp)
+        db.flush()
+        open_exp_id = open_exp.experiment_id
+
+        trial = Trial(experiment_id=open_exp.experiment_id, trial_number=1)
+        db.add(trial)
+        db.flush()
+
+        p1 = Participant(age=30, gender="Male", handedness="Right")
+        p2 = Participant(age=25, gender="Female", handedness="Right")
+        db.add_all([p1, p2])
+        db.flush()
+
+        slot1 = TrialSlot(trial_id=trial.trial_id, slot=1, avatar_visibility_id=av_id)
+        slot2 = TrialSlot(trial_id=trial.trial_id, slot=2, avatar_visibility_id=av_id)
+        db.add_all([slot1, slot2])
+        db.flush()
+
+        db.add(TrialParticipantSlot(trial_slot_id=slot1.trial_slot_id, participant_id=p1.participant_id))
+        db.add(TrialParticipantSlot(trial_slot_id=slot2.trial_slot_id, participant_id=p2.participant_id))
+        db.commit()
     finally:
         db.close()
 
     resp = client.get("/experiments/next")
-    if resp.status_code == status.HTTP_200_OK:
-        assert resp.json()["experiment_id"] != started_exp_id
+    assert resp.status_code == status.HTTP_200_OK
+    data = resp.json()
+    assert data["experiment_id"] == open_exp_id
+    assert data["experiment_id"] != started_exp_id
 
 
 def test_get_next_experiment_slots_not_assigned_returns_409():
