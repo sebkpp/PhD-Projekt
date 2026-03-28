@@ -71,28 +71,29 @@ namespace Application.Scripts.Network.Input
 
             if (avatarDriver == null) return;
 
-            XRInputState state;
+            bool isLeft = side == RigPart.LeftController;
+            HandState handState;
+            TransformState head;
 
             if (IsLocalNetworkRig)
             {
-                state = _rig.hardwareRig.RigState;
+                XRInputState rigState = _rig.hardwareRig.RigState;
+                handState = isLeft ? rigState.LeftHand : rigState.RightHand;
+                head = rigState.Head;
             }
             else
             {
-                // Convert networked hand state for remote player.
-                // HandStateNetworked has an implicit operator to local HandState.
-                HandState localHandState = (HandState)HandState;
-
-                state = new XRInputState
+                handState = (HandState)HandState;
+                head = new TransformState
                 {
-                    PlayArea  = new TransformState { Position = _rig.transform.position,        Rotation = _rig.transform.rotation },
-                    Head      = new TransformState { Position = _rig.headset.transform.position, Rotation = _rig.headset.transform.rotation },
-                    LeftHand  = side == RigPart.LeftController  ? localHandState : default,
-                    RightHand = side == RigPart.RightController ? localHandState : default,
+                    Position = _rig.headset.transform.position,
+                    Rotation = _rig.headset.transform.rotation,
                 };
             }
 
-            avatarDriver.Apply(state);
+            // ApplyHand drives head/body + one side only, preventing the two
+            // NetworkHand instances (left/right) from overwriting each other's results.
+            avatarDriver.ApplyHand(handState, isLeft, head);
         }
     }
 }

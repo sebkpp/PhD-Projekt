@@ -1,4 +1,3 @@
-using Application.Scripts.Avatar.Driver;
 using Application.Scripts.Interaction.States;
 using UnityEngine;
 
@@ -23,7 +22,7 @@ namespace Application.Scripts.Avatar.Driver
         private ArmBoneData _rightArm;
         private bool _initialized;
 
-        private float _verticalOffset;
+        private float _groundY; // avatar root Y after calibration, kept constant each frame
 
         // ------------------------------------------------------------------ //
         //  Initialization
@@ -38,11 +37,11 @@ namespace Application.Scripts.Avatar.Driver
         {
             _bones = bones;
             _config = config;
-            _verticalOffset = verticalOffset;
 
             InsertVirtualTwistBones();
             CaptureArmRestPose();
 
+            _groundY = _bones.Root.position.y;
             _initialized = true;
         }
 
@@ -73,15 +72,8 @@ namespace Application.Scripts.Avatar.Driver
         //  Per-frame application
         // ------------------------------------------------------------------ //
 
-        private void LateUpdate()
-        {
-            // Local player bone driving is triggered via Apply() called from HardwareRig each frame.
-            // This LateUpdate guard exists only to prevent double-application.
-        }
-
         /// <summary>
-        /// Applies a full XRInputState to the avatar bones.
-        /// Safe to call from both LateUpdate (local) and NetworkHand.Render (remote).
+        /// Applies a full XRInputState to the avatar bones (head, body, both hands).
         /// </summary>
         public void Apply(XRInputState state)
         {
@@ -95,14 +87,32 @@ namespace Application.Scripts.Avatar.Driver
             DriveArm(in _rightArm, state.RightHand.Wrist, _config.RightHand);
         }
 
+        /// <summary>
+        /// Applies head/body and a single hand's fingers and arm.
+        /// Use from NetworkHand so two NetworkHand instances (left/right) do not
+        /// overwrite each other's bone results.
+        /// </summary>
+        public void ApplyHand(HandState hand, bool isLeft, TransformState head)
+        {
+            if (!_initialized) return;
+
+            DriveBody(head);
+            DriveHead(head);
+            DriveFingers(hand, isLeft);
+
+            if (isLeft)
+                DriveArm(in _leftArm, hand.Wrist, _config.LeftHand);
+            else
+                DriveArm(in _rightArm, hand.Wrist, _config.RightHand);
+        }
+
         // ------------------------------------------------------------------ //
         //  Body + Head
         // ------------------------------------------------------------------ //
 
         private void DriveBody(TransformState head)
         {
-            Vector3 headXZ = new Vector3(head.Position.x, 0f, head.Position.z);
-            Vector3 rootTarget = headXZ + Vector3.up * (_bones.Root.position.y);
+            Vector3 rootTarget = new Vector3(head.Position.x, _groundY, head.Position.z);
             _bones.Root.position = rootTarget;
 
             float headYaw = head.Rotation.eulerAngles.y;
