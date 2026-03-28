@@ -65,10 +65,10 @@ namespace Avatar.Tests.EditMode
         [Test]
         public void ComputeElbowHint_PalmFacingDown_ElbowHintBehindMidpoint()
         {
-            // Euler(-90,0,0) tilts the hand's "up" axis toward +Z (world forward).
+            // Euler(90,0,0) tilts the hand's "up" axis toward +Z (world forward) in Unity.
             // palmNormal = wristRot * up = (0,0,1).
             // Cross(shoulderToWrist=(1,0,0), palmNormal=(0,0,1)).y = -1  → elbow points down.
-            Quaternion wristRot = Quaternion.Euler(-90f, 0f, 0f);
+            Quaternion wristRot = Quaternion.Euler(90f, 0f, 0f);
             Vector3 shoulder    = Vector3.zero;
             Vector3 wrist       = new Vector3(0.5f, 0f, 0f); // arm pointing right
 
