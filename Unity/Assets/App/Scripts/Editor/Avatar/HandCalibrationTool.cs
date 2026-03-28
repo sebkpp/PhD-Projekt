@@ -2,7 +2,6 @@
 using Application.Scripts.Avatar.Driver;
 using Application.Scripts.Avatar.Mapping;
 using Application.Scripts.Avatar.Utils;
-using Application.Scripts.ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.XR.Hands;
@@ -23,7 +22,6 @@ namespace Application.Scripts.Editor.Avatar
     /// </summary>
     public class HandCalibrationTool : EditorWindow
     {
-        private AvatarScriptableObject _avatarAsset;
         private AvatarConfig _config;
         private GameObject _sceneAvatar;
 
@@ -42,8 +40,6 @@ namespace Application.Scripts.Editor.Avatar
             EditorGUILayout.LabelField("Avatar Hand Calibration", EditorStyles.boldLabel);
             EditorGUILayout.Space();
 
-            _avatarAsset = (AvatarScriptableObject)EditorGUILayout.ObjectField(
-                "Avatar Asset", _avatarAsset, typeof(AvatarScriptableObject), false);
             _config = (AvatarConfig)EditorGUILayout.ObjectField(
                 "AvatarConfig", _config, typeof(AvatarConfig), false);
             _sceneAvatar = (GameObject)EditorGUILayout.ObjectField(
@@ -58,7 +54,7 @@ namespace Application.Scripts.Editor.Avatar
 
             EditorGUILayout.Space();
 
-            using (new EditorGUI.DisabledScope(!Application.isPlaying))
+            using (new EditorGUI.DisabledScope(!UnityEngine.Application.isPlaying))
             {
                 if (GUILayout.Button("Capture Left Hand Offsets"))
                     CaptureOffsets(Handedness.Left, ref _leftOffsets, ref _leftCaptured);
@@ -92,7 +88,7 @@ namespace Application.Scripts.Editor.Avatar
 
         private void CaptureOffsets(Handedness handedness, ref Vector3[,] offsets, ref bool captured)
         {
-            if (_sceneAvatar == null || _avatarAsset == null) { Debug.LogWarning("[Calibration] Assign scene avatar and asset first."); return; }
+            if (_sceneAvatar == null) { Debug.LogWarning("[Calibration] Assign scene avatar first."); return; }
 
             var subs = new System.Collections.Generic.List<XRHandSubsystem>();
             SubsystemManager.GetSubsystems(subs);
@@ -100,7 +96,7 @@ namespace Application.Scripts.Editor.Avatar
             foreach (var s in subs) { if (s.running) { subsystem = s; break; } }
             if (subsystem == null) { Debug.LogWarning("[Calibration] XRHandSubsystem not running. Enter Play mode."); return; }
 
-            var boneRef = AvatarBoneReference.Build(_avatarAsset, _sceneAvatar);
+            var boneRef = AvatarBoneReference.Build(_sceneAvatar);
             int side = handedness == Handedness.Left ? 0 : 1;
 
             XRHand hand = handedness == Handedness.Left ? subsystem.leftHand : subsystem.rightHand;

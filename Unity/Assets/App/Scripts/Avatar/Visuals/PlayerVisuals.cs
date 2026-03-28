@@ -1,10 +1,9 @@
-using Application.Scripts.Avatar;
 using Application.Scripts.Avatar.Driver;
 using Application.Scripts.Avatar.Mapping;
+using Application.Scripts.Avatar.Utils;
 using Application.Scripts.Experiment;
 using Application.Scripts.Network.Input;
-using Application.Scripts.ScriptableObjects;
-using Fusion;
+using Application.Scripts.Avatar;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,48 +11,38 @@ namespace Application.Scripts.Avatar.Visuals
 {
     public class PlayerVisuals : MonoBehaviour
     {
-        [SerializeField] private AvatarScriptableObject avatar;
-        [SerializeField] private AvatarDriver avatarDriver;
-        [SerializeField] private Application.Scripts.Avatar.Utils.AvatarConfigReference avatarConfigReference;
-        [SerializeField] private Transform hmdCameraTransform;
-        [SerializeField] private AvatarVisibility avatarVisibility;
-        [SerializeField] private UnityEvent<AvatarBoneReference> avatarInitialized;
+        [SerializeField] private AvatarSet _avatarSet;
+        [SerializeField] private AvatarDriver _avatarDriver;
+        [SerializeField] private AvatarConfigReference _avatarConfigReference;
+        [SerializeField] private Transform _hmdCameraTransform;
+        [SerializeField] private AvatarVisibility _avatarVisibility;
+        [SerializeField] private UnityEvent<AvatarBoneReference> _avatarInitialized;
 
-        [SerializeField][HideInInspector] private AvatarScriptableObject[] _availableAvatars;
-
+        private string _gender = "Female"; // default until SetGender is called
         private GameObject _avatarInstance;
         private AvatarBoneReference _boneRef;
-        private NetworkObject _networkObject;
         private Transform _visualsContainer;
 
-        public AvatarScriptableObject Avatar
+        public void SetGender(string gender)
         {
-            get => avatar;
-            set { avatar = value; SetupAvatar(); }
+            _gender = gender;
+            if (_visualsContainer != null)
+                SwapAvatar();
         }
 
         private void Awake()
         {
-            _networkObject = GetComponent<NetworkObject>();
-            _availableAvatars = Resources.LoadAll<AvatarScriptableObject>("Avatars");
-            if (_availableAvatars.Length > 0) avatar = _availableAvatars[0];
         }
 
         private void OnEnable()
         {
             SetupAvatar();
-            ExperimentController.OnChangeGender += SetGender;
-            SetAvatarVisibility(avatarVisibility);
-        }
-
-        private void OnDisable()
-        {
-            ExperimentController.OnChangeGender -= SetGender;
+            SetAvatarVisibility(_avatarVisibility);
         }
 
         private void OnValidate()
         {
-            SetAvatarVisibility(avatarVisibility);
+            SetAvatarVisibility(_avatarVisibility);
         }
 
         private void SetupAvatar()
@@ -65,7 +54,6 @@ namespace Application.Scripts.Avatar.Visuals
                 _visualsContainer.localPosition = Vector3.zero;
                 _visualsContainer.localRotation = Quaternion.identity;
             }
-
             SwapAvatar();
         }
 
@@ -80,54 +68,39 @@ namespace Application.Scripts.Avatar.Visuals
 #endif
             }
 
-            if (avatar == null) return;
+            if (_avatarSet == null) return;
 
-            _avatarInstance = Instantiate(avatar.AvatarGo, _visualsContainer);
+            GameObject prefab = _avatarSet.GetPrefab(_gender);
+            if (prefab == null) return;
+
+            _avatarInstance = Instantiate(prefab, _visualsContainer);
             _avatarInstance.layer = 10; // AvatarBody layer
 
-            _boneRef = AvatarBoneReference.Build(avatar, _avatarInstance);
+            _boneRef = AvatarBoneReference.Build(_avatarInstance);
             if (_boneRef == null) return;
 
             float verticalOffset = 0f;
-            if (hmdCameraTransform != null)
-                verticalOffset = AvatarRetargeting.Calibrate(_boneRef.Root, _boneRef.Head, hmdCameraTransform.position);
+            if (_hmdCameraTransform != null)
+                verticalOffset = AvatarRetargeting.Calibrate(_boneRef.Root, _boneRef.Head, _hmdCameraTransform.position);
 
-            if (avatarDriver != null && avatarConfigReference?.Config != null)
-                avatarDriver.Initialize(_boneRef, avatarConfigReference.Config, verticalOffset);
+            if (_avatarDriver != null && _avatarConfigReference?.Config != null)
+                _avatarDriver.Initialize(_boneRef, _avatarConfigReference.Config, verticalOffset);
 
-            // Propagate avatar hand bones to NetworkHand components so grabbed objects
-            // can follow the visual wrist correctly.
             foreach (NetworkHand nh in GetComponentsInChildren<NetworkHand>(includeInactive: true))
             {
                 bool isLeft = nh.Side == RigPart.LeftController;
                 nh.AvatarHand = isLeft ? _boneRef.LeftHand : _boneRef.RightHand;
             }
 
-            Debug.Log($"<color=#ADD8E6>[Avatar]</color> Avatar swapped to {avatar.name}");
-            avatarInitialized?.Invoke(_boneRef);
-
-            SetAvatarVisibility(avatarVisibility);
+            Debug.Log($"<color=#ADD8E6>[Avatar]</color> Avatar swapped: {prefab.name} ({_gender})");
+            _avatarInitialized?.Invoke(_boneRef);
+            SetAvatarVisibility(_avatarVisibility);
         }
 
         public void SetAvatarVisibility(AvatarVisibility visibility)
         {
             if (_avatarInstance == null) return;
             _avatarInstance.SetActive(visibility == AvatarVisibility.AVATAR);
-        }
-
-        private void SetGender(int playerId, Gender gender)
-        {
-            if (_networkObject == null || _networkObject.InputAuthority.IsNone) return;
-            if (_networkObject.InputAuthority.PlayerId != playerId) return;
-
-            foreach (AvatarScriptableObject a in _availableAvatars)
-            {
-                if (a.Gender == gender)
-                {
-                    Avatar = a;
-                    break;
-                }
-            }
         }
     }
 }

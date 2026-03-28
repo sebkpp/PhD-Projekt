@@ -5,6 +5,11 @@ from Backend.db.experiment.experiment_repository import (
     ExperimentRepository,
 )
 from Backend.db.questionnaires.questionnaire_respository import QuestionnaireRepository
+from Backend.models.experiment import Experiment
+from Backend.models.trial.trial import Trial
+from Backend.models.trial.trial_slot import TrialSlot
+from Backend.models.trial.trial_participant_slot import TrialParticipantSlot
+from Backend.models.participant import Participant
 
 def create_experiment(session, data):
     repo = ExperimentRepository(session)
@@ -40,3 +45,50 @@ def set_experiment_completed_at(session, experiment_id):
     repo = ExperimentRepository(session)
     experiment = repo.get_by_id(experiment_id)
     repo.set_completed_at(experiment)
+
+def get_next_open_experiment(session):
+    """
+    Returns the oldest open experiment (started_at IS NULL, completed_at IS NULL)
+    with its next unfinished trial and slot->gender data.
+    Raises ValueError with a code string on all error cases.
+    """
+    experiment = (
+        session.query(Experiment)
+        .filter(Experiment.started_at.is_(None), Experiment.completed_at.is_(None))
+        .order_by(Experiment.created_at.asc())
+        .first()
+    )
+    if experiment is None:
+        raise ValueError("no_open_experiment")
+
+    next_trial = (
+        session.query(Trial)
+        .filter(
+            Trial.experiment_id == experiment.experiment_id,
+            Trial.is_finished.is_(False)
+        )
+        .order_by(Trial.trial_number.asc())
+        .first()
+    )
+    if next_trial is None:
+        raise ValueError("no_unfinished_trial")
+
+    slots = (
+        session.query(TrialSlot.slot, Participant.gender)
+        .join(TrialParticipantSlot,
+              TrialSlot.trial_slot_id == TrialParticipantSlot.trial_slot_id)
+        .join(Participant,
+              TrialParticipantSlot.participant_id == Participant.participant_id)
+        .filter(TrialSlot.trial_id == next_trial.trial_id)
+        .all()
+    )
+    # Fewer than 2 participants assigned (0 = no assignments at all, 1 = partially assigned).
+    # Both are treated as "not ready" since a 2-player session requires exactly 2 slots.
+    if len(slots) < 2:
+        raise ValueError("slots_not_assigned")
+
+    return {
+        "experiment_id": experiment.experiment_id,
+        "trial_id": next_trial.trial_id,
+        "slots": [{"slot": s.slot, "gender": s.gender} for s in slots],
+    }

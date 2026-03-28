@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 
 from Backend.models.trial.trial import TrialCreateRequest
 from Backend.services.experiment_service import create_experiment, get_experiment_by_id, \
-    save_experiment_questionnaires, set_experiment_started_at, set_experiment_completed_at
+    save_experiment_questionnaires, set_experiment_started_at, set_experiment_completed_at, \
+    get_next_open_experiment
 from Backend.db_session import SessionLocal
 from Backend.services.trial_service import save_trials, get_trials_for_experiment
 
@@ -64,6 +65,36 @@ async def create_experiment_route(
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
 
+
+
+class TrialSlotGender(BaseModel):
+    slot: int
+    gender: str
+
+class NextExperimentResponse(BaseModel):
+    experiment_id: int
+    trial_id: int
+    slots: list[TrialSlotGender]
+
+
+@router.get(
+    "/next",
+    response_model=NextExperimentResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get next open experiment",
+    description="Returns the oldest open experiment with its next unfinished trial and slot gender data."
+)
+async def get_next_experiment_route(db: Session = Depends(get_db)) -> NextExperimentResponse:
+    try:
+        result = get_next_open_experiment(db)
+        return result
+    except ValueError as e:
+        code = str(e)
+        if code in ("no_open_experiment", "no_unfinished_trial"):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=code)
+        if code == "slots_not_assigned":
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=code)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=code)
 
 
 @router.get(
