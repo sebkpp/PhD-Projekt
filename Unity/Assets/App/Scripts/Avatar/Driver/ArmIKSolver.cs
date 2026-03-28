@@ -174,8 +174,9 @@ namespace Application.Scripts.Avatar.Driver
         public static Quaternion ExtractTwistAround(Quaternion rotation, Vector3 axis)
         {
             axis = axis.normalized;
-            Vector3 rotatedAxis = rotation * axis;
-            Vector3 projected   = Vector3.Project(rotatedAxis, axis);
+            // Project the quaternion's vector part onto the axis (standard swing-twist decomposition).
+            // Do NOT rotate the axis by the rotation first — that gives the wrong projection.
+            Vector3 projected = Vector3.Project(new Vector3(rotation.x, rotation.y, rotation.z), axis);
             var twist = new Quaternion(projected.x, projected.y, projected.z, rotation.w);
 
             float mag = Mathf.Sqrt(twist.x * twist.x + twist.y * twist.y + twist.z * twist.z + twist.w * twist.w);
