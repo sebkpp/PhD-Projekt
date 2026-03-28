@@ -85,7 +85,7 @@ namespace Application.Scripts.Avatar.Visuals
             _avatarInstance = Instantiate(avatar.AvatarGo, _visualsContainer);
             _avatarInstance.layer = 10; // AvatarBody layer
 
-            _boneRef = AvatarBoneReference.Build(avatar, _avatarInstance);
+            _boneRef = AvatarBoneReference.Build(_avatarInstance);
             if (_boneRef == null) return;
 
             float verticalOffset = 0f;
