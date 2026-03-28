@@ -145,3 +145,4 @@ def test_get_next_experiment_slots_not_assigned_returns_409():
 
     resp = client.get("/experiments/next")
     assert resp.status_code == status.HTTP_409_CONFLICT
+    assert resp.json()["detail"] == "slots_not_assigned"

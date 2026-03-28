@@ -67,10 +67,14 @@ async def create_experiment_route(
 
 
 
+class TrialSlotGender(BaseModel):
+    slot: int
+    gender: str
+
 class NextExperimentResponse(BaseModel):
     experiment_id: int
     trial_id: int
-    slots: list[dict]
+    slots: list[TrialSlotGender]
 
 
 @router.get(

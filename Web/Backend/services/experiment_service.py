@@ -5,6 +5,11 @@ from Backend.db.experiment.experiment_repository import (
     ExperimentRepository,
 )
 from Backend.db.questionnaires.questionnaire_respository import QuestionnaireRepository
+from Backend.models.experiment import Experiment
+from Backend.models.trial.trial import Trial
+from Backend.models.trial.trial_slot import TrialSlot
+from Backend.models.trial.trial_participant_slot import TrialParticipantSlot
+from Backend.models.participant import Participant
 
 def create_experiment(session, data):
     repo = ExperimentRepository(session)
@@ -47,12 +52,6 @@ def get_next_open_experiment(session):
     with its next unfinished trial and slot->gender data.
     Raises ValueError with a code string on all error cases.
     """
-    from Backend.models.experiment import Experiment
-    from Backend.models.trial.trial import Trial
-    from Backend.models.trial.trial_slot import TrialSlot
-    from Backend.models.trial.trial_participant_slot import TrialParticipantSlot
-    from Backend.models.participant import Participant
-
     experiment = (
         session.query(Experiment)
         .filter(Experiment.started_at.is_(None), Experiment.completed_at.is_(None))
@@ -66,7 +65,7 @@ def get_next_open_experiment(session):
         session.query(Trial)
         .filter(
             Trial.experiment_id == experiment.experiment_id,
-            Trial.is_finished == False
+            Trial.is_finished.is_(False)
         )
         .order_by(Trial.trial_number.asc())
         .first()
@@ -83,6 +82,8 @@ def get_next_open_experiment(session):
         .filter(TrialSlot.trial_id == next_trial.trial_id)
         .all()
     )
+    # Fewer than 2 participants assigned (0 = no assignments at all, 1 = partially assigned).
+    # Both are treated as "not ready" since a 2-player session requires exactly 2 slots.
     if len(slots) < 2:
         raise ValueError("slots_not_assigned")
 
