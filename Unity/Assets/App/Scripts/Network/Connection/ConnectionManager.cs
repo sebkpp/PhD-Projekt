@@ -30,7 +30,7 @@ namespace Application.Scripts.Network.Connection
         [SerializeField] private NetworkRunner _runner;
         [SerializeField] private GameMode _gameMode = GameMode.Shared;
         [SerializeField] private string _room = "OP";
-        [SerializeField] private bool _connectOnStart = true;
+        [SerializeField] private bool _connectOnStart = false;
         [SerializeField] private LogLevel _logLevel = LogLevel.Error;
 
         [Header("Room selection criteria")]
