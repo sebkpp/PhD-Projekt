@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Application.Scripts.Avatar.Visuals;
+using Application.Scripts.Network.Experiment;
 using Fusion;
 using UnityEngine;
 
@@ -6,27 +8,28 @@ namespace Application.Scripts.Network.Player
 {
     public class PlayerManager : SimulationBehaviour, IPlayerJoined, IPlayerLeft
     {
-        [SerializeField] private NetworkObject avatarPrefabP1;
-        [SerializeField] private NetworkObject avatarPrefabP2;
-        [SerializeField] private Transform spawnPointP1;
-        [SerializeField] private Transform spawnPointP2;
+        [SerializeField] private NetworkObject _avatarPrefab;
+        [SerializeField] private Transform _spawnPointP1;
+        [SerializeField] private Transform _spawnPointP2;
+        [SerializeField] private ExperimentContext _experimentContext;
 
         private readonly Dictionary<PlayerRef, NetworkObject> _spawnedAvatars = new();
 
         public void PlayerJoined(PlayerRef player)
         {
-            // In Shared Mode IPlayerJoined fires on all peers for every joining player.
-            // Each peer is responsible only for spawning its own avatar.
             if (player != Runner.LocalPlayer) return;
 
-            // Fusion 2 assigns PlayerId sequentially from 1.
-            // First player to join → slot P1, second → slot P2.
-            bool isFirstSlot = player.PlayerId == 1;
-            NetworkObject prefab = isFirstSlot ? avatarPrefabP1 : avatarPrefabP2;
-            Transform spawnPoint = isFirstSlot ? spawnPointP1 : spawnPointP2;
-
-            NetworkObject avatar = Runner.Spawn(prefab, spawnPoint.position, spawnPoint.rotation, player);
+            Transform spawnPoint = player.PlayerId == 1 ? _spawnPointP1 : _spawnPointP2;
+            NetworkObject avatar = Runner.Spawn(_avatarPrefab, spawnPoint.position, spawnPoint.rotation, player);
             _spawnedAvatars[player] = avatar;
+
+            if (_experimentContext != null)
+            {
+                string gender = _experimentContext.GetGender(player.PlayerId);
+                PlayerVisuals visuals = avatar.GetComponentInChildren<PlayerVisuals>();
+                if (visuals != null)
+                    visuals.SetGender(gender);
+            }
         }
 
         public void PlayerLeft(PlayerRef player)
