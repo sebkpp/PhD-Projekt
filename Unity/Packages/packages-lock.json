@@ -442,14 +442,6 @@
       "dependencies": {},
       "hash": "610157ad762084380380148ba8ce14e266a6da97"
     },
-    "de.htw.handtrackvr": {
-      "version": "file:HandTrackVR-upm",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.animation.rigging": "1.0.3"
-      }
-    },
     "org.khronos.unitygltf": {
       "version": "https://github.com/KhronosGroup/UnityGLTF.git",
       "depth": 0,

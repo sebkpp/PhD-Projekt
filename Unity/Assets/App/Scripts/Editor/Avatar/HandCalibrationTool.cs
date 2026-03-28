@@ -58,7 +58,7 @@ namespace Application.Scripts.Editor.Avatar
 
             EditorGUILayout.Space();
 
-            using (new EditorGUI.DisabledScope(!Application.isPlaying))
+            using (new EditorGUI.DisabledScope(!UnityEngine.Application.isPlaying))
             {
                 if (GUILayout.Button("Capture Left Hand Offsets"))
                     CaptureOffsets(Handedness.Left, ref _leftOffsets, ref _leftCaptured);

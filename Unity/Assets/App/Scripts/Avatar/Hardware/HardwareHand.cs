@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Application.Scripts.Avatar;
+using Application.Scripts.Avatar.Data;
 using UnityEngine;
 using UnityEngine.XR.Hands;
 

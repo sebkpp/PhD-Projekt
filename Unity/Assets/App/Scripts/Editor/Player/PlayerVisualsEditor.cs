@@ -1,6 +1,7 @@
 using System.Linq;
 using Application.Scripts.ScriptableObjects;
 using Application.Scripts.Avatar;
+using Application.Scripts.Avatar.Visuals;
 using UnityEditor;
 using UnityEngine;
 
