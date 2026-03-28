@@ -1,4 +1,3 @@
-using Application.Scripts.ScriptableObjects;
 using UnityEngine;
 
 namespace Application.Scripts.Avatar.Driver
@@ -63,7 +62,7 @@ namespace Application.Scripts.Avatar.Driver
         /// Builds an AvatarBoneReference from the avatar's Animator.
         /// The avatar GameObject must have a Unity Humanoid Avatar configured.
         /// </summary>
-        public static AvatarBoneReference Build(AvatarScriptableObject avatarAsset, GameObject avatarInstance)
+        public static AvatarBoneReference Build(GameObject avatarInstance)
         {
             Animator animator = avatarInstance.GetComponentInChildren<Animator>();
 

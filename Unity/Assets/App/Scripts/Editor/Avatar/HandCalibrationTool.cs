@@ -100,7 +100,7 @@ namespace Application.Scripts.Editor.Avatar
             foreach (var s in subs) { if (s.running) { subsystem = s; break; } }
             if (subsystem == null) { Debug.LogWarning("[Calibration] XRHandSubsystem not running. Enter Play mode."); return; }
 
-            var boneRef = AvatarBoneReference.Build(_avatarAsset, _sceneAvatar);
+            var boneRef = AvatarBoneReference.Build(_sceneAvatar);
             int side = handedness == Handedness.Left ? 0 : 1;
 
             XRHand hand = handedness == Handedness.Left ? subsystem.leftHand : subsystem.rightHand;
