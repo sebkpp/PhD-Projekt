@@ -86,6 +86,7 @@ namespace Application.Scripts.Avatar.Visuals
             _avatarInstance.layer = 10; // AvatarBody layer
 
             _boneRef = AvatarBoneReference.Build(avatar, _avatarInstance);
+            if (_boneRef == null) return;
 
             float verticalOffset = 0f;
             if (hmdCameraTransform != null)

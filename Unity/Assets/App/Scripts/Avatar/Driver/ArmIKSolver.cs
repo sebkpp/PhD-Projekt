@@ -128,13 +128,8 @@ namespace Application.Scripts.Avatar.Driver
             // The back-of-hand normal tells us which way the elbow should point.
             Vector3 palmNormal      = wristRot * Vector3.up;
             Vector3 shoulderToWrist = (wristPos - shoulderPos).normalized;
-            Vector3 elbowDir        = Vector3.Cross(shoulderToWrist, palmNormal).normalized;
-
-            if (elbowDir.sqrMagnitude < 0.001f)
-            {
-                // Degenerate case: wrist pointing straight up/down — use world back.
-                elbowDir = -Vector3.forward;
-            }
+            Vector3 cross    = Vector3.Cross(shoulderToWrist, palmNormal);
+            Vector3 elbowDir = cross.sqrMagnitude < 0.001f ? -Vector3.forward : cross.normalized;
 
             Vector3 midpoint = (shoulderPos + wristPos) * 0.5f;
             return midpoint + elbowDir * 0.15f;

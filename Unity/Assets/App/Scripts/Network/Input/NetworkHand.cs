@@ -70,6 +70,20 @@ namespace Application.Scripts.Network.Input
         }
 
         /// <summary>
+        /// Called every network tick. Writes the local player's current hand state to the network.
+        /// </summary>
+        public override void FixedUpdateNetwork()
+        {
+            base.FixedUpdateNetwork();
+            if (!IsLocalNetworkRig) return;
+
+            bool isLeft = side == RigPart.LeftController;
+            XRInputState rigState = _rig.hardwareRig.RigState;
+            HandState localHandState = isLeft ? rigState.LeftHand : rigState.RightHand;
+            HandState = (HandStateNetworked)localHandState;
+        }
+
+        /// <summary>
         /// Called every render frame.
         /// For the local user: applies extrapolated hand pose data via AvatarDriver.
         /// For remote users: updates visuals based on received network data via AvatarDriver.

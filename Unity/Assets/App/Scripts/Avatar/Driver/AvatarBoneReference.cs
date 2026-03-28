@@ -67,6 +67,12 @@ namespace Application.Scripts.Avatar.Driver
         {
             Animator animator = avatarInstance.GetComponentInChildren<Animator>();
 
+            if (animator == null)
+            {
+                Debug.LogError($"[AvatarBoneReference] No Animator found on '{avatarInstance.name}'. The avatar prefab must have a Humanoid Animator.");
+                return null;
+            }
+
             var r = new AvatarBoneReference
             {
                 Root         = avatarInstance.transform,

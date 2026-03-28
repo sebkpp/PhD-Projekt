@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Application.Scripts.Avatar.Driver
 {
     /// <summary>
-    /// Drives all avatar bones directly each LateUpdate from an XRInputState.
+    /// Caller-initiated bone driver — called from NetworkHand.Render each frame.
     /// Replaces AvatarMapping + AvatarSkeleton (Animation Rigging).
     ///
     /// Usage:
@@ -23,6 +23,7 @@ namespace Application.Scripts.Avatar.Driver
         private bool _initialized;
 
         private float _groundY; // avatar root Y after calibration, kept constant each frame
+        private int _lastBodyDriveFrame = -1;
 
         // ------------------------------------------------------------------ //
         //  Initialization
@@ -96,8 +97,13 @@ namespace Application.Scripts.Avatar.Driver
         {
             if (!_initialized) return;
 
-            DriveBody(head);
-            DriveHead(head);
+            if (Time.frameCount != _lastBodyDriveFrame)
+            {
+                DriveBody(head);
+                DriveHead(head);
+                _lastBodyDriveFrame = Time.frameCount;
+            }
+
             DriveFingers(hand, isLeft);
 
             if (isLeft)
