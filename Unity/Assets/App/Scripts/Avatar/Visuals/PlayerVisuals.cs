@@ -1,8 +1,9 @@
 using Application.Scripts.Avatar.Driver;
 using Application.Scripts.Avatar.Mapping;
+using Application.Scripts.Avatar.Utils;
+using Application.Scripts.Experiment;
 using Application.Scripts.Network.Input;
 using Application.Scripts.Avatar;
-using Fusion;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,17 +11,16 @@ namespace Application.Scripts.Avatar.Visuals
 {
     public class PlayerVisuals : MonoBehaviour
     {
-        [SerializeField] private AvatarSet avatarSet;
-        [SerializeField] private AvatarDriver avatarDriver;
-        [SerializeField] private Application.Scripts.Avatar.Utils.AvatarConfigReference avatarConfigReference;
-        [SerializeField] private Transform hmdCameraTransform;
-        [SerializeField] private AvatarVisibility avatarVisibility;
-        [SerializeField] private UnityEvent<AvatarBoneReference> avatarInitialized;
+        [SerializeField] private AvatarSet _avatarSet;
+        [SerializeField] private AvatarDriver _avatarDriver;
+        [SerializeField] private AvatarConfigReference _avatarConfigReference;
+        [SerializeField] private Transform _hmdCameraTransform;
+        [SerializeField] private AvatarVisibility _avatarVisibility;
+        [SerializeField] private UnityEvent<AvatarBoneReference> _avatarInitialized;
 
         private string _gender = "Female"; // default until SetGender is called
         private GameObject _avatarInstance;
         private AvatarBoneReference _boneRef;
-        private NetworkObject _networkObject;
         private Transform _visualsContainer;
 
         public void SetGender(string gender)
@@ -32,18 +32,17 @@ namespace Application.Scripts.Avatar.Visuals
 
         private void Awake()
         {
-            _networkObject = GetComponent<NetworkObject>();
         }
 
         private void OnEnable()
         {
             SetupAvatar();
-            SetAvatarVisibility(avatarVisibility);
+            SetAvatarVisibility(_avatarVisibility);
         }
 
         private void OnValidate()
         {
-            SetAvatarVisibility(avatarVisibility);
+            SetAvatarVisibility(_avatarVisibility);
         }
 
         private void SetupAvatar()
@@ -69,9 +68,9 @@ namespace Application.Scripts.Avatar.Visuals
 #endif
             }
 
-            if (avatarSet == null) return;
+            if (_avatarSet == null) return;
 
-            GameObject prefab = avatarSet.GetPrefab(_gender);
+            GameObject prefab = _avatarSet.GetPrefab(_gender);
             if (prefab == null) return;
 
             _avatarInstance = Instantiate(prefab, _visualsContainer);
@@ -81,11 +80,11 @@ namespace Application.Scripts.Avatar.Visuals
             if (_boneRef == null) return;
 
             float verticalOffset = 0f;
-            if (hmdCameraTransform != null)
-                verticalOffset = AvatarRetargeting.Calibrate(_boneRef.Root, _boneRef.Head, hmdCameraTransform.position);
+            if (_hmdCameraTransform != null)
+                verticalOffset = AvatarRetargeting.Calibrate(_boneRef.Root, _boneRef.Head, _hmdCameraTransform.position);
 
-            if (avatarDriver != null && avatarConfigReference?.Config != null)
-                avatarDriver.Initialize(_boneRef, avatarConfigReference.Config, verticalOffset);
+            if (_avatarDriver != null && _avatarConfigReference?.Config != null)
+                _avatarDriver.Initialize(_boneRef, _avatarConfigReference.Config, verticalOffset);
 
             foreach (NetworkHand nh in GetComponentsInChildren<NetworkHand>(includeInactive: true))
             {
@@ -94,8 +93,8 @@ namespace Application.Scripts.Avatar.Visuals
             }
 
             Debug.Log($"<color=#ADD8E6>[Avatar]</color> Avatar swapped: {prefab.name} ({_gender})");
-            avatarInitialized?.Invoke(_boneRef);
-            SetAvatarVisibility(avatarVisibility);
+            _avatarInitialized?.Invoke(_boneRef);
+            SetAvatarVisibility(_avatarVisibility);
         }
 
         public void SetAvatarVisibility(AvatarVisibility visibility)
