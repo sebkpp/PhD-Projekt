@@ -1,0 +1,13 @@
+{
+    "name": "Avatar",
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Assembly-CSharp.dll"
+    ]
+}
