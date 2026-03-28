@@ -20,6 +20,11 @@ namespace Application.Scripts.Network.Player
             if (player != Runner.LocalPlayer) return;
 
             Transform spawnPoint = player.PlayerId == 1 ? _spawnPointP1 : _spawnPointP2;
+            if (spawnPoint == null)
+            {
+                Debug.LogError($"[PlayerManager] Spawn point for player {player.PlayerId} is not assigned.");
+                return;
+            }
             NetworkObject avatar = Runner.Spawn(_avatarPrefab, spawnPoint.position, spawnPoint.rotation, player);
             _spawnedAvatars[player] = avatar;
 

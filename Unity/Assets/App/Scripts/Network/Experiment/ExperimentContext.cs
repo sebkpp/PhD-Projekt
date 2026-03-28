@@ -16,8 +16,8 @@ namespace Application.Scripts.Network.Experiment
     {
         [SerializeField] private string _backendBaseUrl = "http://localhost:5000";
 
-        public UnityEvent<int, Dictionary<int, string>> OnExperimentReady = new();
-        public UnityEvent<string> OnExperimentError = new();
+        [SerializeField] private UnityEvent<int, Dictionary<int, string>> OnExperimentReady = new();
+        [SerializeField] private UnityEvent<string> OnExperimentError = new();
 
         public int TrialId { get; private set; }
         public int ExperimentId { get; private set; }
@@ -68,6 +68,13 @@ namespace Application.Scripts.Network.Experiment
             TrialId      = response.trial_id;
             _slotGender  = new Dictionary<int, string>();
 
+            if (response.slots == null)
+            {
+                string msg = "[ExperimentContext] Response has no slot data.";
+                Debug.LogError(msg);
+                OnExperimentError.Invoke(msg);
+                yield break;
+            }
             foreach (var slot in response.slots)
                 _slotGender[slot.slot] = slot.gender;
 
