@@ -144,11 +144,15 @@ namespace Application.Scripts.Network.Interactable
             }
             
             if (!IsGrabbed) return;
-            
+
             // Follow grabber, adding position/rotation offsets
             if (CurrentGrabber != null)
-                grabbable.Follow(followedTransform: CurrentGrabber.hand.AvatarHand, LocalPositionOffset,
-                    LocalRotationOffset);
+            {
+                Transform followTarget = CurrentGrabber.hand?.AvatarHand != null
+                    ? CurrentGrabber.hand.AvatarHand
+                    : CurrentGrabber.transform;
+                grabbable.Follow(followedTransform: followTarget, LocalPositionOffset, LocalRotationOffset);
+            }
         }
         
         /// <summary>

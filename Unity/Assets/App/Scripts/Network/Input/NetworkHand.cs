@@ -1,4 +1,6 @@
+using Application.Scripts.Avatar;
 using Application.Scripts.Avatar.Driver;
+using Application.Scripts.Avatar.Hardware;
 using Application.Scripts.Interaction.States;
 using Application.Scripts.Network.Input.States;
 using Fusion;
@@ -20,6 +22,7 @@ namespace Application.Scripts.Network.Input
 
 
         [SerializeField] private RigPart side;
+        public RigPart Side => side;
 
         [SerializeField] private Application.Scripts.Avatar.Driver.AvatarDriver avatarDriver;
 
@@ -43,6 +46,12 @@ namespace Application.Scripts.Network.Input
         /// </summary>
         public HardwareHand LocalHardwareHand => IsLocalNetworkRig ? (side == RigPart.LeftController ? _rig?.hardwareRig?.leftHand : _rig?.hardwareRig?.rightHand)
             : null;
+
+        /// <summary>
+        /// The avatar hand bone Transform (wrist). Set by PlayerVisuals after avatar initialization.
+        /// Used by NetworkedGrabbable to position grabbed objects relative to the visual hand.
+        /// </summary>
+        public Transform AvatarHand { get; set; }
 
 
         private void Awake()

@@ -1,6 +1,8 @@
+using Application.Scripts.Avatar;
 using Application.Scripts.Avatar.Driver;
 using Application.Scripts.Avatar.Mapping;
 using Application.Scripts.Experiment;
+using Application.Scripts.Network.Input;
 using Application.Scripts.ScriptableObjects;
 using Fusion;
 using UnityEngine;
@@ -91,6 +93,14 @@ namespace Application.Scripts.Avatar.Visuals
 
             if (avatarDriver != null && avatarConfigReference?.Config != null)
                 avatarDriver.Initialize(_boneRef, avatarConfigReference.Config, verticalOffset);
+
+            // Propagate avatar hand bones to NetworkHand components so grabbed objects
+            // can follow the visual wrist correctly.
+            foreach (NetworkHand nh in GetComponentsInChildren<NetworkHand>(includeInactive: true))
+            {
+                bool isLeft = nh.Side == RigPart.LeftController;
+                nh.AvatarHand = isLeft ? _boneRef.LeftHand : _boneRef.RightHand;
+            }
 
             Debug.Log($"<color=#ADD8E6>[Avatar]</color> Avatar swapped to {avatar.name}");
             avatarInitialized?.Invoke(_boneRef);
