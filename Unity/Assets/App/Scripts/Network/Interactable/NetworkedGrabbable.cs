@@ -29,8 +29,9 @@ namespace Application.Scripts.Network.Interactable
         public bool IsGrabbed => Object != null && GiverGrabber != null;
 
         [Header("Events")]
-        public UnityEvent<NetworkedGrabber> onDidGrab   = new();
-        public UnityEvent                   onDidUngrab = new();
+        public UnityEvent<NetworkedGrabber> onDidGrab       = new();
+        public UnityEvent                   onDidUngrab     = new();
+        public UnityEvent                   onObjectDropped = new();
 
         [Header("Advanced")]
         public bool extrapolateWhileTakingAuthority = true;
@@ -85,7 +86,9 @@ namespace Application.Scripts.Network.Interactable
             float dropThreshold = _settings != null ? _settings.dropThreshold : 0.4f;
             if (totalGrip < dropThreshold)
             {
-                // Nobody has a sufficient grip — let it fall
+                // If receiver was holding, a mid-handover drop — notify listeners before clearing
+                if (ReceiverGrabber != null)
+                    onObjectDropped?.Invoke();
                 grabbable.UnlockObjectPhysics();
                 GiverGrabber    = null;
                 ReceiverGrabber = null;
