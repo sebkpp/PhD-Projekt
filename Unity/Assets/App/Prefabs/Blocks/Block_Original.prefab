@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8605109649976207317}
-  - component: {fileID: 8498534870396795928}
   - component: {fileID: 1419158999850354603}
   - component: {fileID: 1297525272130795448}
   m_Layer: 8
@@ -34,38 +33,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7059006703876386793}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8498534870396795928
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 681782138481787657}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 397648738, guid: 9e5402f1f36575640bf97c05c7333478, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_type: 4
-  m_motionType: 0
-  m_min: 0
-  m_max: 0
-  m_min2: 0
-  m_max2: 0
-  m_affordances:
-    m_graspable: 1
-    m_indexPushable: 0
-    m_palmPushable: 0
-    m_bounces: 0
-    m_bounces_two_state: 0
-    m_snaps: 0
-  m_screwRate: 0
-  m_dualHandsOnly: 0
-  m_simulatedWeight: 0
-  m_discreteStates: []
-  m_discreteStates2: []
-  m_anchor: {fileID: 0}
-  m_pushDirection: {fileID: 0}
 --- !u!33 &1419158999850354603
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -91,6 +58,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -112,9 +84,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &5171122902613711009
 GameObject:
@@ -193,10 +167,11 @@ GameObject:
   m_Component:
   - component: {fileID: 7059006703876386793}
   - component: {fileID: 100864051556319579}
-  - component: {fileID: -374755278175993468}
   - component: {fileID: 259047574350329424}
-  - component: {fileID: -2226093788828549512}
   - component: {fileID: -1855297542056367535}
+  - component: {fileID: 939395491120593555}
+  - component: {fileID: 9057025536366851744}
+  - component: {fileID: 9133060515803760448}
   m_Layer: 8
   m_Name: Block_Original
   m_TagString: Interactable
@@ -228,10 +203,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7691428666082293075}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -248,25 +223,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-374755278175993468
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7691428666082293075}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82853dab52e5bd54c883c2e2e5690bd9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentGrabber: {fileID: 0}
-  networkGrabbable: {fileID: 0}
-  localPositionOffset: {x: 0, y: 0, z: 0}
-  localRotationOffset: {x: 0, y: 0, z: 0, w: 0}
-  isGrabbed: 0
-  followVelocityAttenuation: 0.5
-  maxVelocity: 10
 --- !u!114 &259047574350329424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,42 +240,10 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: -2226093788828549512}
   - {fileID: -1855297542056367535}
---- !u!114 &-2226093788828549512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7691428666082293075}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6764c4661b3e98468ba2acaac267920, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onDidRelease:
-    m_PersistentCalls:
-      m_Calls: []
-  onDidGrab:
-    m_PersistentCalls:
-      m_Calls: []
-  _DetailedGrabInfo:
-    grabberId:
-      Object:
-        Raw: 0
-      Behaviour: 0
-    grabInfo:
-      grabbedObjectId:
-        Object:
-          Raw: 0
-        Behaviour: 0
-      localPositionOffset: {x: 0, y: 0, z: 0}
-      localRotationOffset: {x: 0, y: 0, z: 0, w: 0}
-      ungrabPosition: {x: 0, y: 0, z: 0}
-      ungrabRotation: {x: 0, y: 0, z: 0, w: 0}
-      ungrabVelocity: {x: 0, y: 0, z: 0}
-      ungrabAngularVelocity: {x: 0, y: 0, z: 0}
+  - {fileID: 9057025536366851744}
+  - {fileID: 9133060515803760448}
+  ForceRemoteRenderTimeframe: 0
 --- !u!114 &-1855297542056367535
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,6 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a591d221a634417e9827eb58e17de84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _stateAuthorityChangeErrorCorrectionDelta: 0
   SyncScale: 0
   SyncParent: 0
   _interpolationTarget: {fileID: 8605109649976207317}
@@ -342,3 +267,61 @@ MonoBehaviour:
     Position: 0.01
     Rotation: 0.01
     Scale: 0.01
+--- !u!114 &939395491120593555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7691428666082293075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad73a129e40842c7b5f9a244b2d3a1dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.InteractableObject.Grabbable
+  expectedIsKinematic: 1
+  applyVelocityOnRelease: 1
+  rb: {fileID: 0}
+  networkGrabbable: {fileID: 0}
+  onGrab:
+    m_PersistentCalls:
+      m_Calls: []
+  onUngrab:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &9057025536366851744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7691428666082293075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 235d381a2a7912a41bedf44298220d69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Network.Interactable.NetworkGrabbableObject
+  networkTransform: {fileID: 0}
+  networkRigidbody: {fileID: 0}
+  grabbable: {fileID: 0}
+  _settings: {fileID: 11400000, guid: 51c297ee472f22341b6a9746612b7770, type: 2}
+  onDidGrab:
+    m_PersistentCalls:
+      m_Calls: []
+  onDidUngrab:
+    m_PersistentCalls:
+      m_Calls: []
+  extrapolateWhileTakingAuthority: 1
+  isTakingAuthority: 0
+--- !u!114 &9133060515803760448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7691428666082293075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a7c1e83b92f056d3e8a140c7b5d29f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Network.Interactable.HandoverTracker
