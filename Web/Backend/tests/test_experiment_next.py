@@ -68,9 +68,14 @@ def test_get_next_experiment_returns_oldest_open():
     assert data["experiment_id"] == exp_id
     assert data["trial_id"] == trial_id
     assert len(data["slots"]) == 2
-    slots_by_number = {s["slot"]: s["gender"] for s in data["slots"]}
-    assert slots_by_number[1] == "Male"
-    assert slots_by_number[2] == "Female"
+    slots_by_number = {s["slot"]: s for s in data["slots"]}
+    assert slots_by_number[1]["gender"] == "Male"
+    assert slots_by_number[2]["gender"] == "Female"
+    # New assertions:
+    assert "participant_id" in slots_by_number[1]
+    assert "participant_id" in slots_by_number[2]
+    assert isinstance(slots_by_number[1]["participant_id"], int)
+    assert isinstance(slots_by_number[2]["participant_id"], int)
 
 
 def test_get_next_experiment_skips_started():

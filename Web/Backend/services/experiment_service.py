@@ -74,7 +74,7 @@ def get_next_open_experiment(session):
         raise ValueError("no_unfinished_trial")
 
     slots = (
-        session.query(TrialSlot.slot, Participant.gender)
+        session.query(TrialSlot.slot, Participant.gender, Participant.participant_id)
         .join(TrialParticipantSlot,
               TrialSlot.trial_slot_id == TrialParticipantSlot.trial_slot_id)
         .join(Participant,
@@ -90,5 +90,5 @@ def get_next_open_experiment(session):
     return {
         "experiment_id": experiment.experiment_id,
         "trial_id": next_trial.trial_id,
-        "slots": [{"slot": s.slot, "gender": s.gender} for s in slots],
+        "slots": [{"slot": s.slot, "gender": s.gender, "participant_id": s.participant_id} for s in slots],
     }
