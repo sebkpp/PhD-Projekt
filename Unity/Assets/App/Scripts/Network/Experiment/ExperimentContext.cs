@@ -10,7 +10,6 @@ namespace Application.Scripts.Network.Experiment
     /// <summary>
     /// Fetches the next open experiment from the Web backend at startup.
     /// Fires OnExperimentReady when data is available, OnExperimentError on failure.
-    /// Decoupled from Fusion — knows nothing about networking.
     /// </summary>
     public class ExperimentContext : MonoBehaviour
     {
