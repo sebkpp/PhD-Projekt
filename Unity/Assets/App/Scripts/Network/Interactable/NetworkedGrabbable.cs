@@ -188,6 +188,9 @@ namespace Application.Scripts.Network.Interactable
             {
                 // Second grabber becomes the receiver (dual-grip)
                 ReceiverGrabber = grabHand.networkGrabber;
+                // Notify HandoverTracker — receiver's first contact is when they initiate grab
+                GetComponent<HandoverTracker>()?.OnReceiverFirstContact(
+                    grabHand.networkGrabber.Object.InputAuthority.PlayerId);
             }
         }
 
