@@ -1,6 +1,7 @@
 using Application.Scripts.Avatar.Grab;
 using Application.Scripts.InteractableObject;
 using Application.Scripts.Network.Interaction;
+using Application.Scripts.Utils.Extensions;
 using Fusion;
 using Fusion.Addons.Physics;
 using UnityEngine;
