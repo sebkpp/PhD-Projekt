@@ -36,11 +36,14 @@ namespace Application.Scripts.Network.Interactable
         private DateTime _receiverTouchedAt;
         private DateTime _receiverGrabbedAt;
         private DateTime? _pendingGiverReleasedAt;
+        private bool      _pendingDropError;
 
         private void Awake()
         {
             _tracker      = GetComponent<HandoverTracker>();
             _netGrabbable = GetComponent<NetworkGrabbableObject>();
+            if (_experimentContext == null)
+                Debug.LogError("[HandoverReporter] ExperimentContext reference not set — participant IDs will be -1.");
         }
 
         private void OnEnable()
@@ -108,8 +111,11 @@ namespace Application.Scripts.Network.Interactable
 
         private void HandleObjectDropped()
         {
-            if (IsGiverClient && _activeHandoverId > 0)
+            if (!IsGiverClient) return;
+            if (_activeHandoverId > 0)
                 StartCoroutine(PatchDropError());
+            else
+                _pendingDropError = true; // POST still in flight — flush after it completes
         }
 
         // ── HTTP coroutines ──────────────────────────────────────────────────────
@@ -167,6 +173,14 @@ namespace Application.Scripts.Network.Interactable
                 DateTime ts = _pendingGiverReleasedAt.Value;
                 _pendingGiverReleasedAt = null;
                 StartCoroutine(PatchGiverReleased(ts));
+                return; // drop and release are mutually exclusive
+            }
+
+            // If object was dropped while POST was still in flight, flag it now
+            if (_pendingDropError)
+            {
+                _pendingDropError = false;
+                StartCoroutine(PatchDropError());
             }
         }
 
@@ -214,6 +228,7 @@ namespace Application.Scripts.Network.Interactable
             _giverPlayerId          = -1;
             _receiverPlayerId       = -1;
             _pendingGiverReleasedAt = null;
+            _pendingDropError       = false;
             _giverGrabbedAt         = default;
             _receiverTouchedAt      = default;
             _receiverGrabbedAt      = default;
