@@ -175,7 +175,7 @@ namespace Application.Scripts.Network.Interactable
                 DateTime ts = _pendingGiverReleasedAt.Value;
                 _pendingGiverReleasedAt = null;
                 StartCoroutine(PatchGiverReleased(ts));
-                return; // drop and release are mutually exclusive
+                yield break; // drop and release are mutually exclusive
             }
 
             // If object was dropped while POST was still in flight, flag it now
