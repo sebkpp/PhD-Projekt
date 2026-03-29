@@ -18,10 +18,12 @@ namespace Application.Scripts.Network.Experiment
         [SerializeField] private UnityEvent<int, Dictionary<int, string>> OnExperimentReady = new();
         [SerializeField] private UnityEvent<string> OnExperimentError = new();
 
-        public int TrialId { get; private set; }
-        public int ExperimentId { get; private set; }
+        public int    TrialId      { get; private set; }
+        public int    ExperimentId { get; private set; }
+        public string BackendBaseUrl => _backendBaseUrl;
 
-        private Dictionary<int, string> _slotGender = new();
+        private Dictionary<int, string> _slotGender      = new();
+        private Dictionary<int, int>    _slotParticipant = new();
 
         private void Start()
         {
@@ -32,6 +34,16 @@ namespace Application.Scripts.Network.Experiment
         {
             _slotGender.TryGetValue(playerId, out string gender);
             return gender ?? "Female";
+        }
+
+        /// <summary>
+        /// Returns the participant_id for the given Fusion PlayerId (mapped via slot index).
+        /// Returns -1 if not found.
+        /// </summary>
+        public int GetParticipantId(int playerId)
+        {
+            _slotParticipant.TryGetValue(playerId, out int participantId);
+            return participantId == 0 ? -1 : participantId;
         }
 
         public void FinishTrial()
@@ -63,9 +75,10 @@ namespace Application.Scripts.Network.Experiment
                 yield break;
             }
 
-            ExperimentId = response.experiment_id;
-            TrialId      = response.trial_id;
-            _slotGender  = new Dictionary<int, string>();
+            ExperimentId     = response.experiment_id;
+            TrialId          = response.trial_id;
+            _slotGender      = new Dictionary<int, string>();
+            _slotParticipant = new Dictionary<int, int>();
 
             if (response.slots == null)
             {
@@ -75,7 +88,10 @@ namespace Application.Scripts.Network.Experiment
                 yield break;
             }
             foreach (var slot in response.slots)
-                _slotGender[slot.slot] = slot.gender;
+            {
+                _slotGender[slot.slot]      = slot.gender;
+                _slotParticipant[slot.slot] = slot.participant_id;
+            }
 
             Debug.Log($"<color=#ADD8E6>[ExperimentContext]</color> Experiment {ExperimentId}, Trial {TrialId} ready.");
             OnExperimentReady.Invoke(TrialId, _slotGender);
@@ -98,16 +114,17 @@ namespace Application.Scripts.Network.Experiment
         [Serializable]
         private class ExperimentNextResponse
         {
-            public int experiment_id;
-            public int trial_id;
+            public int        experiment_id;
+            public int        trial_id;
             public SlotEntry[] slots;
         }
 
         [Serializable]
         private class SlotEntry
         {
-            public int slot;
+            public int    slot;
             public string gender;
+            public int    participant_id;
         }
     }
 }
