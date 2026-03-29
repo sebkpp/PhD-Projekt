@@ -42,8 +42,7 @@ namespace Application.Scripts.Network.Experiment
         /// </summary>
         public int GetParticipantId(int playerId)
         {
-            _slotParticipant.TryGetValue(playerId, out int participantId);
-            return participantId == 0 ? -1 : participantId;
+            return _slotParticipant.TryGetValue(playerId, out int participantId) ? participantId : -1;
         }
 
         public void FinishTrial()
