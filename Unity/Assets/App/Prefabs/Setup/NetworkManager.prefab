@@ -9,11 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 211002450395828820}
-  - component: {fileID: 5057999467338289997}
   - component: {fileID: 8925818946862111255}
   - component: {fileID: 327386319276848911}
-  - component: {fileID: 4876308380281489825}
-  - component: {fileID: 2219628720049120347}
+  - component: {fileID: 4916015338040958817}
+  - component: {fileID: 1615857763134285322}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -36,23 +35,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5057999467338289997
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4135758025707863899}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f81ac110fde247999ae6d2e5a5150bff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _runner: {fileID: 8925818946862111255}
-  _gameMode: 2
-  _room: OP
-  _connectOnStart: 1
-  logLevel: 1
 --- !u!114 &8925818946862111255
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,7 +64,7 @@ MonoBehaviour:
   ClientPhysicsSimulation: 0
   DeltaTimeMultiplier: 1
   SetUnityFixedTimestep: 0
---- !u!114 &4876308380281489825
+--- !u!114 &4916015338040958817
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,29 +73,31 @@ MonoBehaviour:
   m_GameObject: {fileID: 4135758025707863899}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d22109db6f94b15862ffb6840f995a6, type: 3}
+  m_Script: {fileID: 11500000, guid: b5d82e4f1c7a093d6e48b3f9a2c15e70, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  _spawnPoint_P1: {fileID: 0}
-  _spawnPoint_P2: {fileID: 0}
-  _avatarPrefabMale: {fileID: 6840968868610239094, guid: 8a44b6244a2d8824cad70a4e8a6e00b5, type: 3}
-  _avatarPrefabFemale: {fileID: 7384170428881521186, guid: fae73900e22c0ea489c1706387f33ebd, type: 3}
-  avatarSpawned:
+  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Network.Connection.ConnectionManager
+  _runner: {fileID: 8925818946862111255}
+  _gameMode: 2
+  _room: Roomname
+  _connectOnStart: 1
+  _logLevel: 3
+  _connectionCriterias: 1
+  _additionalSessionProperties: []
+  _playerCount: 0
+  onWillConnect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: XRAvatarHeightAdjustment, Assembly-CSharp
-        m_MethodName: AdjustAvatarHeight
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &2219628720049120347
+      m_Calls: []
+  onConnected:
+    m_PersistentCalls:
+      m_Calls: []
+  onDisconnected:
+    m_PersistentCalls:
+      m_Calls: []
+  onConnectFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  actualSessionProperties: []
+--- !u!114 &1615857763134285322
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,152 +106,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4135758025707863899}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f68fd0b1c5b55c4592770fcdf1f505c, type: 3}
+  m_Script: {fileID: 11500000, guid: d3f5b9e2c74a108f6a30d5b1e2c83f49, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  xrRig: {fileID: 0}
-  rigOffsets:
-    trackingPositionOffset: {x: 0, y: 0, z: 0}
-    trackingRotationOffset: {x: 0, y: 0, z: 0}
-  headset: {fileID: 0}
-  headOffsets:
-    trackingPositionOffset: {x: 0, y: 0, z: 0}
-    trackingRotationOffset: {x: 0, y: 90, z: 0}
-  leftHand:
-    wristSource: {fileID: 0}
-    offsetPosition: {x: 0.000125, y: 0, z: 0}
-    offsetRotation: {x: 0, y: 270, z: 270}
-    thumb:
-      proximal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-      intermediate:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-      distal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-    index:
-      proximal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-      intermediate:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-      distal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-    middle:
-      proximal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-      intermediate:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-      distal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-    ring:
-      proximal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-      intermediate:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-      distal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-    pinky:
-      proximal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-      intermediate:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-      distal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 0, z: 90}
-  rightHand:
-    wristSource: {fileID: 0}
-    offsetPosition: {x: 0.000125, y: 0, z: 0}
-    offsetRotation: {x: 0, y: 270, z: 270}
-    thumb:
-      proximal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-      intermediate:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-      distal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-    index:
-      proximal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-      intermediate:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-      distal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-    middle:
-      proximal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-      intermediate:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-      distal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-    ring:
-      proximal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-      intermediate:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-      distal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-    pinky:
-      proximal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-      intermediate:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
-      distal:
-        source: {fileID: 0}
-        offsetPosition: {x: 0, y: 0, z: 0}
-        offsetRotation: {x: 180, y: 180, z: 90}
+  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Network.Player.PlayerManager
+  _avatarPrefab: {fileID: 8999768868802648454, guid: 518eb3031db256c45bc2512b809ac5c3, type: 3}
+  _spawnPointP1: {fileID: 0}
+  _spawnPointP2: {fileID: 0}
+  _experimentContext: {fileID: 0}
