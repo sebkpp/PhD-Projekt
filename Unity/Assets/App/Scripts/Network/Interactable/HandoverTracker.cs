@@ -1,3 +1,4 @@
+using System;
 using Application.Scripts.Network.Interaction;
 using Fusion;
 using UnityEngine;
@@ -11,9 +12,16 @@ namespace Application.Scripts.Network.Interactable
     /// Attach to the same GameObject as NetworkGrabbableObject.
     /// Events are broadcast to all clients via Fusion RPC.
     /// Each payload: trialId, timestamp, playerId, objectNetworkId.
+    /// C# events mirror each RPC so local MonoBehaviours (e.g. HandoverReporter) can subscribe.
     /// </summary>
     public class HandoverTracker : NetworkBehaviour
     {
+        // C# events — fired on every client inside each RPC body
+        public event Action<int, int, NetworkId> OnGiverGrabbedEvent;
+        public event Action<int, int, NetworkId> OnReceiverTouchedEvent;
+        public event Action<int, int, NetworkId> OnReceiverGrabbedEvent;
+        public event Action<int, int, NetworkId> OnGiverReleasedEvent;
+
         private NetworkGrabbableObject _netGrabbable;
         private int _trialId; // set externally by ExperimentContext or scene setup
 
@@ -49,8 +57,7 @@ namespace Application.Scripts.Network.Interactable
         {
             if (!_giverGrabbedFired)
             {
-                // First grab = giver grabbed
-                _giverGrabbedFired = true;
+                _giverGrabbedFired    = true;
                 _receiverGrabbedFired = false;
                 _receiverTouchedFired = false;
                 int playerId = grabber.Object.InputAuthority.PlayerId;
@@ -58,7 +65,6 @@ namespace Application.Scripts.Network.Interactable
             }
             else if (_giverGrabbedFired && !_receiverGrabbedFired)
             {
-                // Second grab while giver still holds = receiver grabbed
                 _receiverGrabbedFired = true;
                 int playerId = grabber.Object.InputAuthority.PlayerId;
                 RPC_FireReceiverGrabbed(_trialId, Runner.SimulationTime, playerId, Object.Id);
@@ -69,7 +75,6 @@ namespace Application.Scripts.Network.Interactable
         {
             if (_receiverGrabbedFired && _giverGrabbedFired)
             {
-                // Giver released after receiver had grabbed
                 int playerId = _netGrabbable.GiverGrabber != null
                     ? _netGrabbable.GiverGrabber.Object.InputAuthority.PlayerId
                     : 0;
@@ -103,18 +108,30 @@ namespace Application.Scripts.Network.Interactable
 
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         private void RPC_FireGiverGrabbed(int trialId, float timestamp, int playerId, NetworkId objectId)
-            => Debug.Log($"[Handover] GiverGrabbed trial={trialId} t={timestamp:F3} player={playerId} obj={objectId}");
+        {
+            Debug.Log($"[Handover] GiverGrabbed trial={trialId} t={timestamp:F3} player={playerId} obj={objectId}");
+            OnGiverGrabbedEvent?.Invoke(trialId, playerId, objectId);
+        }
 
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         private void RPC_FireReceiverTouched(int trialId, float timestamp, int playerId, NetworkId objectId)
-            => Debug.Log($"[Handover] ReceiverTouched trial={trialId} t={timestamp:F3} player={playerId} obj={objectId}");
+        {
+            Debug.Log($"[Handover] ReceiverTouched trial={trialId} t={timestamp:F3} player={playerId} obj={objectId}");
+            OnReceiverTouchedEvent?.Invoke(trialId, playerId, objectId);
+        }
 
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         private void RPC_FireReceiverGrabbed(int trialId, float timestamp, int playerId, NetworkId objectId)
-            => Debug.Log($"[Handover] ReceiverGrabbed trial={trialId} t={timestamp:F3} player={playerId} obj={objectId}");
+        {
+            Debug.Log($"[Handover] ReceiverGrabbed trial={trialId} t={timestamp:F3} player={playerId} obj={objectId}");
+            OnReceiverGrabbedEvent?.Invoke(trialId, playerId, objectId);
+        }
 
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         private void RPC_FireGiverReleased(int trialId, float timestamp, int playerId, NetworkId objectId)
-            => Debug.Log($"[Handover] GiverReleased trial={trialId} t={timestamp:F3} player={playerId} obj={objectId}");
+        {
+            Debug.Log($"[Handover] GiverReleased trial={trialId} t={timestamp:F3} player={playerId} obj={objectId}");
+            OnGiverReleasedEvent?.Invoke(trialId, playerId, objectId);
+        }
     }
 }
