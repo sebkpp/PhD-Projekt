@@ -88,7 +88,10 @@ namespace Application.Scripts.Network.Interactable
             {
                 // If receiver was holding, a mid-handover drop — notify listeners before clearing
                 if (ReceiverGrabber != null)
+                {
+                    Debug.Log($"[Handover] ObjectDropped obj={Object.Id}");
                     onObjectDropped?.Invoke();
+                }
                 grabbable.UnlockObjectPhysics();
                 GiverGrabber    = null;
                 ReceiverGrabber = null;
