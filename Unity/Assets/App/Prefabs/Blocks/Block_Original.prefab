@@ -172,6 +172,7 @@ GameObject:
   - component: {fileID: 939395491120593555}
   - component: {fileID: 9057025536366851744}
   - component: {fileID: 9133060515803760448}
+  - component: {fileID: -4433867418779823691}
   m_Layer: 8
   m_Name: Block_Original
   m_TagString: Interactable
@@ -311,6 +312,9 @@ MonoBehaviour:
   onDidUngrab:
     m_PersistentCalls:
       m_Calls: []
+  onObjectDropped:
+    m_PersistentCalls:
+      m_Calls: []
   extrapolateWhileTakingAuthority: 1
   isTakingAuthority: 0
 --- !u!114 &9133060515803760448
@@ -325,3 +329,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a7c1e83b92f056d3e8a140c7b5d29f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Network.Interactable.HandoverTracker
+--- !u!114 &-4433867418779823691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7691428666082293075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a3f9c2b1d4e0f8a6c5b2d9e3f1a7c4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Network.Interactable.HandoverReporter
+  _experimentContext: {fileID: 0}
