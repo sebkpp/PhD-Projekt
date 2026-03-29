@@ -39,6 +39,10 @@ namespace Application.Scripts.Network.Experiment
         /// <summary>
         /// Returns the participant_id for the given Fusion PlayerId (mapped via slot index).
         /// Returns -1 if not found.
+        ///
+        /// ASSUMPTION: Fusion assigns PlayerId values starting from 1, matching the slot numbers
+        /// (1 and 2) returned by /experiments/next. If the host is PlayerId 0 or slot numbers
+        /// differ from Fusion's assignment, this mapping will silently return -1.
         /// </summary>
         public int GetParticipantId(int playerId)
         {

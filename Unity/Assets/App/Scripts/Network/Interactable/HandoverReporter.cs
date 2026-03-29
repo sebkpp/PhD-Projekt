@@ -123,6 +123,8 @@ namespace Application.Scripts.Network.Interactable
         private IEnumerator PostHandoverAndPatchTimestamps(int trialId)
         {
             string baseUrl            = _experimentContext != null ? _experimentContext.BackendBaseUrl : "http://localhost:5000";
+            // NOTE: GetParticipantId maps Fusion PlayerId → DB participant_id via slot index.
+            // This assumes Fusion assigns PlayerId 1/2 matching the backend slot numbers 1/2.
             int    giverParticipantId = _experimentContext != null ? _experimentContext.GetParticipantId(_giverPlayerId)    : -1;
             int    recvParticipantId  = _experimentContext != null ? _experimentContext.GetParticipantId(_receiverPlayerId) : -1;
 
