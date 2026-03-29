@@ -35,6 +35,7 @@ namespace Application.Scripts.Network.Interactable
         private DateTime _giverGrabbedAt;
         private DateTime _receiverTouchedAt;
         private DateTime _receiverGrabbedAt;
+        private DateTime? _pendingGiverReleasedAt;
 
         private void Awake()
         {
@@ -90,14 +91,19 @@ namespace Application.Scripts.Network.Interactable
         {
             _receiverPlayerId  = playerId;
             _receiverGrabbedAt = DateTime.UtcNow;
+            if (_giverPlayerId < 0)
+                Debug.LogWarning("[HandoverReporter] ReceiverGrabbed fired but giverPlayerId not set — GiverGrabbed may have been missed.");
             if (IsGiverClient)
                 StartCoroutine(PostHandoverAndPatchTimestamps(trialId));
         }
 
         private void HandleGiverReleased(int trialId, int playerId, NetworkId objectId)
         {
-            if (IsGiverClient && _activeHandoverId > 0)
+            if (!IsGiverClient) return;
+            if (_activeHandoverId > 0)
                 StartCoroutine(PatchGiverReleased(DateTime.UtcNow));
+            else
+                _pendingGiverReleasedAt = DateTime.UtcNow; // POST still in flight — flush after it completes
         }
 
         private void HandleObjectDropped()
@@ -154,6 +160,14 @@ namespace Application.Scripts.Network.Interactable
 
             if (patchReq.result != UnityWebRequest.Result.Success)
                 Debug.LogError($"[HandoverReporter] PATCH timestamps failed: {patchReq.error}");
+
+            // If GiverReleased fired while POST was still in flight, send it now
+            if (_pendingGiverReleasedAt.HasValue)
+            {
+                DateTime ts = _pendingGiverReleasedAt.Value;
+                _pendingGiverReleasedAt = null;
+                StartCoroutine(PatchGiverReleased(ts));
+            }
         }
 
         private IEnumerator PatchGiverReleased(DateTime timestamp)
@@ -196,9 +210,13 @@ namespace Application.Scripts.Network.Interactable
 
         private void ResetState()
         {
-            _activeHandoverId = -1;
-            _giverPlayerId    = -1;
-            _receiverPlayerId = -1;
+            _activeHandoverId       = -1;
+            _giverPlayerId          = -1;
+            _receiverPlayerId       = -1;
+            _pendingGiverReleasedAt = null;
+            _giverGrabbedAt         = default;
+            _receiverTouchedAt      = default;
+            _receiverGrabbedAt      = default;
         }
 
         private static string Iso(DateTime dt) => dt.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
