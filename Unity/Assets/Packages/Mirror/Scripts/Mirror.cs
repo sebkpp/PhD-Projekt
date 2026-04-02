@@ -44,6 +44,7 @@ namespace Packages.Mirror
         private RenderTexture _rtRight;
         private int           _oldTextureSize;
         private int           _oldAntiAliasing;
+        private RenderTextureFormat _oldTextureFormat;
 
         private Renderer   _renderer;
         private Material[] _materials;
@@ -197,10 +198,10 @@ namespace Packages.Mirror
             var oldPixelLightCount = QualitySettings.pixelLightCount;
             if (mDisablePixelLights) QualitySettings.pixelLightCount = 0;
 
-            // Bug 1 fix: GL.invertCulling in try-finally.
+            // Bug 1 fix: GL.invertCulling and pixelLightCount both in try/finally.
             // A reflection matrix has det = −1 → winding order flips → front-faces
-            // become back-faces. invertCulling compensates. If SubmitRenderRequest
-            // throws, the global state is still reset to false.
+            // become back-faces. invertCulling compensates. Both global state mutations
+            // are restored on exception so the render pipeline is never left corrupted.
             GL.invertCulling = true;
             try
             {
@@ -211,9 +212,8 @@ namespace Packages.Mirror
             finally
             {
                 GL.invertCulling = false;
+                if (mDisablePixelLights) QualitySettings.pixelLightCount = oldPixelLightCount;
             }
-
-            if (mDisablePixelLights) QualitySettings.pixelLightCount = oldPixelLightCount;
             _portalCamera.targetTexture = null;
         }
 
@@ -235,17 +235,19 @@ namespace Packages.Mirror
 
         private void EnsureRenderTextures()
         {
-            bool sizeChanged = _oldTextureSize  != mTextureSize;
-            bool aaChanged   = _oldAntiAliasing != antiAliasing;
+            bool sizeChanged   = _oldTextureSize   != mTextureSize;
+            bool aaChanged     = _oldAntiAliasing  != antiAliasing;
+            bool formatChanged = _oldTextureFormat != textureFormat;
 
-            if (_rtLeft != null && !sizeChanged && !aaChanged) return;
+            if (_rtLeft != null && !sizeChanged && !aaChanged && !formatChanged) return;
 
             if (_rtLeft)  DestroyImmediate(_rtLeft);
             if (_rtRight) DestroyImmediate(_rtRight);
-            _rtLeft          = CreateRT("Left");
-            _rtRight         = CreateRT("Right");
-            _oldTextureSize  = mTextureSize;
-            _oldAntiAliasing = antiAliasing;
+            _rtLeft           = CreateRT("Left");
+            _rtRight          = CreateRT("Right");
+            _oldTextureSize   = mTextureSize;
+            _oldAntiAliasing  = antiAliasing;
+            _oldTextureFormat = textureFormat;
         }
 
         private RenderTexture CreateRT(string label) =>
@@ -284,6 +286,8 @@ namespace Packages.Mirror
             }
 
             dest.farClipPlane     = src.farClipPlane;
+            // Clamp to nearClipLimit: prevents near-clip artifacts when the source
+            // camera is positioned very close to the mirror surface.
             dest.nearClipPlane    = Mathf.Max(src.nearClipPlane, nearClipLimit);
             dest.orthographic     = src.orthographic;
             dest.fieldOfView      = src.fieldOfView;
