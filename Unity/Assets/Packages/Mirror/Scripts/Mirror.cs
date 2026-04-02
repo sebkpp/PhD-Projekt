@@ -1,466 +1,365 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
-using UnityEngine.XR;
-using RenderPipeline = UnityEngine.Rendering.RenderPipelineManager;
 
-public class Mirror : MonoBehaviour
+namespace Packages.Mirror
 {
-    #region Variables
-
-    // Public variables
-    [Header("Main Settings")] public Vector3 projectionDirection = Vector3.forward;
-
-    public LayerMask mLayerMask = -1; // Set the layermask for the portal camera
-    public int mTextureSize = 1024; // The texture size (resolution)
-    public bool useStereo = true;
-
-
-    [Header("Advanced Settings")]
-    //clipping & culling
-    public float mClipPlaneOffset = 0.001f;
-
-    public float nearClipLimit = 0.2f;
-
-    // Texture settings
-    public bool mDisablePixelLights = true;
-    public int mFramesNeededToUpdate;
-
-    // public class ProjectionMatrizes
-    // {
-    //     public Matrix4x4 left = Matrix4x4.identity;
-    //     public Matrix4x4 right = Matrix4x4.identity;
-
-    //     public ProjectionMatrizes()
-    //     {
-    //         left = Matrix4x4.identity;
-    //         right = Matrix4x4.identity;
-    //     }
-    // }
-
-
-    // Private variables
-    private readonly Dictionary<Camera, Camera> _mPortalCameras = new Dictionary<Camera, Camera>();
-    // private Dictionary<Camera, ProjectionMatrizes> m_PortalCamerasProjectionMatrix = new Dictionary<Camera, ProjectionMatrizes>();
-
-
-    private int _mFrameCounter;
-    private static bool _sInsideRendering; // To prevent recursion
-    private List<XRNodeState> _nodeStates = new List<XRNodeState>();
-
-    private RenderTexture _mPortalTextureLeft;
-    private RenderTexture _mPortalTextureRight;
-    private int _mOldReflectionTextureSize;
-
-    private InputDevice _hmdInputDevice;
-    public Vector3 leftEyeRotationOffset;
-    public Vector3 rightEyeRotationOffset;
-
-    #endregion
-
-    #region Methods
-
-    private void OnEnable()
+    public class Mirror : MonoBehaviour
     {
-        RenderPipeline.beginCameraRendering += UpdateCamera;
-    }
+        [Header("Main Settings")]
+        public Vector3   projectionDirection = Vector3.forward;
+        public LayerMask mLayerMask          = -1;
+        public int       mTextureSize        = 1024;
+        [Tooltip("Camera used for reflection. Leave empty to use Camera.main.")]
+        [SerializeField] private Camera _targetCamera;
 
-    private void OnDisable()
-    {
-        RenderPipeline.beginCameraRendering -= UpdateCamera;
+        [Header("Advanced Settings")]
+        public float mClipPlaneOffset    = 0.001f;
+        public float nearClipLimit       = 0.2f;
+        public bool  mDisablePixelLights = true;
+        public int   mFramesNeededToUpdate;
+        [Range(1, 8)]
+        public int antiAliasing = 4;
 
+        [Header("Render Texture Format")]
+        [Tooltip("Default = ARGB32 (safe). RGB111110Float = HDR. RGB565 = 16-bit.")]
+        public RenderTextureFormat textureFormat = RenderTextureFormat.Default;
 
-        // Cleanup all the objects we possibly have created
-        if (_mPortalTextureLeft)
+        // ── Shader property IDs ──────────────────────────────────────────────────
+
+        private static readonly int PropLeft  = Shader.PropertyToID("_ReflectionTexLeft");
+        private static readonly int PropRight = Shader.PropertyToID("_ReflectionTexRight");
+
+        // ── Private state ────────────────────────────────────────────────────────
+
+        // NOTE: _insideRendering is static — prevents recursive mirror-in-mirror rendering.
+        // Side effect: only one Mirror instance renders per frame in multi-mirror scenes.
+        // This project uses at most one mirror, so this is acceptable.
+        private static bool _insideRendering;
+
+        private Camera _portalCamera;
+        private int    _frameCounter;
+
+        private RenderTexture _rtLeft;
+        private RenderTexture _rtRight;
+        private int           _oldTextureSize;
+        private int           _oldAntiAliasing;
+
+        private Renderer   _renderer;
+        private Material[] _materials;
+
+        // ── Lifecycle ────────────────────────────────────────────────────────────
+
+        private void Awake()
         {
-            DestroyImmediate(_mPortalTextureLeft);
-            _mPortalTextureLeft = null;
+            _renderer  = GetComponent<Renderer>();
+            _materials = _renderer.sharedMaterials;
         }
 
-        if (_mPortalTextureRight)
+        private void OnDisable()
         {
-            DestroyImmediate(_mPortalTextureRight);
-            _mPortalTextureRight = null;
+            if (_rtLeft)        { DestroyImmediate(_rtLeft);                    _rtLeft       = null; }
+            if (_rtRight)       { DestroyImmediate(_rtRight);                   _rtRight      = null; }
+            if (_portalCamera)  { DestroyImmediate(_portalCamera.gameObject);   _portalCamera = null; }
         }
 
-        foreach (var kvp in _mPortalCameras)
-            DestroyImmediate(kvp.Value.gameObject);
-
-        _mPortalCameras.Clear();
-    }
-
-    #endregion
-
-    #region Functions
-
-    public void EnableLayer(string layerName)
-    {
-        mLayerMask |= 1 << LayerMask.NameToLayer(layerName);
-    }
-
-    public void DisableLayer(string layerName)
-    {
-        mLayerMask &= ~(1 << LayerMask.NameToLayer(layerName));
-    }
-
-    private void UpdateCamera(ScriptableRenderContext src, Camera camera)
-    {
-        useStereo = camera.stereoEnabled;
-        
-
-        if ((camera.cameraType == CameraType.Game || camera.cameraType == CameraType.SceneView) &&
-            camera.tag != "PortalCam" && UnityEngine.Application.isPlaying) // is the current camera eligeble for portalling?
+        // LateUpdate: all camera transforms are finalised; SubmitRenderRequest is
+        // safe here because we are outside the active URP render loop.
+        private void LateUpdate()
         {
-            
-            if (_mFrameCounter > 0) // update over how many frames?
-            {
-                _mFrameCounter--;
-                return;
-            }
-
-            var rend = GetComponent<Renderer>();
-
-            if (!enabled || !rend || !rend.sharedMaterial || !rend.enabled) // <<<< Why does the renderer NEED to have a shared material??
-                return;
-
-            // Safeguard from recursive reflections.
-            if (_sInsideRendering)
-                return;
-            _sInsideRendering = true;
-
-            _mFrameCounter = mFramesNeededToUpdate;
-
-            // Render the camera
-            RenderCamera(camera, rend, Camera.StereoscopicEye.Left, ref _mPortalTextureLeft, src);
-            if (useStereo)
-                //Debug.Log("Detected StereoMode!!"); // works
-                RenderCamera(camera, rend, Camera.StereoscopicEye.Right, ref _mPortalTextureRight, src);
+            if (!Application.isPlaying) return;
+            var cam = _targetCamera != null ? _targetCamera : Camera.main;
+            if (cam != null) RenderReflection(cam);
         }
-    }
 
-    private void RenderCamera(Camera camera, Renderer rend, Camera.StereoscopicEye eye, ref RenderTexture portalTexture, ScriptableRenderContext src)
-    {
-        Camera portalCamera = null;
+        // ── Public API ───────────────────────────────────────────────────────────
 
-        CreatePortalCamera(camera, eye, out portalCamera, ref portalTexture);
-        // Create the camera that will render the reflection
-        CopyCameraProperties(camera, portalCamera); // Copy the properties of the (player) camera
+        /// <summary>Call when materials on the renderer are swapped at runtime.</summary>
+        public void RefreshMaterials() => _materials = _renderer.sharedMaterials;
 
-        // find out the reflection plane: position and normal in world space
-        var pos = transform.position; //portalRenderPlane.transform.forward;//
-        var
-            normal = transform.TransformDirection(
-                projectionDirection); // Alex: This is done because sometimes the object reflection direction does not align with what was the default (transform.forward), in this way, the user can specify this.
-        //normal.Normalize(); // Alex: normalize in case someone enters a non-normalized vector. Turned off for now because it is a fun effect :P
+        // ── Render entry point ───────────────────────────────────────────────────
 
-        // Optionally disable pixel lights for reflection
-        var oldPixelLightCount = QualitySettings.pixelLightCount;
-        if (mDisablePixelLights)
-            QualitySettings.pixelLightCount = 0;
-
-        // Reflect camera around reflection plane
-        var d = -Vector3.Dot(normal, pos) - mClipPlaneOffset;
-        var reflectionPlane = new Vector4(normal.x, normal.y, normal.z, d);
-
-        var reflection = Matrix4x4.identity;
-        CalculateReflectionMatrix(ref reflection, reflectionPlane);
-
-        // Calculate the eye offsets
-        Vector3 worldEyePosition;
-        Quaternion worldEyeRotation;
-
-        if (useStereo)
+        public void RenderReflection(Camera mainCam)
         {
-            // Get hmd and eye positions
-            if (!_hmdInputDevice.isValid)
-            {
-                var devs = new List<InputDevice>();
-                InputDevices.GetDevicesWithCharacteristics(InputDeviceCharacteristics.HeadMounted, devs);
-                _hmdInputDevice = devs.FirstOrDefault(dev => (dev.characteristics & InputDeviceCharacteristics.HeadMounted) != 0);
-            }
+            if (!_renderer.isVisible)                                        return;
+            if (!enabled || !_renderer.sharedMaterial || !_renderer.enabled) return;
+            if (_insideRendering)                                             return;
 
-            if (eye == Camera.StereoscopicEye.Left)
-            {
-                // Set world position left eye
-                _hmdInputDevice.TryGetFeatureValue(CommonUsages.leftEyePosition, out var leftEyePositionFromNode);
-                _hmdInputDevice.TryGetFeatureValue(CommonUsages.rightEyePosition, out var rightEyePositionFromNode);
-                var eyeDistance = Vector3.Distance(leftEyePositionFromNode, rightEyePositionFromNode);
-                worldEyePosition = camera.transform.position - camera.transform.right * eyeDistance / 2;
+            if (_frameCounter > 0) { _frameCounter--; return; }
 
-                // Set rotation for left eye
-                _hmdInputDevice.TryGetFeatureValue(CommonUsages.centerEyeRotation, out var centerEyeRotationFromNode);
-                _hmdInputDevice.TryGetFeatureValue(CommonUsages.leftEyeRotation, out var leftEyeRotationFromNode);
-                var leftForwardVector = leftEyeRotationFromNode * Vector3.forward;
-                var centerForwardVector = centerEyeRotationFromNode * Vector3.forward;
-                leftEyeRotationOffset = Quaternion.FromToRotation(centerForwardVector, leftForwardVector).eulerAngles;
-                worldEyeRotation = camera.transform.rotation * Quaternion.Euler(leftEyeRotationOffset);
+            _insideRendering = true;
+            _frameCounter    = mFramesNeededToUpdate;
+
+            try { RenderMirror(mainCam); }
+            finally { _insideRendering = false; }
+        }
+
+        // ── Render ───────────────────────────────────────────────────────────────
+
+        private void RenderMirror(Camera mainCam)
+        {
+            // Bug 2 fix: .normalized — TransformDirection respects object scale;
+            // a non-unit normal breaks the reflection matrix formula I − 2nnᵀ.
+            var pos    = transform.position;
+            var normal = transform.TransformDirection(projectionDirection).normalized;
+
+            // Bug 4 fix: d carries NO offset. The clip-plane offset is applied
+            // only inside CameraSpacePlane where it belongs (oblique clip plane).
+            var d     = -Vector3.Dot(normal, pos);
+            var plane = new Vector4(normal.x, normal.y, normal.z, d);
+
+            var reflectionMatrix = Matrix4x4.identity;
+            CalculateReflectionMatrix(ref reflectionMatrix, plane);
+
+            EnsureRenderTextures();
+            EnsurePortalCamera();
+
+            if (mainCam.stereoEnabled)
+            {
+                RenderEye(mainCam, reflectionMatrix, pos, normal,
+                    Camera.StereoscopicEye.Left,  _rtLeft);
+                RenderEye(mainCam, reflectionMatrix, pos, normal,
+                    Camera.StereoscopicEye.Right, _rtRight);
+                AssignTextures(_rtLeft, _rtRight);
             }
             else
             {
-                // Set world position right eye
-                _hmdInputDevice.TryGetFeatureValue(CommonUsages.leftEyePosition, out var leftEyePositionFromNode);
-                _hmdInputDevice.TryGetFeatureValue(CommonUsages.rightEyePosition, out var rightEyePositionFromNode);
-                var eyeDistance = Vector3.Distance(leftEyePositionFromNode, rightEyePositionFromNode);
-                worldEyePosition = camera.transform.position + camera.transform.right * eyeDistance / 2;
-
-                // Set rotation for right eye
-                _hmdInputDevice.TryGetFeatureValue(CommonUsages.centerEyeRotation, out var centerEyeRotationFromNode);
-                _hmdInputDevice.TryGetFeatureValue(CommonUsages.rightEyeRotation, out var rightEyeRotationFromNode);
-                var rightForwardVector = rightEyeRotationFromNode * Vector3.forward;
-                var centerForwardVector = centerEyeRotationFromNode * Vector3.forward;
-                rightEyeRotationOffset = Quaternion.FromToRotation(centerForwardVector, rightForwardVector).eulerAngles;
-                worldEyeRotation = camera.transform.rotation * Quaternion.Euler(rightEyeRotationOffset);
+                RenderEyeMono(mainCam, reflectionMatrix, pos, normal);
+                // Mono: write same texture to both shader slots so the shader works
+                // unchanged (unity_StereoEyeIndex = 0 → lerp picks left = correct).
+                AssignTextures(_rtLeft, _rtLeft);
             }
         }
-        else
+
+        private void RenderEye(Camera mainCam, Matrix4x4 reflectionMatrix,
+            Vector3 pos, Vector3 normal, Camera.StereoscopicEye eye, RenderTexture rt)
         {
-            // No stereo, just take world eye position and rotation from the camera
-            worldEyePosition = camera.transform.position;
-            worldEyeRotation = camera.transform.rotation;
+            // Extract world-space eye pose from the stereo view matrix.
+            // GetStereoViewMatrix returns world→camera; invert to get camera→world.
+            // Column layout of camera→world: [right | up | backward | position]
+            // backward = +Z in camera space = opposite of looking direction.
+            var camToWorld = mainCam.GetStereoViewMatrix(eye).inverse;
+            var eyePos     = (Vector3)camToWorld.GetColumn(3);
+            var eyeFwd     = -(Vector3)camToWorld.GetColumn(2); // camera looks along −Z
+            var eyeUp      =  (Vector3)camToWorld.GetColumn(1);
+            var eyeRight   =  (Vector3)camToWorld.GetColumn(0);
+            var srcProj    = mainCam.GetStereoProjectionMatrix(eye);
+
+            ConfigureAndSubmit(mainCam, reflectionMatrix, pos, normal,
+                eyePos, eyeFwd, eyeUp, eyeRight, srcProj, rt);
         }
 
-        // Transform camera to capture reflection correctly
-        portalCamera.ResetWorldToCameraMatrix();
-
-        // Set position of portal camera
-        portalCamera.transform.position = worldEyePosition;
-        portalCamera.transform.rotation = worldEyeRotation;
-
-        // Transform to capture reflection
-        portalCamera.worldToCameraMatrix *= reflection;
-
-        // Setup oblique projection matrix so that near plane is our reflection plane. This way we clip everything below/above it for free
-        var clipPlane = CameraSpacePlane(portalCamera.worldToCameraMatrix, pos, normal, 1.0f);
-
-        // Get correct projection matrix (in Unity 2020.3, the camera need to render the skybox once to get the correct matrix)
-        Matrix4x4 projectionMatrix;
-        if (useStereo)
-            // Get stereo projection for the current eye
-            projectionMatrix = camera.GetStereoProjectionMatrix(eye);
-        else
-            // Get stereo projection for the camera
-            projectionMatrix = camera.projectionMatrix;
-
-        MakeProjectionMatrixOblique(ref projectionMatrix, clipPlane);
-
-        portalCamera.projectionMatrix = projectionMatrix;
-        portalCamera.cullingMask = mLayerMask.value;
-        portalCamera.targetTexture = portalTexture;
-
-        GL.invertCulling = true;
-
-        try
+        private void RenderEyeMono(Camera mainCam, Matrix4x4 reflectionMatrix,
+            Vector3 pos, Vector3 normal)
         {
-            UniversalRenderPipeline.RenderSingleCamera(src, portalCamera);
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning("Rendering Mirror-Camera failed!");
+            var t = mainCam.transform;
+            ConfigureAndSubmit(mainCam, reflectionMatrix, pos, normal,
+                t.position, t.forward, t.up, t.right, mainCam.projectionMatrix, _rtLeft);
         }
 
-        GL.invertCulling = false;
-        portalCamera.targetTexture = null;
-
-        // Assign the rendertexture to the material
-        var materials = rend.sharedMaterials; // Why only get the shared materials?
-        var property = "_ReflectionTex" + eye;
-
-        foreach (var mat in materials)
-            if (mat.HasProperty(property))
-                mat.SetTexture(property, portalTexture);
-
-        // Restore pixel light count
-        if (mDisablePixelLights)
-            QualitySettings.pixelLightCount = oldPixelLightCount;
-
-        _sInsideRendering = false;
-    }
-
-    private void CreatePortalCamera(Camera currentCamera, Camera.StereoscopicEye eye, out Camera reflectionCamera, ref RenderTexture portalTexture)
-    {
-        reflectionCamera = null;
-        // Create the render texture (if needed)
-        if (!portalTexture || _mOldReflectionTextureSize != mTextureSize) // if it doesn't exist or the size has changed
+        private void ConfigureAndSubmit(Camera mainCam, Matrix4x4 reflectionMatrix,
+            Vector3 pos, Vector3 normal,
+            Vector3 eyePos, Vector3 eyeFwd, Vector3 eyeUp, Vector3 eyeRight,
+            Matrix4x4 srcProj, RenderTexture rt)
         {
-            if (portalTexture) // if it does exist
-                DestroyImmediate(portalTexture); // destroy it first
+            CopyCameraProperties(mainCam, _portalCamera);
 
-            portalTexture = new RenderTexture(mTextureSize, mTextureSize, 24); // <<<< make buffer size 24??
-            portalTexture.name = "__MirrorReflection" + eye + GetInstanceID(); // create the name of the object
-            portalTexture.isPowerOfTwo =
-                true; // https://docs.unity3d.com/Manual/Textures.html: Non power of two texture assets can be scaled up at import time using the Non Power of 2 option in the advanced texture type in the import settings. Unity will scale texture contents as requested, and in the game they will behave just like any other texture, so they can still be compressed and very fast to load.
-            portalTexture.hideFlags = HideFlags.DontSave; // The object will not be saved to the Scene. It will not be destroyed when a new Scene is loaded.
+            // Reflect eye pose over the mirror plane.
+            var refPos   = reflectionMatrix.MultiplyPoint3x4(eyePos);
+            var refFwd   = reflectionMatrix.MultiplyVector(eyeFwd);
+            var refUp    = reflectionMatrix.MultiplyVector(eyeUp);
+            var refRight = reflectionMatrix.MultiplyVector(eyeRight);
 
-            portalTexture.antiAliasing = 4; // < <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ResourceIntensive but pretty
+            // Bug 5 fix: LookRotation is undefined when forward ≈ up (e.g. floor mirror,
+            // camera looking straight down). Fall back to refRight as the up hint.
+            var upHint = Mathf.Abs(Vector3.Dot(refFwd.normalized, refUp.normalized)) > 0.99f
+                ? refRight
+                : refUp;
 
-            _mOldReflectionTextureSize = mTextureSize; // save the old texture size
-        }
+            // Set transform so URP uses it for frustum culling.
+            _portalCamera.transform.SetPositionAndRotation(
+                refPos, Quaternion.LookRotation(refFwd, upHint));
 
-        // Create camera with the render texture
-        if (!_mPortalCameras.TryGetValue(currentCamera, out reflectionCamera)
-        ) // if it does not yet exist in the dictionary, create it. If it does, assign it. (catch both not-in-dictionary and in-dictionary-but-deleted-GO)
-        {
-            var go = new GameObject("Mirror Reflection Camera id" + GetInstanceID() + " for " + currentCamera.GetInstanceID(), typeof(Camera),
-                typeof(Skybox)); // create the new game object
+            // Build the view matrix explicitly — do NOT use ResetWorldToCameraMatrix().
+            // Unity evaluates it lazily; BuildObliqueProjection would read stale data.
+            // Formula: world→camera with camera looking along −Z.
+            var viewMatrix = new Matrix4x4();
+            viewMatrix.SetRow(0, new Vector4( refRight.x,  refRight.y,  refRight.z, -Vector3.Dot(refRight, refPos)));
+            viewMatrix.SetRow(1, new Vector4( refUp.x,     refUp.y,     refUp.z,    -Vector3.Dot(refUp,    refPos)));
+            viewMatrix.SetRow(2, new Vector4(-refFwd.x,   -refFwd.y,   -refFwd.z,   Vector3.Dot(refFwd,   refPos)));
+            viewMatrix.SetRow(3, new Vector4(0, 0, 0, 1));
 
-            reflectionCamera = go.GetComponent<Camera>();
-            reflectionCamera.enabled = false;
-            reflectionCamera.transform.position = transform.position;
-            reflectionCamera.transform.rotation = transform.rotation;
-            reflectionCamera.tag = "PortalCam"; // Tag it as a portal camera so it doesn't participate in the additional CameraRender function
-            //portalCamera.gameObject.AddComponent<FlareLayer>(); // Adds a flare layer to make Lens Flares appear in the image?? disabled for now
-            go.hideFlags = HideFlags.DontSave; // The object will not be saved to the Scene. It will not be destroyed when a new Scene is loaded.
+            _portalCamera.worldToCameraMatrix = viewMatrix;
+            _portalCamera.projectionMatrix    = BuildObliqueProjection(srcProj, viewMatrix, pos, normal);
+            _portalCamera.cullingMask         = mLayerMask.value;
+            _portalCamera.targetTexture       = rt;
 
-            _mPortalCameras.Add(currentCamera, reflectionCamera); // add the newly created camera to the dictionary
-        }
+            var oldPixelLightCount = QualitySettings.pixelLightCount;
+            if (mDisablePixelLights) QualitySettings.pixelLightCount = 0;
 
-        // ProjectionMatrizes reflectionProjectionMatrizes = new ProjectionMatrizes(); // Saving ProjectionMatrizes for left and right
-        // if (!m_PortalCamerasProjectionMatrix.TryGetValue(currentCamera, out _reflectionProjectionMatrizes))
-        // {
-        //     //Valve.VR.EVREye valveEyes = (eye == Camera.StereoscopicEye.Left) ? Valve.VR.EVREye.Eye_Left : Valve.VR.EVREye.Eye_Right;
-        //     reflectionProjectionMatrizes.left = GetSteamVRProjectionMatrix(currentCamera, Valve.VR.EVREye.Eye_Left);
-        //     reflectionProjectionMatrizes.right = GetSteamVRProjectionMatrix(currentCamera, Valve.VR.EVREye.Eye_Right);
-        //     m_PortalCamerasProjectionMatrix.Add(currentCamera, reflectionProjectionMatrizes);
-        //     _reflectionProjectionMatrizes = reflectionProjectionMatrizes;
-        // }
-    }
-
-    private void CopyCameraProperties(Camera src, Camera dest)
-    {
-        if (dest == null) // to prevent errors
-            return;
-
-        // set camera to clear the same way as current camera <<< Not really sure what this does, more info: https://docs.unity3d.com/Manual/class-Camera.html
-        dest.clearFlags = src.clearFlags;
-        dest.backgroundColor = src.backgroundColor;
-
-        if (src.clearFlags == CameraClearFlags.Skybox)
-        {
-            var sky = src.GetComponent(typeof(Skybox)) as Skybox;
-            var mysky = dest.GetComponent(typeof(Skybox)) as Skybox;
-            if (!sky || !sky.material)
+            // Bug 1 fix: GL.invertCulling in try-finally.
+            // A reflection matrix has det = −1 → winding order flips → front-faces
+            // become back-faces. invertCulling compensates. If SubmitRenderRequest
+            // throws, the global state is still reset to false.
+            GL.invertCulling = true;
+            try
             {
-                mysky.enabled = false;
+                var request = new UniversalRenderPipeline.SingleCameraRequest();
+                if (RenderPipeline.SupportsRenderRequest(_portalCamera, request))
+                    RenderPipeline.SubmitRenderRequest(_portalCamera, request);
             }
-            else
+            finally
             {
-                mysky.enabled = true;
-                mysky.material = sky.material;
+                GL.invertCulling = false;
+            }
+
+            if (mDisablePixelLights) QualitySettings.pixelLightCount = oldPixelLightCount;
+            _portalCamera.targetTexture = null;
+        }
+
+        // ── Camera management ────────────────────────────────────────────────────
+
+        private void EnsurePortalCamera()
+        {
+            if (_portalCamera != null) return;
+
+            var go = new GameObject($"Mirror Portal Camera {GetInstanceID()}",
+                typeof(Camera), typeof(Skybox))
+            {
+                hideFlags = HideFlags.DontSave
+            };
+            _portalCamera         = go.GetComponent<Camera>();
+            _portalCamera.enabled = false;
+            _portalCamera.tag     = "PortalCam";
+        }
+
+        private void EnsureRenderTextures()
+        {
+            bool sizeChanged = _oldTextureSize  != mTextureSize;
+            bool aaChanged   = _oldAntiAliasing != antiAliasing;
+
+            if (_rtLeft != null && !sizeChanged && !aaChanged) return;
+
+            if (_rtLeft)  DestroyImmediate(_rtLeft);
+            if (_rtRight) DestroyImmediate(_rtRight);
+            _rtLeft          = CreateRT("Left");
+            _rtRight         = CreateRT("Right");
+            _oldTextureSize  = mTextureSize;
+            _oldAntiAliasing = antiAliasing;
+        }
+
+        private RenderTexture CreateRT(string label) =>
+            new RenderTexture(mTextureSize, mTextureSize, 24)
+            {
+                name         = $"__MirrorReflection{label}{GetInstanceID()}",
+                isPowerOfTwo = true,
+                hideFlags    = HideFlags.DontSave,
+                antiAliasing = antiAliasing,
+                format       = textureFormat,
+            };
+
+        private void CopyCameraProperties(Camera src, Camera dest)
+        {
+            dest.clearFlags      = src.clearFlags;
+            dest.backgroundColor = src.backgroundColor;
+
+            if (src.clearFlags == CameraClearFlags.Skybox)
+            {
+                // Skybox fix: if the main camera has no Skybox component it uses
+                // RenderSettings.skybox (the scene skybox). Fall back to that so
+                // the mirror doesn't render a grey background.
+                var srcSkyMat = src.GetComponent<Skybox>()?.material ?? RenderSettings.skybox;
+                var dstSky    = dest.GetComponent<Skybox>();
+
+                if (srcSkyMat != null)
+                {
+                    dstSky.enabled  = true;
+                    dstSky.material = srcSkyMat;
+                }
+                else
+                {
+                    dstSky.enabled  = false;
+                    dest.clearFlags = CameraClearFlags.SolidColor;
+                }
+            }
+
+            dest.farClipPlane     = src.farClipPlane;
+            dest.nearClipPlane    = Mathf.Max(src.nearClipPlane, nearClipLimit);
+            dest.orthographic     = src.orthographic;
+            dest.fieldOfView      = src.fieldOfView;
+            dest.aspect           = src.aspect;
+            dest.orthographicSize = src.orthographicSize;
+            dest.depth            = 2;
+            dest.GetUniversalAdditionalCameraData().renderPostProcessing = true;
+        }
+
+        private void AssignTextures(RenderTexture left, RenderTexture right)
+        {
+            foreach (var mat in _materials)
+            {
+                if (mat == null) continue;
+                if (left  != null && mat.HasProperty(PropLeft))  mat.SetTexture(PropLeft,  left);
+                if (right != null && mat.HasProperty(PropRight)) mat.SetTexture(PropRight, right);
             }
         }
 
-        // update other values to match current camera.
-        // even if we are supplying custom camera&projection matrices,
-        // some of values are used elsewhere (e.g. skybox uses far plane)
-        
-        //dest.stereoTargetEye = StereoTargetEyeMask.None; // To prevent the camera from following some eye, else this gets fuckey sometimes (e.g. the FOV cant be copied)
-        dest.farClipPlane = src.farClipPlane; // 30m is enough in this scene
-        dest.nearClipPlane = src.nearClipPlane;
-        dest.orthographic = src.orthographic;
-        dest.fieldOfView = src.fieldOfView;
-        dest.aspect = src.aspect;
-        dest.orthographicSize = src.orthographicSize;
-        dest.depth = 2;
-        //dest.stereoTargetEye = src.stereoTargetEye;
-        dest.GetUniversalAdditionalCameraData().renderPostProcessing = true;
+        // ── Matrix helpers ───────────────────────────────────────────────────────
+
+        private Matrix4x4 BuildObliqueProjection(Matrix4x4 srcProj, Matrix4x4 viewMatrix,
+            Vector3 pos, Vector3 normal)
+        {
+            // sideSign = −1: reflected camera is on the back side of the mirror plane.
+            // The world normal transforms to a camera-space vector pointing AWAY from
+            // the camera. Negating it ensures the clip plane faces the camera.
+            var clipPlane = CameraSpacePlane(viewMatrix, pos, normal, -1f);
+            MakeProjectionMatrixOblique(ref srcProj, clipPlane);
+            return srcProj;
+        }
+
+        private Vector4 CameraSpacePlane(Matrix4x4 worldToCameraMatrix,
+            Vector3 pos, Vector3 normal, float sideSign)
+        {
+            // Bug 4 fix: offset applied HERE only (not in the reflection matrix plane).
+            var offsetPos = pos + normal * mClipPlaneOffset;
+            var cpos      = worldToCameraMatrix.MultiplyPoint(offsetPos);
+            var cnormal   = worldToCameraMatrix.MultiplyVector(normal).normalized * sideSign;
+            return new Vector4(cnormal.x, cnormal.y, cnormal.z, -Vector3.Dot(cpos, cnormal));
+        }
+
+        private static void CalculateReflectionMatrix(ref Matrix4x4 reflectionMat, Vector4 plane)
+        {
+            reflectionMat.m00 =  1f - 2f * plane[0] * plane[0];
+            reflectionMat.m01 =      -2f * plane[0] * plane[1];
+            reflectionMat.m02 =      -2f * plane[0] * plane[2];
+            reflectionMat.m03 =      -2f * plane[3] * plane[0];
+            reflectionMat.m10 =      -2f * plane[1] * plane[0];
+            reflectionMat.m11 =  1f - 2f * plane[1] * plane[1];
+            reflectionMat.m12 =      -2f * plane[1] * plane[2];
+            reflectionMat.m13 =      -2f * plane[3] * plane[1];
+            reflectionMat.m20 =      -2f * plane[2] * plane[0];
+            reflectionMat.m21 =      -2f * plane[2] * plane[1];
+            reflectionMat.m22 =  1f - 2f * plane[2] * plane[2];
+            reflectionMat.m23 =      -2f * plane[3] * plane[2];
+            reflectionMat.m30 = 0f; reflectionMat.m31 = 0f;
+            reflectionMat.m32 = 0f; reflectionMat.m33 = 1f;
+        }
+
+        private static void MakeProjectionMatrixOblique(ref Matrix4x4 matrix, Vector4 clipPlane)
+        {
+            // Lengyel oblique near-clip algorithm. Modifies row 2 (the Z row) of the
+            // projection matrix so the near plane coincides with the mirror surface.
+            // Unity Matrix4x4 single-index: matrix[i] = matrix[row = i%4, col = i/4].
+            var q = new Vector4(
+                (Mathf.Sign(clipPlane.x) + matrix[8])  / matrix[0],
+                (Mathf.Sign(clipPlane.y) + matrix[9])  / matrix[5],
+                -1f,
+                (1f + matrix[10]) / matrix[14]
+            );
+            var c      = clipPlane * (2f / Vector3.Dot(clipPlane, q));
+            matrix[2]  = c.x;
+            matrix[6]  = c.y;
+            matrix[10] = c.z + 1f;
+            matrix[14] = c.w;
+        }
     }
-
-    // Given position/normal of the plane, calculates plane in camera space.
-    private Vector4 CameraSpacePlane(Matrix4x4 worldToCameraMatrix, Vector3 pos, Vector3 normal, float sideSign)
-    {
-        var offsetPos = pos + normal * mClipPlaneOffset;
-        var cpos = worldToCameraMatrix.MultiplyPoint(offsetPos);
-        var cnormal = worldToCameraMatrix.MultiplyVector(normal).normalized * sideSign;
-        return new Vector4(cnormal.x, cnormal.y, cnormal.z, -Vector3.Dot(cpos, cnormal));
-    }
-
-    #endregion
-
-    #region HelperMethods
-
-    // private Matrix4x4 GetSteamVRProjectionMatrix(Camera cam, EVREye eye)
-    // {
-    //     // Crashes if called constantly
-    //     var proj = SteamVR.instance.hmd.GetProjectionMatrix(eye, cam.nearClipPlane, cam.farClipPlane);
-    //     var m = Matrix4x4.identity;
-    //     m.m00 = proj.m0;
-    //     m.m01 = proj.m1;
-    //     m.m02 = proj.m2;
-    //     m.m03 = proj.m3;
-    //     m.m10 = proj.m4;
-    //     m.m11 = proj.m5;
-    //     m.m12 = proj.m6;
-    //     m.m13 = proj.m7;
-    //     m.m20 = proj.m8;
-    //     m.m21 = proj.m9;
-    //     m.m22 = proj.m10;
-    //     m.m23 = proj.m11;
-    //     m.m30 = proj.m12;
-    //     m.m31 = proj.m13;
-    //     m.m32 = proj.m14;
-    //     m.m33 = proj.m15;
-    //     return m;
-    // }
-
-    // Calculates reflection matrix around the given plane
-    private static void CalculateReflectionMatrix(ref Matrix4x4 reflectionMat, Vector4 plane)
-    {
-        reflectionMat.m00 = 1F - 2F * plane[0] * plane[0];
-        reflectionMat.m01 = -2F * plane[0] * plane[1];
-        reflectionMat.m02 = -2F * plane[0] * plane[2];
-        reflectionMat.m03 = -2F * plane[3] * plane[0];
-
-        reflectionMat.m10 = -2F * plane[1] * plane[0];
-        reflectionMat.m11 = 1F - 2F * plane[1] * plane[1];
-        reflectionMat.m12 = -2F * plane[1] * plane[2];
-        reflectionMat.m13 = -2F * plane[3] * plane[1];
-
-        reflectionMat.m20 = -2F * plane[2] * plane[0];
-        reflectionMat.m21 = -2F * plane[2] * plane[1];
-        reflectionMat.m22 = 1F - 2F * plane[2] * plane[2];
-        reflectionMat.m23 = -2F * plane[3] * plane[2];
-
-        reflectionMat.m30 = 0F;
-        reflectionMat.m31 = 0F;
-        reflectionMat.m32 = 0F;
-        reflectionMat.m33 = 1F;
-    }
-
-    // Extended sign: returns -1, 0 or 1 based on sign of a
-    private static float Sgn(float a)
-    {
-        if (a > 0.0f) return 1.0f;
-        if (a < 0.0f) return -1.0f;
-        return 0.0f;
-    }
-
-    // Taken from http://www.terathon.com/code/oblique.html
-    private static void MakeProjectionMatrixOblique(ref Matrix4x4 matrix, Vector4 clipPlane)
-    {
-        Vector4 q;
-
-        // Calculate the clip-space corner point opposite the clipping plane
-        // as (sgn(clipPlane.x), sgn(clipPlane.y), 1, 1) and
-        // transform it into camera space by multiplying it
-        // by the inverse of the projection matrix
-
-        q.x = (Sgn(clipPlane.x) + matrix[8]) / matrix[0];
-        q.y = (Sgn(clipPlane.y) + matrix[9]) / matrix[5];
-        q.z = -1.0F;
-        q.w = (1.0F + matrix[10]) / matrix[14];
-
-        // Calculate the scaled plane vector
-        var c = clipPlane * (2.0F / Vector3.Dot(clipPlane, q));
-
-        // Replace the third row of the projection matrix
-        matrix[2] = c.x;
-        matrix[6] = c.y;
-        matrix[10] = c.z + 1.0F;
-        matrix[14] = c.w;
-    }
-
-    #endregion
 }
