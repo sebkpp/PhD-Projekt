@@ -68,7 +68,7 @@ namespace Packages.Mirror
         // safe here because we are outside the active URP render loop.
         private void LateUpdate()
         {
-            if (!Application.isPlaying) return;
+            if (!UnityEngine.Application.isPlaying) return;
             var cam = _targetCamera != null ? _targetCamera : Camera.main;
             if (cam != null) RenderReflection(cam);
         }
@@ -270,7 +270,12 @@ namespace Packages.Mirror
                 // Skybox fix: if the main camera has no Skybox component it uses
                 // RenderSettings.skybox (the scene skybox). Fall back to that so
                 // the mirror doesn't render a grey background.
-                var srcSkyMat = src.GetComponent<Skybox>()?.material ?? RenderSettings.skybox;
+                // NOTE: use Unity's != operator (not C# ?.) to catch Unity "fake null"
+                // objects — GetComponent can return a non-C#-null but Unity-null object,
+                // and accessing .material on it throws MissingComponentException.
+                var skyCmp    = src.GetComponent<Skybox>();
+                var srcSkyMat = (skyCmp != null) ? skyCmp.material : null;
+                if (srcSkyMat == null) srcSkyMat = RenderSettings.skybox;
                 var dstSky    = dest.GetComponent<Skybox>();
 
                 if (srcSkyMat != null)
