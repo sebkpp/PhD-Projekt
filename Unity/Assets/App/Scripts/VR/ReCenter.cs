@@ -21,7 +21,6 @@ namespace Application.Scripts.VR
             Vector3 eyePosition = xrRig.Camera.transform.position;
 
             xrRig.Origin.transform.position -= (eyePosition - spawnPosition.position);
-            Debug.Log(xrRig.Camera.transform.position);
         }
     }
 }

@@ -136,10 +136,6 @@ namespace Application.Scripts.GUI
         }
         private void OnGenderChange(int value, bool playerOne)
         {
-            if (_expController == null) return;
-            // _expController.ChangePlayerGender(
-            //     _playerManager.GetPlayerRefById(playerOne ? 2 : 3),
-            //     (Gender)value);
         }
         private void OnAvatarValuesChanged(int value)
         {

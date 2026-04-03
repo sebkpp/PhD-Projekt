@@ -18,14 +18,15 @@ namespace Application.Scripts.GUI
 
         private void OnEnable()
         {
-            //Events
             logAreaButton.onClick.AddListener(LogDisplay);
-
-            //References
             _logAreaParent = logAreaText.transform.parent.gameObject;
             _logAreaButtonText = logAreaButton.GetComponentInChildren<TextMeshProUGUI>();
-
             if (hideOnStart) LogDisplay();
+        }
+
+        private void OnDisable()
+        {
+            logAreaButton.onClick.RemoveListener(LogDisplay);
         }
         private void LogDisplay()
         {

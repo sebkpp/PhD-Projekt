@@ -30,10 +30,6 @@ namespace Application.Scripts.Avatar.Visuals
                 SwapAvatar();
         }
 
-        private void Awake()
-        {
-        }
-
         private void OnEnable()
         {
             SetupAvatar();
@@ -100,7 +96,7 @@ namespace Application.Scripts.Avatar.Visuals
         public void SetAvatarVisibility(AvatarVisibility visibility)
         {
             if (_avatarInstance == null) return;
-            _avatarInstance.SetActive(visibility == AvatarVisibility.AVATAR);
+            _avatarInstance.SetActive(visibility == AvatarVisibility.Avatar);
         }
     }
 }

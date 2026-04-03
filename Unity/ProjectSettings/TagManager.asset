@@ -2,8 +2,23 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
-  tags: []
+  serializedVersion: 3
+  tags:
+  - Interactable
+  - HeadVrTarget
+  - RighthandVrTarget
+  - LifthandVrTarget
+  - LFVrTarget0
+  - RFVrTarget2
+  - LFVrTarget2
+  - RFVrTarget4
+  - LFVrTarget3
+  - RFVrTarget3
+  - LFVrTarget1
+  - LFVrTarget4
+  - RFVrTarget1
+  - RFVrTarget0
+  - PortalCam
   layers:
   - Default
   - TransparentFX
@@ -50,27 +65,3 @@ TagManager:
   - Light Layer 5
   - Light Layer 6
   - Light Layer 7
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 

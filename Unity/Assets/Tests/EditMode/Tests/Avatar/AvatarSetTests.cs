@@ -12,8 +12,8 @@ namespace Avatar.Tests.EditMode
             var set = ScriptableObject.CreateInstance<AvatarSet>();
             var malePrefab   = new GameObject("Male");
             var femalePrefab = new GameObject("Female");
-            set.malePrefab   = malePrefab;
-            set.femalePrefab = femalePrefab;
+            set.MalePrefab   = malePrefab;
+            set.FemalePrefab = femalePrefab;
 
             Assert.That(set.GetPrefab("Male"),   Is.SameAs(malePrefab));
             Assert.That(set.GetPrefab("Female"), Is.SameAs(femalePrefab));
@@ -27,7 +27,7 @@ namespace Avatar.Tests.EditMode
         {
             var set = ScriptableObject.CreateInstance<AvatarSet>();
             var femalePrefab = new GameObject("Female");
-            set.femalePrefab = femalePrefab;
+            set.FemalePrefab = femalePrefab;
 
             Assert.That(set.GetPrefab("Diverse"), Is.SameAs(femalePrefab));
 

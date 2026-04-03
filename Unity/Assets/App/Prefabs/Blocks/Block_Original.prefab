@@ -100,7 +100,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1578286527000143521}
   - component: {fileID: 8456663156691038038}
-  - component: {fileID: 6318094961206787021}
   m_Layer: 8
   m_Name: Collider
   m_TagString: Untagged
@@ -144,19 +143,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6318094961206787021
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5171122902613711009}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d8451611d752a64a82b6b41ef0632f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  floorTag: Floor
 --- !u!1 &7691428666082293075
 GameObject:
   m_ObjectHideFlags: 0
