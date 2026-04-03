@@ -27,6 +27,7 @@ namespace Application.Scripts.Network.Interactable
 
         private HandoverTracker        _tracker;
         private NetworkGrabbableObject _netGrabbable;
+        private string                 _baseUrl;
 
         private int _giverPlayerId    = -1;
         private int _receiverPlayerId = -1;
@@ -43,7 +44,10 @@ namespace Application.Scripts.Network.Interactable
             _tracker      = GetComponent<HandoverTracker>();
             _netGrabbable = GetComponent<NetworkGrabbableObject>();
             if (_experimentContext == null)
-                Debug.LogError("[HandoverReporter] ExperimentContext reference not set — participant IDs will be -1.");
+                _experimentContext = FindFirstObjectByType<ExperimentContext>();
+            if (_experimentContext == null)
+                Debug.LogError("[HandoverReporter] ExperimentContext not found — participant IDs will be -1.");
+            _baseUrl = _experimentContext != null ? _experimentContext.BackendBaseUrl : "http://localhost:5000";
         }
 
         private void OnEnable()
@@ -70,12 +74,14 @@ namespace Application.Scripts.Network.Interactable
             }
             if (_netGrabbable != null)
                 _netGrabbable.onObjectDropped.RemoveListener(HandleObjectDropped);
+            ResetState();
         }
 
         // True only on the client whose local player is the giver
         private bool IsGiverClient =>
             _tracker != null &&
             _tracker.Runner != null &&
+            _tracker.Runner.IsRunning &&
             _giverPlayerId >= 0 &&
             _tracker.Runner.LocalPlayer.PlayerId == _giverPlayerId;
 
@@ -103,7 +109,7 @@ namespace Application.Scripts.Network.Interactable
         private void HandleGiverReleased(int trialId, int playerId, NetworkId objectId)
         {
             if (!IsGiverClient) return;
-            if (_activeHandoverId > 0)
+            if (_activeHandoverId != -1)
                 StartCoroutine(PatchGiverReleased(DateTime.UtcNow));
             else
                 _pendingGiverReleasedAt = DateTime.UtcNow; // POST still in flight — flush after it completes
@@ -112,7 +118,7 @@ namespace Application.Scripts.Network.Interactable
         private void HandleObjectDropped()
         {
             if (!IsGiverClient) return;
-            if (_activeHandoverId > 0)
+            if (_activeHandoverId != -1)
                 StartCoroutine(PatchDropError());
             else
                 _pendingDropError = true; // POST still in flight — flush after it completes
@@ -122,14 +128,13 @@ namespace Application.Scripts.Network.Interactable
 
         private IEnumerator PostHandoverAndPatchTimestamps(int trialId)
         {
-            string baseUrl            = _experimentContext != null ? _experimentContext.BackendBaseUrl : "http://localhost:5000";
             // NOTE: GetParticipantId maps Fusion PlayerId → DB participant_id via slot index.
             // This assumes Fusion assigns PlayerId 1/2 matching the backend slot numbers 1/2.
-            int    giverParticipantId = _experimentContext != null ? _experimentContext.GetParticipantId(_giverPlayerId)    : -1;
-            int    recvParticipantId  = _experimentContext != null ? _experimentContext.GetParticipantId(_receiverPlayerId) : -1;
+            int giverParticipantId = _experimentContext != null ? _experimentContext.GetParticipantId(_giverPlayerId)    : -1;
+            int recvParticipantId  = _experimentContext != null ? _experimentContext.GetParticipantId(_receiverPlayerId) : -1;
 
             // 1. POST /handovers/trials/{trialId}
-            string postUrl  = $"{baseUrl}/handovers/trials/{trialId}";
+            string postUrl  = $"{_baseUrl}/handovers/trials/{trialId}";
             string postBody = $"{{\"giver\":{giverParticipantId},\"receiver\":{recvParticipantId},\"grasped_object\":\"{gameObject.name}\"}}";
 
             using var postReq = new UnityWebRequest(postUrl, "POST");
@@ -141,6 +146,7 @@ namespace Application.Scripts.Network.Interactable
             if (postReq.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError($"[HandoverReporter] POST failed: {postReq.error}");
+                ResetState();
                 yield break;
             }
 
@@ -148,12 +154,13 @@ namespace Application.Scripts.Network.Interactable
             if (parsed == null || parsed.handover_id <= 0)
             {
                 Debug.LogError("[HandoverReporter] POST response missing handover_id.");
+                ResetState();
                 yield break;
             }
             _activeHandoverId = parsed.handover_id;
 
             // 2. PATCH /handovers/{id}/phases — 3 timestamps
-            string patchUrl  = $"{baseUrl}/handovers/{_activeHandoverId}/phases";
+            string patchUrl  = $"{_baseUrl}/handovers/{_activeHandoverId}/phases";
             string patchBody = $"{{" +
                 $"\"giver_grasped_object\":\"{Iso(_giverGrabbedAt)}\"," +
                 $"\"receiver_touched_object\":\"{Iso(_receiverTouchedAt)}\"," +
@@ -188,8 +195,7 @@ namespace Application.Scripts.Network.Interactable
 
         private IEnumerator PatchGiverReleased(DateTime timestamp)
         {
-            string baseUrl  = _experimentContext != null ? _experimentContext.BackendBaseUrl : "http://localhost:5000";
-            string patchUrl = $"{baseUrl}/handovers/{_activeHandoverId}/phases";
+            string patchUrl = $"{_baseUrl}/handovers/{_activeHandoverId}/phases";
             string body     = $"{{\"giver_released_object\":\"{Iso(timestamp)}\"}}";
 
             using var req = new UnityWebRequest(patchUrl, "PATCH");
@@ -206,8 +212,7 @@ namespace Application.Scripts.Network.Interactable
 
         private IEnumerator PatchDropError()
         {
-            string baseUrl  = _experimentContext != null ? _experimentContext.BackendBaseUrl : "http://localhost:5000";
-            string patchUrl = $"{baseUrl}/handovers/{_activeHandoverId}/phases";
+            string patchUrl = $"{_baseUrl}/handovers/{_activeHandoverId}/phases";
             const string body = "{\"is_error\":true,\"error_type\":\"dropped\"}";
 
             using var req = new UnityWebRequest(patchUrl, "PATCH");

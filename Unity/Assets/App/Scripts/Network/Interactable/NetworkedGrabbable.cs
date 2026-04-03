@@ -86,11 +86,11 @@ namespace Application.Scripts.Network.Interactable
             float dropThreshold = _settings != null ? _settings.dropThreshold : 0.4f;
             if (totalGrip < dropThreshold)
             {
-                // If receiver was holding, a mid-handover drop — notify listeners before clearing
+                // If receiver was holding, a mid-handover drop — notify all clients via RPC
                 if (ReceiverGrabber != null)
                 {
                     Debug.Log($"[Handover] ObjectDropped obj={Object.Id}");
-                    onObjectDropped?.Invoke();
+                    RPC_NotifyObjectDropped();
                 }
                 grabbable.UnlockObjectPhysics();
                 GiverGrabber    = null;
@@ -100,6 +100,12 @@ namespace Application.Scripts.Network.Interactable
 
             ApplySpringForces(giverGrip, receiverGrip);
             CheckAuthorityTransfer(giverGrip);
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_NotifyObjectDropped()
+        {
+            onObjectDropped?.Invoke();
         }
 
         private void ApplySpringForces(float giverGrip, float receiverGrip)

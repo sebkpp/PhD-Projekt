@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 
 namespace Application.Scripts.Experiment
 {
@@ -13,14 +10,6 @@ namespace Application.Scripts.Experiment
         {
             gazeInteractor = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactors.XRGazeInteractor>();
         }
-        void Update()
-        {
-            if (gazeInteractor == null) return;
 
-            if (gazeInteractor.TryGetCurrent3DRaycastHit(out RaycastHit res))
-            {                
-                Debug.Log("HIT:" + res.transform.gameObject.name);
-            }
-        }
     }
 }
