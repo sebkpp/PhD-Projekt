@@ -88,3 +88,21 @@ def get_participants_for_trial(session, trial_id):
     if not trial:
         return []
     return get_participants_by_experiment(session, trial.experiment_id)
+
+
+def get_stimuli_for_trial(session, trial_id: int):
+    """Return [{slot, stimuli[]}] for all slots of a trial."""
+    from Backend.models.trial.trial_slot import TrialSlot
+    slots = (
+        session.query(TrialSlot)
+        .filter(TrialSlot.trial_id == trial_id)
+        .order_by(TrialSlot.slot)
+        .all()
+    )
+    return [
+        {
+            "slot": slot.slot,
+            "stimuli": [tss.to_dict() for tss in slot.stimuli],
+        }
+        for slot in slots
+    ]
