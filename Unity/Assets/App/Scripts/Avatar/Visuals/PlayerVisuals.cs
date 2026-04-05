@@ -16,7 +16,7 @@ namespace Application.Scripts.Avatar.Visuals
         [SerializeField] private AvatarConfigReference _avatarConfigReference;
         [SerializeField] private Transform _hmdCameraTransform;
         [SerializeField] private AvatarVisibility _avatarVisibility;
-        [SerializeField] private UnityEvent<AvatarBoneReference> _avatarInitialized;
+        public UnityEvent<AvatarBoneReference> AvatarInitialized = new();
 
         private string _gender = "Female"; // default until SetGender is called
         private GameObject _avatarInstance;
@@ -89,7 +89,7 @@ namespace Application.Scripts.Avatar.Visuals
             }
 
             Debug.Log($"<color=#ADD8E6>[Avatar]</color> Avatar swapped: {prefab.name} ({_gender})");
-            _avatarInitialized?.Invoke(_boneRef);
+            AvatarInitialized?.Invoke(_boneRef);
             SetAvatarVisibility(_avatarVisibility);
         }
 
