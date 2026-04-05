@@ -15,6 +15,8 @@ namespace Application.Scripts.Feedback
     {
         [SerializeField] private ExperimentContext _experimentContext;
 
+        public ExperimentContext ExperimentContext => _experimentContext;
+
         private readonly Dictionary<int, StimulusSlotConfig> _configBySlot = new();
         private string _baseUrl;
 

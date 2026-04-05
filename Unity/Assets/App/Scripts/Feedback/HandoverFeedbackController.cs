@@ -18,10 +18,11 @@ namespace Application.Scripts.Feedback
     /// Attach to a persistent scene GameObject together with ExperimentContext and
     /// StimulusConfigLoader.
     /// </summary>
+    [RequireComponent(typeof(StimulusConfigLoader))]
     public class HandoverFeedbackController : MonoBehaviour
     {
-        [SerializeField] private ExperimentContext _experimentContext;
-        [SerializeField] private StimulusConfigLoader _stimulusConfigLoader;
+        private ExperimentContext _experimentContext;
+        private StimulusConfigLoader _stimulusConfigLoader;
 
         private HandoverTracker _tracker;
         private NetworkGrabbableObject _netGrabbable;
@@ -35,10 +36,8 @@ namespace Application.Scripts.Feedback
 
         private void Awake()
         {
-            if (_experimentContext == null)
-                _experimentContext = FindFirstObjectByType<ExperimentContext>();
-            if (_stimulusConfigLoader == null)
-                _stimulusConfigLoader = FindFirstObjectByType<StimulusConfigLoader>();
+            _stimulusConfigLoader = GetComponent<StimulusConfigLoader>();
+            _experimentContext = _stimulusConfigLoader.ExperimentContext;
 
             _tracker = FindFirstObjectByType<HandoverTracker>();
             _netGrabbable = FindFirstObjectByType<NetworkGrabbableObject>();
