@@ -133,5 +133,10 @@ async def get_trial_stimuli_route(
 ):
     try:
         return get_stimuli_for_trial(db, trial_id)
+    except ValueError as e:
+        if str(e) == "trial_not_found":
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trial not found")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+

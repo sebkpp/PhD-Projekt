@@ -27,7 +27,7 @@ class TrialSlotRepository:
         query = self.session.query(TrialSlot).filter_by(trial_id=trial_id)
         if slot is not None:
             query = query.filter_by(slot=slot)
-        return query.all()
+        return query.order_by(TrialSlot.slot).all()
 
     def get_all(self):
         return self.session.query(TrialSlot).all()
