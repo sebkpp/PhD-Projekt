@@ -15,7 +15,7 @@ namespace Application.Scripts.Network.Experiment
     {
         [SerializeField] private string _backendBaseUrl = "http://localhost:5000";
 
-        [SerializeField] private UnityEvent<int, Dictionary<int, string>> OnExperimentReady = new();
+        [SerializeField] public UnityEvent<int, Dictionary<int, string>> OnExperimentReady = new();
         [SerializeField] private UnityEvent<string> OnExperimentError = new();
 
         public int    TrialId      { get; private set; }
