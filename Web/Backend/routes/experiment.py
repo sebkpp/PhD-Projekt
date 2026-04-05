@@ -1,4 +1,4 @@
-﻿from typing import List, Optional
+﻿from typing import Any, List, Optional
 from fastapi import APIRouter, HTTPException, status, Depends
 from pydantic import BaseModel
 
@@ -71,6 +71,7 @@ class TrialSlotParticipant(BaseModel):
     slot: int
     gender: str
     participant_id: int
+    stimuli: list[Any] = []
 
 class NextExperimentResponse(BaseModel):
     experiment_id: int

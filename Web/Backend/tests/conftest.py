@@ -25,7 +25,7 @@ def _delete_all(session):
     from Backend.models.study.study_questionnaire import StudyQuestionnaire
     from Backend.models.study.study_stimuli import StudyStimuli
     from Backend.models.study.study_config import StudyConfig
-    from Backend.models.stimulus import Stimulus, StimulusType
+    from Backend.models.stimulus import Stimulus, StimulusType, StimulusVisual, StimulusAuditiv, StimulusTactile
 
     session.query(EyeTracking).delete()
     session.query(Handover).delete()
@@ -41,6 +41,9 @@ def _delete_all(session):
     session.query(StudyStimuli).delete()
     session.query(StudyConfig).delete()
     session.query(Study).delete()
+    session.query(StimulusVisual).delete()
+    session.query(StimulusAuditiv).delete()
+    session.query(StimulusTactile).delete()
     session.query(Stimulus).delete()
     session.query(StimulusType).delete()
     session.commit()

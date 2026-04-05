@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from Backend.db_session import SessionLocal
 from Backend.services.trial_service import finish_trial, \
-    get_trial, start_trial, get_participants_for_trial
+    get_trial, start_trial, get_participants_for_trial, get_stimuli_for_trial
 
 router = APIRouter(prefix="/trials", tags=["trials"])
 
@@ -117,6 +117,26 @@ async def get_trial_participants_route(
     try:
         participants = get_participants_for_trial(db, trial_id)
         return [p.to_dict() for p in participants]
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.get(
+    "/{trial_id}/stimuli",
+    status_code=status.HTTP_200_OK,
+    summary="Get stimuli for a trial",
+    description="Returns all slot stimuli configurations for the given trial."
+)
+async def get_trial_stimuli_route(
+        trial_id: int,
+        db: Session = Depends(get_db)
+):
+    try:
+        return get_stimuli_for_trial(db, trial_id)
+    except ValueError as e:
+        if str(e) == "trial_not_found":
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trial not found")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 

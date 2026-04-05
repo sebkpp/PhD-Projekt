@@ -15,7 +15,7 @@ namespace Application.Scripts.Network.Experiment
     {
         [SerializeField] private string _backendBaseUrl = "http://localhost:5000";
 
-        [SerializeField] private UnityEvent<int, Dictionary<int, string>> OnExperimentReady = new();
+        [SerializeField] public UnityEvent<int, Dictionary<int, string>> OnExperimentReady = new();
         [SerializeField] private UnityEvent<string> OnExperimentError = new();
 
         public int    TrialId      { get; private set; }
@@ -47,6 +47,16 @@ namespace Application.Scripts.Network.Experiment
         public int GetParticipantId(int playerId)
         {
             return _slotParticipant.TryGetValue(playerId, out int participantId) ? participantId : -1;
+        }
+
+        /// <summary>
+        /// Returns the slot number (1 or 2) for the given Fusion PlayerId.
+        /// Returns -1 if not found.
+        /// Relies on the assumption that Fusion PlayerId == slot number.
+        /// </summary>
+        public int GetSlot(int fusionPlayerId)
+        {
+            return _slotParticipant.ContainsKey(fusionPlayerId) ? fusionPlayerId : -1;
         }
 
         public void FinishTrial()

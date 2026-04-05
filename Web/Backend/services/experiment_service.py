@@ -5,6 +5,7 @@ from Backend.db.experiment.experiment_repository import (
     ExperimentRepository,
 )
 from Backend.db.questionnaires.questionnaire_respository import QuestionnaireRepository
+from Backend.db.trial.trial_slot_repository import TrialSlotRepository
 from Backend.models.experiment import Experiment
 from Backend.models.trial.trial import Trial
 from Backend.models.trial.trial_slot import TrialSlot
@@ -73,22 +74,40 @@ def get_next_open_experiment(session):
     if next_trial is None:
         raise ValueError("no_unfinished_trial")
 
-    slots = (
-        session.query(TrialSlot.slot, Participant.gender, Participant.participant_id)
-        .join(TrialParticipantSlot,
-              TrialSlot.trial_slot_id == TrialParticipantSlot.trial_slot_id)
-        .join(Participant,
-              TrialParticipantSlot.participant_id == Participant.participant_id)
-        .filter(TrialSlot.trial_id == next_trial.trial_id)
-        .all()
-    )
+    slot_repo = TrialSlotRepository(session)
+    trial_slots = slot_repo.get_by_trial_id(next_trial.trial_id)
+
+    # Build slot->participant mapping via TrialParticipantSlot
+    participant_by_slot = {}
+    for trial_slot in trial_slots:
+        for assignment in trial_slot.assignments:
+            participant = (
+                session.query(Participant)
+                .filter(Participant.participant_id == assignment.participant_id)
+                .first()
+            )
+            if participant:
+                participant_by_slot[trial_slot.trial_slot_id] = participant
+
     # Fewer than 2 participants assigned (0 = no assignments at all, 1 = partially assigned).
     # Both are treated as "not ready" since a 2-player session requires exactly 2 slots.
-    if len(slots) < 2:
+    if len(participant_by_slot) < 2:
         raise ValueError("slots_not_assigned")
+
+    result_slots = []
+    for trial_slot in trial_slots:
+        participant = participant_by_slot.get(trial_slot.trial_slot_id)
+        if participant is None:
+            continue
+        result_slots.append({
+            "slot": trial_slot.slot,
+            "gender": participant.gender,
+            "participant_id": participant.participant_id,
+            "stimuli": [tss.to_dict() for tss in trial_slot.stimuli],
+        })
 
     return {
         "experiment_id": experiment.experiment_id,
         "trial_id": next_trial.trial_id,
-        "slots": [{"slot": s.slot, "gender": s.gender, "participant_id": s.participant_id} for s in slots],
+        "slots": result_slots,
     }

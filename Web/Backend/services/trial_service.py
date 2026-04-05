@@ -2,6 +2,7 @@
 from Backend.db.questionnaires.questionnaire_respository import QuestionnaireRepository
 from Backend.db.study.study_repository import StudyRepository
 from Backend.db.trial.trial import TrialRepository
+from Backend.db.trial.trial_slot_repository import TrialSlotRepository
 from Backend.models import Trial
 from Backend.services.participant_service import get_participants_by_experiment
 
@@ -88,3 +89,19 @@ def get_participants_for_trial(session, trial_id):
     if not trial:
         return []
     return get_participants_by_experiment(session, trial.experiment_id)
+
+
+def get_stimuli_for_trial(session, trial_id: int):
+    """Return [{slot, stimuli[]}] for all slots of a trial."""
+    trial_repo = TrialRepository(session)
+    if not trial_repo.get_by_id(trial_id):
+        raise ValueError("trial_not_found")
+    slot_repo = TrialSlotRepository(session)
+    slots = slot_repo.get_by_trial_id(trial_id)
+    return [
+        {
+            "slot": slot.slot,
+            "stimuli": [tss.to_dict() for tss in slot.stimuli],
+        }
+        for slot in slots
+    ]
