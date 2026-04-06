@@ -22,6 +22,7 @@ These ScriptableObject assets must be present before a scene can run. They are a
 | `AvatarConfig` | ScriptableObject | Tracking offsets (position/rotation) per joint for calibrating hardware tracking to avatar bones. Different per avatar type. |
 | `AvatarSet` | ScriptableObject | Holds references to male and female avatar mesh prefabs (`Medical_Male_prefab`, `Medical_Female_prefab`). `PlayerVisuals` uses this to select the correct mesh based on the gender string. |
 | `StimulusDefinition` (×4) | ScriptableObject | One asset per visual stimulus. The filename must exactly match the backend stimulus name (loaded via `Resources.Load`). Located under `Assets/App/Resources/Stimuli/`. |
+| `StudySessionConfig` | ScriptableObject | Configures backend URL, offline mode, and offline trial sequence. Located at `Assets/App/Resources/Sessions/`. When `offlineMode = true`, the system runs fully without a backend. |
 
 **StimulusDefinition assets:**
 
@@ -54,27 +55,17 @@ NetworkManager
 
 ---
 
-#### Prefab: `ExperimentContext`
+#### Prefab: `StudyManager`
 
 ```
-ExperimentContext
+StudyManager
 ```
 
 | Component | Origin | Purpose |
 |---|---|---|
-| `ExperimentContext` | Project | Loads the next open experiment from the backend on start; provides experiment data to the rest of the system; fires `OnExperimentReady` when data is available |
+| `BackendService` | Project | Single HTTP layer. Polls `GET /experiments/next` until data is available; loads stimuli via `GET /trials/{id}/stimuli`; fires `OnSessionReady(SessionState)` when complete data is ready. When `offlineMode = true`, serves trial data from `StudySessionConfig` — no backend required. |
 
-**Backend data (`GET /experiments/next`):**
-
-| Field | Exposed as | Used by |
-|---|---|---|
-| `trial_id` | `TrialId` property | `StimulusConfigLoader`, `HandoverReporter` |
-| `experiment_id` | `ExperimentId` property | — |
-| `slot → gender` | `GetGender(playerId)` | `PlayerManager` → avatar mesh selection |
-| `slot → participant_id` | `GetParticipantId(playerId)` | `HandoverReporter` |
-| `slot → stimuli[]` | via `OnExperimentReady` + `StimulusConfigLoader` | `HandoverFeedbackController` |
-
-**Inspector:** Set the backend URL.
+**Inspector:** Assign the `StudySessionConfig` asset. For VR testing without backend: set `offlineMode = true`.
 
 ---
 
@@ -195,17 +186,16 @@ Contains MeshFilter + MeshRenderer. Used as `NetworkTransform` interpolation tar
 ### Layer 4 — Feedback Manager (`FeedbackManager` prefab)
 
 ```
-FeedbackManager  ← StimulusConfigLoader, HandoverFeedbackController
+FeedbackManager  ← HandoverFeedbackController
 ```
 
-`HandoverFeedbackController` has `[RequireComponent(typeof(StimulusConfigLoader))]` — both components are always together. `HandoverFeedbackController` resolves `StimulusConfigLoader` and `ExperimentContext` via `GetComponent<>()`.
+`HandoverFeedbackController` reads slot and stimulus data from `SessionState` via `BackendService.OnSessionReady`.
 
 | Component | Origin | Purpose |
 |---|---|---|
-| `StimulusConfigLoader` | Project | Subscribes to `OnExperimentReady`; fetches all slot→stimulus configurations from the backend (`GET /trials/{id}/stimuli`); provides `GetStimuli(slot)` |
 | `HandoverFeedbackController` | Project | Subscribes to `HandoverTracker` events; activates the correct `HandVisualFeedback` and `ToneAuditoryFeedback` on the relevant `PlayerAvatar` per phase; calls `UpdateGrip()` every frame on all active providers |
 
-**Inspector:** Set the `ExperimentContext` reference on `StimulusConfigLoader`.
+**Inspector:** Set the `BackendService` reference (`StudyManager` in the scene) on `HandoverFeedbackController`.
 
 ---
 
@@ -216,10 +206,11 @@ FeedbackManager  ← StimulusConfigLoader, HandoverFeedbackController
 - [ ] `AvatarConfig` asset present and assigned in `PlayerAvatar`
 - [ ] `AvatarSet` asset present with male/female prefab references and assigned in `PlayerAvatar`
 - [ ] `StimulusDefinition` assets under `Assets/App/Resources/Stimuli/`: `inner_hand`, `outer_hand`, `finger_color`, `object_color`
+- [ ] `StudySessionConfig` asset present at `Assets/App/Resources/Sessions/Session_Default.asset`
 
 ### Layer 1 — Infrastructure
 - [ ] Drag prefab `NetworkManager` into the scene
-- [ ] Drag prefab `ExperimentContext` into the scene — set backend URL
+- [ ] Drag prefab `StudyManager` into the scene — assign `StudySessionConfig` asset
 - [ ] Drag prefab `Local_XR_Rig` into the scene
 
 ### Layer 2 — Player
@@ -228,7 +219,7 @@ FeedbackManager  ← StimulusConfigLoader, HandoverFeedbackController
 
 ### Layer 3 — Interactable Objects
 - [ ] Place at least one interactable object (based on `Block_Original`) in the scene
-- [ ] `HandoverReporter` — set `ExperimentContext` reference
+- [ ] `HandoverReporter` — set `BackendService` reference (`StudyManager`)
 
 ### Layer 4 — Feedback
-- [ ] Drag prefab `FeedbackManager` into the scene — set `ExperimentContext` reference on `StimulusConfigLoader`
+- [ ] Drag prefab `FeedbackManager` into the scene — set `BackendService` reference on `HandoverFeedbackController`
