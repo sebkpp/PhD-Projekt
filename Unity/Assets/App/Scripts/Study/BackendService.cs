@@ -281,7 +281,7 @@ namespace Application.Scripts.Study
 #if UNITY_EDITOR
             if (_config == null || !_config.logHandoversLocally) return;
             string filename = $"handover_log_{data.TrialId}_{DateTime.UtcNow:yyyyMMddHHmmss}.json";
-            string path     = System.IO.Path.Combine(Application.persistentDataPath, filename);
+            string path     = System.IO.Path.Combine(UnityEngine.Application.persistentDataPath, filename);
             string json     = JsonUtility.ToJson(new HandoverLogEntry(data), true);
             System.IO.File.WriteAllText(path, json);
             Debug.Log($"[BackendService] Handover logged to: {path}");
