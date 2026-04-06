@@ -25,6 +25,7 @@ namespace Application.Scripts.Study
 
         private int          _currentTrialIndex;
         private SessionState _currentSession;
+        private Coroutine    _fetchCoroutine;
 
         private void Start()
         {
@@ -37,7 +38,7 @@ namespace Application.Scripts.Study
             if (_config.offlineMode)
                 ActivateOfflineSession();
             else
-                StartCoroutine(FetchSessionOnline());
+                _fetchCoroutine = StartCoroutine(FetchSessionOnline());
         }
 
         // ── Offline path ─────────────────────────────────────────────────────────
@@ -73,7 +74,8 @@ namespace Application.Scripts.Study
             }
             else
             {
-                StartCoroutine(FetchSessionOnline());
+                if (_fetchCoroutine != null) StopCoroutine(_fetchCoroutine);
+                _fetchCoroutine = StartCoroutine(FetchSessionOnline());
             }
         }
 
@@ -96,6 +98,8 @@ namespace Application.Scripts.Study
         }
 
         // ── Online HTTP ──────────────────────────────────────────────────────────
+
+        private static string EscapeJson(string s) => s?.Replace("\\", "\\\\").Replace("\"", "\\\"") ?? "";
 
         private IEnumerator FetchSessionOnline()
         {
@@ -131,11 +135,12 @@ namespace Application.Scripts.Study
             }
 
             FireSession(BuildSessionFromOnlineData(expResponse, stimuli));
+            _fetchCoroutine = null;
         }
 
         private IEnumerator PostHandover(HandoverData data)
         {
-            string postBody = $"{{\"giver\":{data.GiverParticipantId},\"receiver\":{data.ReceiverParticipantId},\"grasped_object\":\"{data.GraspedObject}\"}}";
+            string postBody = $"{{\"giver\":{data.GiverParticipantId},\"receiver\":{data.ReceiverParticipantId},\"grasped_object\":\"{EscapeJson(data.GraspedObject)}\"}}";
             using var postReq = new UnityWebRequest($"{_config.backendUrl}/handovers/trials/{data.TrialId}", "POST");
             postReq.uploadHandler   = new UploadHandlerRaw(Encoding.UTF8.GetBytes(postBody));
             postReq.downloadHandler = new DownloadHandlerBuffer();
@@ -256,6 +261,8 @@ namespace Application.Scripts.Study
             foreach (var entry in exp.slots)
             {
                 stimuliBySlot.TryGetValue(entry.slot, out var slotStimuli);
+                if (slotStimuli == null)
+                    Debug.LogWarning($"[BackendService] No stimuli found for slot {entry.slot}.");
                 slots[entry.slot] = new SlotData(entry.slot, entry.gender, entry.participant_id, slotStimuli);
             }
             return new SessionState(exp.trial_id, exp.experiment_id, slots);
