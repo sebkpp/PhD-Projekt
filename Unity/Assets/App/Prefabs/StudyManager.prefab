@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3317147216624797488}
-  - component: {fileID: 8813820054108588758}
+  - component: {fileID: 4310499848278923493}
   m_Layer: 0
-  m_Name: ExperimentContext
+  m_Name: StudyManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8813820054108588758
+--- !u!114 &4310499848278923493
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,13 +41,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 314843862910679497}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8c4a9e2b7d1e3f5a6c8d0b9e2f4a7c3, type: 3}
+  m_Script: {fileID: 11500000, guid: 3aa25bead5eeaa748986a930fd923a2f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Network.Experiment.ExperimentContext
-  _backendBaseUrl: http://localhost:5000
-  OnExperimentReady:
+  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Study.BackendService
+  _config: {fileID: 11400000, guid: eb367ea27f40d5841b611d1f1a0f2954, type: 2}
+  OnSessionReady:
     m_PersistentCalls:
       m_Calls: []
-  OnExperimentError:
+  OnStudyComplete:
     m_PersistentCalls:
       m_Calls: []

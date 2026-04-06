@@ -211,12 +211,12 @@ namespace Application.Scripts.Study
             {
                 var sc       = config.slots[i];
                 int playerId = i + 1;
-                slots[playerId] = new SlotData(playerId, sc.gender, sc.participantId, BuildStimuliFromSlotConfig(sc));
+                slots[playerId] = new SlotData(playerId, sc.gender, sc.participantId, BuildStimuliFromSlotConfig(sc, playerId));
             }
             return new SessionState(config.trialId, 0, slots);
         }
 
-        private static StimulusSlotConfig BuildStimuliFromSlotConfig(SlotConfig sc)
+        private static StimulusSlotConfig BuildStimuliFromSlotConfig(SlotConfig sc, int playerId)
         {
             var stimList = new System.Collections.Generic.List<TrialSlotStimulusData>();
 
@@ -250,7 +250,7 @@ namespace Application.Scripts.Study
                 });
             }
 
-            return new StimulusSlotConfig { slot = sc.playerId, stimuli = stimList.ToArray() };
+            return new StimulusSlotConfig { slot = playerId, stimuli = stimList.ToArray() };
         }
 
         private static SessionState BuildSessionFromOnlineData(ExperimentNextResponse exp, StimulusSlotConfig[] stimuli)
