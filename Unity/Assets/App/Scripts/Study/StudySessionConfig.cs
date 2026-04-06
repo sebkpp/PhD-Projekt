@@ -35,8 +35,6 @@ namespace Application.Scripts.Study
     [Serializable]
     public class SlotConfig
     {
-        [Tooltip("Fusion PlayerId (== slot index in Shared Mode)")]
-        public int    playerId      = 1;
         public string gender        = "Male";
         public int    participantId = 1;
 

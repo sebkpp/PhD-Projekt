@@ -207,10 +207,11 @@ namespace Application.Scripts.Study
         private static SessionState BuildSessionFromConfig(TrialConfig config)
         {
             var slots = new Dictionary<int, SlotData>();
-            foreach (var sc in config.slots)
+            for (int i = 0; i < config.slots.Length; i++)
             {
-                var stimuli = BuildStimuliFromSlotConfig(sc);
-                slots[sc.playerId] = new SlotData(sc.playerId, sc.gender, sc.participantId, stimuli);
+                var sc       = config.slots[i];
+                int playerId = i + 1;
+                slots[playerId] = new SlotData(playerId, sc.gender, sc.participantId, BuildStimuliFromSlotConfig(sc));
             }
             return new SessionState(config.trialId, 0, slots);
         }

@@ -24,7 +24,7 @@ namespace Study.Tests.EditMode
             Object.DestroyImmediate(_go);
         }
 
-        private static StudySessionConfig MakeOfflineConfig(params (int trialId, int playerId, string gender)[] slots)
+        private static StudySessionConfig MakeOfflineConfig(params (int trialId, string gender)[] slots)
         {
             var config           = ScriptableObject.CreateInstance<StudySessionConfig>();
             config.offlineMode   = true;
@@ -32,7 +32,7 @@ namespace Study.Tests.EditMode
             var trial            = new TrialConfig { trialId = slots[0].trialId };
             var slotList         = new SlotConfig[slots.Length];
             for (int i = 0; i < slots.Length; i++)
-                slotList[i] = new SlotConfig { playerId = slots[i].playerId, gender = slots[i].gender, participantId = i + 1 };
+                slotList[i] = new SlotConfig { gender = slots[i].gender, participantId = i + 1 };
             trial.slots    = slotList;
             config.trials[0] = trial;
             return config;
@@ -61,7 +61,7 @@ namespace Study.Tests.EditMode
         [Test]
         public void OfflineMode_OnSessionReady_IsFired()
         {
-            var config  = MakeOfflineConfig((1, 1, "Male"));
+            var config  = MakeOfflineConfig((1, "Male"));
             SessionState received = null;
             _sut.OnSessionReady.AddListener(s => received = s);
 
@@ -73,7 +73,7 @@ namespace Study.Tests.EditMode
         [Test]
         public void OfflineMode_SessionState_HasCorrectTrialId()
         {
-            var config = MakeOfflineConfig((7, 1, "Male"));
+            var config = MakeOfflineConfig((7, "Male"));
             SessionState received = null;
             _sut.OnSessionReady.AddListener(s => received = s);
 
@@ -85,7 +85,7 @@ namespace Study.Tests.EditMode
         [Test]
         public void OfflineMode_SessionState_HasCorrectGender()
         {
-            var config = MakeOfflineConfig((1, 1, "Female"));
+            var config = MakeOfflineConfig((1, "Female"));
             SessionState received = null;
             _sut.OnSessionReady.AddListener(s => received = s);
 
