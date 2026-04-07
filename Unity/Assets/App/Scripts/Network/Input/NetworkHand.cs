@@ -122,7 +122,7 @@ namespace Application.Scripts.Network.Input
             }
             else
             {
-                handState = (HandState)HandState;
+                handState = HandState;
                 head = new TransformState
                 {
                     Position = _rig.headset.transform.position,
