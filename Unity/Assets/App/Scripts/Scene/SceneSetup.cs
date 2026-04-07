@@ -26,7 +26,7 @@ namespace Application.Scripts.Scene
 
             if (_handoverTrackers != null)
                 foreach (var tracker in _handoverTrackers)
-                    tracker.SetTrialId(_testTrialId);
+                    tracker?.SetTrialId(_testTrialId);
         }
     }
 }

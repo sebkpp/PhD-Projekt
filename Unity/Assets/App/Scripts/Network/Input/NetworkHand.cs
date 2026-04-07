@@ -33,6 +33,7 @@ namespace Application.Scripts.Network.Input
         [Networked] public HandStateNetworked HandState { get; set; }
 
         private NetworkRig _rig;
+        private PlayerVisuals _playerVisuals;
         private ChangeDetector _changeDetector;
 
         /// <summary>
@@ -56,11 +57,10 @@ namespace Application.Scripts.Network.Input
 
         private void Awake()
         {
-            _rig = GetComponentInParent<NetworkRig>();
-
-            var visuals = GetComponentInParent<PlayerVisuals>();
-            if (visuals != null)
-                visuals.AvatarInitialized.AddListener(OnAvatarInitialized);
+            _rig           = GetComponentInParent<NetworkRig>();
+            _playerVisuals = GetComponentInParent<PlayerVisuals>();
+            if (_playerVisuals != null)
+                _playerVisuals.AvatarInitialized.AddListener(OnAvatarInitialized);
         }
 
         private void OnAvatarInitialized(AvatarBoneReference bones)
@@ -71,9 +71,8 @@ namespace Application.Scripts.Network.Input
 
         private void OnDestroy()
         {
-            var visuals = GetComponentInParent<PlayerVisuals>();
-            if (visuals != null)
-                visuals.AvatarInitialized.RemoveListener(OnAvatarInitialized);
+            if (_playerVisuals != null)
+                _playerVisuals.AvatarInitialized.RemoveListener(OnAvatarInitialized);
         }
 
         /// <summary>

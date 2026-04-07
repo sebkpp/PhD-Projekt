@@ -31,8 +31,8 @@ namespace Application.Scripts.Avatar.Driver
 
         private void LateUpdate()
         {
-            if (_localRig != null)
-                Apply(_localRig.RigState);
+            if (_localRig == null || !_initialized) return;
+            Apply(_localRig.RigState);
         }
 
         /// <summary>Called by SceneSetup in Presence-only scenes to enable self-drive.</summary>

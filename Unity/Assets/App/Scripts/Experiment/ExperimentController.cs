@@ -97,7 +97,10 @@ namespace Application.Scripts.Experiment
         private void RPC_StartStudy()
         {
             OnStartExperiment?.Invoke();
-            OnTrialStarted?.Invoke(ExperimentId);
+            if (ExperimentId > 0)
+                OnTrialStarted?.Invoke(ExperimentId);
+            else
+                Debug.LogWarning("[ExperimentController] RPC_StartStudy called with invalid ExperimentId.");
         }
 
         private void TransitionToExperiment()
