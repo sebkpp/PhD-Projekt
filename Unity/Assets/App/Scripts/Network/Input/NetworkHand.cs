@@ -57,6 +57,16 @@ namespace Application.Scripts.Network.Input
         private void Awake()
         {
             _rig = GetComponentInParent<NetworkRig>();
+
+            var visuals = GetComponentInParent<PlayerVisuals>();
+            if (visuals != null)
+                visuals.AvatarInitialized.AddListener(OnAvatarInitialized);
+        }
+
+        private void OnAvatarInitialized(AvatarBoneReference bones)
+        {
+            bool isLeft = side == RigPart.LeftController;
+            AvatarHand = isLeft ? bones.LeftHand : bones.RightHand;
         }
 
         /// <summary>
