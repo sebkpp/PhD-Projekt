@@ -1,6 +1,7 @@
 using Application.Scripts.Avatar;
 using Application.Scripts.Avatar.Driver;
 using Application.Scripts.Avatar.Hardware;
+using Application.Scripts.Avatar.Visuals;
 using Application.Scripts.Interaction.States;
 using Application.Scripts.Network.Input.States;
 using Fusion;
@@ -24,7 +25,7 @@ namespace Application.Scripts.Network.Input
         [SerializeField] private RigPart side;
         public RigPart Side => side;
 
-        [SerializeField] private Application.Scripts.Avatar.Driver.AvatarDriver avatarDriver;
+        [SerializeField] private AvatarDriver avatarDriver;
 
         /// <summary>
         /// The network-synchronized hand pose state.
