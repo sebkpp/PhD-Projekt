@@ -29,6 +29,10 @@ namespace Application.Scripts.Experiment
 
         public static UnityEvent OnStartExperiment = new();
 
+        // Trial lifecycle — consumed by HandoverReporter, DataManager (Study layer)
+        public UnityEvent<int> OnTrialStarted = new(); // payload: trialId
+        public UnityEvent<int> OnTrialEnded   = new(); // payload: trialId
+
         private void OnEnable()
         {
             OnStartExperiment.AddListener(TransitionToExperiment);
@@ -79,10 +83,21 @@ namespace Application.Scripts.Experiment
                 RPC_StartStudy();
             }
         }
+
+        /// <summary>
+        /// Call when a trial ends. Fires OnTrialEnded so Study-layer components
+        /// (BackendService, DataManager) can react without direct coupling.
+        /// </summary>
+        public void EndTrial()
+        {
+            OnTrialEnded?.Invoke(ExperimentId);
+        }
+
         [Rpc]
         private void RPC_StartStudy()
         {
             OnStartExperiment?.Invoke();
+            OnTrialStarted?.Invoke(ExperimentId);
         }
 
         private void TransitionToExperiment()
