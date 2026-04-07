@@ -24,8 +24,9 @@ namespace Application.Scripts.Scene
         {
             _avatarDriver?.SetLocalRig(_hardwareRig);
 
-            foreach (var tracker in _handoverTrackers)
-                tracker.SetTrialId(_testTrialId);
+            if (_handoverTrackers != null)
+                foreach (var tracker in _handoverTrackers)
+                    tracker.SetTrialId(_testTrialId);
         }
     }
 }
