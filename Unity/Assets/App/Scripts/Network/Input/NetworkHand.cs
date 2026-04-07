@@ -69,6 +69,13 @@ namespace Application.Scripts.Network.Input
             AvatarHand = isLeft ? bones.LeftHand : bones.RightHand;
         }
 
+        private void OnDestroy()
+        {
+            var visuals = GetComponentInParent<PlayerVisuals>();
+            if (visuals != null)
+                visuals.AvatarInitialized.RemoveListener(OnAvatarInitialized);
+        }
+
         /// <summary>
         /// Called when the networked object has been spawned.
         /// Initializes change detection for tracking replicated property updates.
