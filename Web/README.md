@@ -1,29 +1,43 @@
 # VR Study Management — Web Application
 
-## What is this?
-
-This application is the web-based control and analysis platform for a research project investigating **virtual object handovers in VR**. In the underlying VR application (built in Unity), two participants wearing VR headsets interact with each other and hand virtual objects back and forth. This web platform is used to:
-
-- **Plan and configure** studies, experiments, and trials before they take place
-- **Monitor and control** live trial sessions (start/stop trials, track participant readiness)
-- **Collect data** from the VR application (handover events, eye tracking, questionnaire responses)
-- **Analyze results** after the study is complete (statistical analysis, visualizations, data export)
-
-The platform is built for study conductors and researchers — no programming knowledge is required to use it.
+Part of the [projekt_ws24](../README.md) research project. This is the browser-based control and analysis platform used to plan studies, run live sessions, and analyse collected data.
 
 ---
 
-## Architecture Overview
+## Web Architecture
 
-The application consists of two parts that run simultaneously:
+The application has two processes that run simultaneously:
 
 | Component | Technology | Default Port |
 |---|---|---|
-| **Backend** | Python / FastAPI | `5000` |
+| **Backend** | Python 3.12 / FastAPI | `5000` |
 | **Frontend** | React / Vite | `5173` |
 | **Database** | PostgreSQL 17 | `5432` |
 
-The frontend runs in your browser and communicates with the backend via a REST API. The backend stores all data in a PostgreSQL database and also serves as the interface for the Unity VR application.
+The frontend runs in your browser and communicates with the backend via a REST API. The Vite dev proxy forwards all `/api/*` requests to the backend at port 5000. The backend stores all data in PostgreSQL and also accepts data from the Unity VR application (handover events, eye tracking).
+
+### Backend layers (`Web/Backend/`)
+
+| Layer | Location | Purpose |
+|---|---|---|
+| Routes | `routes/` | FastAPI routers, one file per resource; registered automatically via `routes/__init__.py` |
+| Services | `services/` | Business logic, called by routes |
+| DB repositories | `db/` | SQLAlchemy query functions |
+| Models | `models/` | SQLAlchemy ORM models + Pydantic request/response schemas |
+| Session | `db_session.py` | Engine + `SessionLocal`; selects `.env` vs `.env.test` automatically |
+| App entry | `app.py` | FastAPI instance, CORS, lifespan (creates tables, starts cleanup) |
+
+### Frontend structure (`Web/src/`)
+
+| Location | Purpose |
+|---|---|
+| `AppRouter.jsx` | All client-side routes; main admin paths are under `/study/:studyId/...` |
+| `features/` | Feature-per-folder: study, experiment, participant, questionnaire, Analysis, overview, configuration, shared |
+| `components/` | Shared UI components |
+| `context/` | React context / global state |
+| `layout/` | Header, navigation shell |
+
+UI libraries: MUI, Ant Design, Tailwind CSS. Charts: Recharts, Chart.js, ApexCharts, Plotly.
 
 ---
 
