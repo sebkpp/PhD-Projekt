@@ -79,6 +79,19 @@ Open **http://localhost:5173** in your browser.
 
 ---
 
+## Branch Strategy
+
+| Branch | Purpose |
+|---|---|
+| `main` | Stable releases — only receives merges from `development` |
+| `development` | Integration branch — all feature and fix branches merge here first |
+| `feature/*` | New features, branched off `development` |
+| `fix/*` | Bug fixes, branched off `development` |
+
+New work is always branched from `development`. Once a set of changes has been tested and is considered stable, `development` is merged into `main`. Never commit directly to `main`.
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
