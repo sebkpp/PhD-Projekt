@@ -25,7 +25,8 @@ def get_db():
     response_model=List[AvatarVisibilityResponse],
     status_code=status.HTTP_200_OK,
     summary="List all avatar visibility entries",
-    description="Retrieve a list of all avatar visibility entries."
+    description="Retrieve a list of all avatar visibility entries.",
+    responses={500: {"description": "Internal server error"}},
 )
 async def get_avatar_visibility_route(
         db=Depends(get_db)

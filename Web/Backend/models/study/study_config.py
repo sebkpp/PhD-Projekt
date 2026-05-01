@@ -42,4 +42,4 @@ class StudyConfigResponse(BaseModel):
     study_type: Optional[str] = Field('stimulus_comparison', description="Type: avatar_comparison | stimulus_comparison | combination_comparison")
 
     class Config:
-        orm_mode = True
+        from_attributes = True

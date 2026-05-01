@@ -45,12 +45,25 @@ class QuestionnaireResponseModel(BaseModel):
     status: str
     data: Optional[Any] = None
 
+class QuestionnaireCreateResponse(BaseModel):
+    status: str
+    questionnaire_id: int
+    name: str
+    scale_type: str
+    scale_min: float
+    scale_max: float
+    items: List[Any]
+
+class QuestionnairesListResponse(BaseModel):
+    questionnaires: List[Any]
+
 class QuestionnaireDoneResponse(BaseModel):
     allDone: bool
 
 
 @router.post(
     "/submit",
+    response_model=QuestionnaireResponseModel,
     status_code=status.HTTP_200_OK,
     summary="Submit questionnaire responses",
     description="Submit responses for a questionnaire by a participant in a trial."
@@ -67,7 +80,7 @@ async def submit_questionnaire(
             questionnaire_name=payload.questionnaire_name,
             responses=payload.responses
         )
-        return result
+        return QuestionnaireResponseModel(status="ok", data=result)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
@@ -93,6 +106,7 @@ async def get_questionnaire_responses(
 
 @router.post(
     "/",
+    response_model=QuestionnaireCreateResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Create a new questionnaire",
     description="Create a new questionnaire with a name and items."
@@ -102,7 +116,6 @@ async def create_questionnaire(
         db=Depends(get_db)
 ):
     try:
-        # Items können Strings oder QuestionnaireItemCreateRequest-Objekte sein
         items = [item.model_dump() if hasattr(item, 'model_dump') else item for item in payload.items]
         questionnaire = create_questionnaire_with_items(
             db, payload.name, items,
@@ -127,6 +140,7 @@ async def create_questionnaire(
 
 @router.get(
     "/",
+    response_model=QuestionnaireResponseModel,
     status_code=status.HTTP_200_OK,
     summary="List all questionnaires",
     description="Retrieve all available questionnaires."
@@ -181,6 +195,7 @@ async def check_questionnaires_trial_done(
 
 @router.get(
     "/experiments/{experiment_id}/participants/{participant_id}/questionnaires",
+    response_model=QuestionnairesListResponse,
     status_code=status.HTTP_200_OK,
     summary="Get questionnaires for experiment and participant",
     description="Retrieve all questionnaires for a given experiment and participant."
@@ -203,6 +218,7 @@ async def get_questionnaires_for_experiment_route(
 
 @router.get(
     "/experiments/{experiment_id}/questionnaire-responses",
+    response_model=QuestionnaireResponseModel,
     status_code=status.HTTP_200_OK,
     summary="Get questionnaire responses for experiment",
     description="Retrieve all questionnaire responses for a given experiment."
@@ -219,9 +235,11 @@ async def get_questionnaire_responses_for_experiment_route(
 
 @router.get(
     "/{questionnaire_id}",
+    response_model=QuestionnaireResponseModel,
     status_code=status.HTTP_200_OK,
     summary="Get a single questionnaire by ID",
-    description="Retrieve a questionnaire and its items by questionnaire ID."
+    description="Retrieve a questionnaire and its items by questionnaire ID.",
+    responses={404: {"description": "Questionnaire not found"}, 500: {"description": "Internal server error"}}
 )
 async def get_questionnaire_by_id_route(
         questionnaire_id: int = Path(..., description="Questionnaire ID"),
@@ -231,7 +249,7 @@ async def get_questionnaire_by_id_route(
         questionnaire = get_questionnaire_by_id(db, questionnaire_id)
         if not questionnaire:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Questionnaire not found")
-        return questionnaire.to_dict()
+        return QuestionnaireResponseModel(status="ok", data=questionnaire.to_dict())
     except HTTPException:
         raise
     except Exception as e:

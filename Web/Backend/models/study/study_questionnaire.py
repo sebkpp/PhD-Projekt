@@ -26,4 +26,4 @@ class StudyQuestionnaireResponse(BaseModel):
     name: Optional[str] = Field(None, description="Name of the questionnaire")
 
     class Config:
-        orm_mode = True
+        from_attributes = True

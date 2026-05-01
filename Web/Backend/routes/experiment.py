@@ -1,9 +1,10 @@
 ﻿from typing import Any, List, Optional
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Path
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
 
+from Backend.models.experiment import ExperimentResponse
 from Backend.models.trial.trial import TrialCreateRequest
 from Backend.services.experiment_service import create_experiment, get_experiment_by_id, \
     save_experiment_questionnaires, set_experiment_started_at, set_experiment_completed_at, \
@@ -21,19 +22,9 @@ def get_db():
         db.close()
 
 class ExperimentCreateRequest(BaseModel):
-    name: str
+    description: Optional[str] = None
     study_id: int
-    description: Optional[str] = None
     researcher: Optional[str] = None
-
-class ExperimentResponse(BaseModel):
-    experiment_id: int
-    description: Optional[str] = None
-    researcher: Optional[str] = None
-    study_id: Optional[int] = None
-
-    class Config:
-        from_attributes = True
 
 class ExperimentIdResponse(BaseModel):
     experiment_id: int
@@ -84,7 +75,12 @@ class NextExperimentResponse(BaseModel):
     response_model=NextExperimentResponse,
     status_code=status.HTTP_200_OK,
     summary="Get next open experiment",
-    description="Returns the oldest open experiment with its next unfinished trial and slot gender data."
+    description="Returns the oldest open experiment with its next unfinished trial and slot gender data.",
+    responses={
+        404: {"description": "No open experiment or unfinished trial"},
+        409: {"description": "Slots not assigned"},
+        500: {"description": "Internal server error"},
+    }
 )
 async def get_next_experiment_route(db: Session = Depends(get_db)) -> NextExperimentResponse:
     try:
@@ -104,10 +100,14 @@ async def get_next_experiment_route(db: Session = Depends(get_db)) -> NextExperi
     response_model=ExperimentResponse,
     status_code=status.HTTP_200_OK,
     summary="Get Experiment by ID",
-    description="Retrieve an experiment by its ID."
+    description="Retrieve an experiment by its ID.",
+    responses={
+        404: {"description": "Experiment not found"},
+        500: {"description": "Internal server error"},
+    }
 )
 async def get_experiment_route(
-        experiment_id: int,
+        experiment_id: int = Path(..., description="Numeric ID of the experiment"),
         db: Session = Depends(get_db)
 ) -> ExperimentResponse:
     try:
@@ -125,11 +125,15 @@ async def get_experiment_route(
     response_model=MessageResponse,
     status_code=status.HTTP_200_OK,
     summary="Update Linked Questionnaires",
-    description="Update the questionnaires linked to a specific experiment."
+    description="Update the questionnaires linked to a specific experiment.",
+    responses={
+        404: {"description": "Experiment not found"},
+        500: {"description": "Internal server error"},
+    }
 )
 async def update_linked_questionnaires(
-        experiment_id: int,
-        questionnaire_ids: List[int],
+        experiment_id: int = Path(..., description="Numeric ID of the experiment"),
+        questionnaire_ids: List[int] = ...,
         db: Session = Depends(get_db)
 ) -> MessageResponse:
     experiment = get_experiment_by_id(db, experiment_id)
@@ -149,10 +153,14 @@ async def update_linked_questionnaires(
     response_model=MessageResponse,
     status_code=status.HTTP_200_OK,
     summary="Set Experiment Started",
-    description="Set the started_at timestamp for a specific experiment."
+    description="Set the started_at timestamp for a specific experiment.",
+    responses={
+        404: {"description": "Experiment not found"},
+        500: {"description": "Internal server error"},
+    }
 )
 async def set_experiment_started(
-        experiment_id: int,
+        experiment_id: int = Path(..., description="Numeric ID of the experiment"),
         db: Session = Depends(get_db)
 ) -> MessageResponse:
     try:
@@ -169,10 +177,14 @@ async def set_experiment_started(
     response_model=MessageResponse,
     status_code=status.HTTP_200_OK,
     summary="Set Experiment Completed",
-    description="Set the completed_at timestamp for a specific experiment."
+    description="Set the completed_at timestamp for a specific experiment.",
+    responses={
+        404: {"description": "Experiment not found"},
+        500: {"description": "Internal server error"},
+    }
 )
 async def set_experiment_completed(
-        experiment_id: int,
+        experiment_id: int = Path(..., description="Numeric ID of the experiment"),
         db: Session = Depends(get_db)
 ) -> MessageResponse:
     try:

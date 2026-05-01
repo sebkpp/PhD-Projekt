@@ -27,4 +27,4 @@ class StudyStimuliResponse(BaseModel):
     name: Optional[str] = Field(None, description="Name of the stimulus type")
 
     class Config:
-        orm_mode = True
+        from_attributes = True

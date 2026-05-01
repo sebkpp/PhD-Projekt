@@ -47,7 +47,24 @@ class TrialCreateRequest(BaseModel):
     trials: List[Dict[str, Any]]
     questionnaires: Optional[List[Dict[str, int]]] = []
 
+class TrialStimulusResponse(BaseModel):
+    name: str
+    stimulus_id: int
+    stimulus_type: str
+
+
+class TrialSlotResponse(BaseModel):
+    trial_slot_id: int
+    slot: int
+    stimuli: List[TrialStimulusResponse]
+
+
 class TrialResponse(BaseModel):
-    # Passe die Felder an dein Modell an
     trial_id: int
-    # weitere Felder nach Bedarf
+    experiment_id: int
+    trial_number: int
+    is_finished: bool
+    slots: List[TrialSlotResponse]
+
+    class Config:
+        from_attributes = True

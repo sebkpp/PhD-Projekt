@@ -56,4 +56,4 @@ class ExperimentResponse(BaseModel):
     trials: Optional[List] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
