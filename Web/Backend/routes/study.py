@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, HTTPException, status, Depends
+﻿from fastapi import APIRouter, HTTPException, status, Depends, Path
 from typing import List
 
 from sqlalchemy.orm import Session
@@ -46,18 +46,20 @@ async def list_studies(
 
 @router.get(
     "/{study_id}",
+    response_model=StudyResponse,
     status_code=status.HTTP_200_OK,
     summary="Get study by ID",
-    description="Retrieve a study by its ID."
+    description="Retrieve a study by its ID.",
+    responses={404: {"description": "Study not found"}, 500: {"description": "Internal server error"}}
 )
 async def get_study_route(
-        study_id: int,
+        study_id: int = Path(description="The ID of the study to retrieve"),
         db: Session = Depends(get_db)
-):
+) -> StudyResponse:
     study = get_study_by_id(db, study_id)
     if not study:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Study not found")
-    return study.to_dict()
+    return study
 
 
 @router.post(
@@ -88,8 +90,8 @@ async def create_study_route(
     description="Update the details of an existing study by its ID."
 )
 async def update_study_route(
-        study_id: int,
         payload: StudyUpdate,
+        study_id: int = Path(description="The ID of the study to update"),
         db: Session = Depends(get_db)
 ) -> StudyResponse:
     try:

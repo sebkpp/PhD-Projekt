@@ -86,4 +86,4 @@ class StudyResponse(BaseModel):
     stimuli: Optional[List[StudyStimuliResponse]] = Field(None, description="List of stimuli types associated with the study")
 
     class Config:
-        orm_mode = True
+        from_attributes = True

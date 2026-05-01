@@ -108,6 +108,26 @@ namespace Application.Scripts.Network.Interactable
             onObjectDropped?.Invoke();
         }
 
+        /// <summary>
+        /// Sent by the receiver client so the state authority sets ReceiverGrabber.
+        /// [Networked] properties must only be written from the state authority.
+        /// </summary>
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        private void RPC_SetReceiverGrabber(NetworkedGrabber grabber, int receiverPlayerId)
+        {
+            ReceiverGrabber = grabber;
+            GetComponent<HandoverTracker>()?.OnReceiverFirstContact(receiverPlayerId);
+        }
+
+        /// <summary>
+        /// Sent by the receiver client when they release so the state authority clears ReceiverGrabber.
+        /// </summary>
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        private void RPC_ClearReceiverGrabber()
+        {
+            ReceiverGrabber = null;
+        }
+
         private void ApplySpringForces(float giverGrip, float receiverGrip)
         {
             if (grabbable.rb == null) return;
@@ -184,7 +204,8 @@ namespace Application.Scripts.Network.Interactable
         private void ExtrapolateWhileTakingAuthority()
         {
             if (_localGrabHand == null) return;
-            // Keep visual representation following the local hand while waiting for authority
+            // Follow local hand position visually while waiting for state authority transfer
+            transform.position = Vector3.Lerp(transform.position, _localGrabHand.transform.position, 0.3f);
         }
 
         #region Local grab API (called by GrabHand)
@@ -199,11 +220,10 @@ namespace Application.Scripts.Network.Interactable
             }
             else
             {
-                // Second grabber becomes the receiver (dual-grip)
-                ReceiverGrabber = grabHand.networkGrabber;
-                // Notify HandoverTracker — receiver's first contact is when they initiate grab
-                GetComponent<HandoverTracker>()?.OnReceiverFirstContact(
-                    grabHand.networkGrabber.Object.InputAuthority.PlayerId);
+                // Second grabber becomes the receiver — ask state authority to set the property
+                // so we don't write [Networked] properties from a non-authority client
+                int receiverPlayerId = grabHand.networkGrabber.Object.InputAuthority.PlayerId;
+                RPC_SetReceiverGrabber(grabHand.networkGrabber, receiverPlayerId);
             }
         }
 
@@ -225,6 +245,8 @@ namespace Application.Scripts.Network.Interactable
 
             if (GiverGrabber != null && GiverGrabber == grabHand.networkGrabber)
             {
+                // Giver releases — should already have state authority from RequestGiverGrab
+                if (!Object.HasStateAuthority) return;
                 GiverGrabber = ReceiverGrabber; // promote receiver if any
                 ReceiverGrabber = null;
                 if (GiverGrabber == null)
@@ -232,7 +254,8 @@ namespace Application.Scripts.Network.Interactable
             }
             else if (ReceiverGrabber != null && ReceiverGrabber == grabHand.networkGrabber)
             {
-                ReceiverGrabber = null;
+                // Receiver releases — ask state authority to clear the property
+                RPC_ClearReceiverGrabber();
             }
         }
 

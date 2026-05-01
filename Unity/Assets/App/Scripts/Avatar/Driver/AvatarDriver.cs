@@ -25,6 +25,19 @@ namespace Application.Scripts.Avatar.Driver
         private float _groundY; // avatar root Y after calibration, kept constant each frame
         private int _lastBodyDriveFrame = -1;
 
+        // Optional local rig — when set, AvatarDriver drives itself each frame.
+        // Leave null in networked scenes; NetworkHand.Render() drives it instead.
+        [SerializeField] private HardwareRig _localRig;
+
+        private void LateUpdate()
+        {
+            if (_localRig == null || !_initialized) return;
+            Apply(_localRig.RigState);
+        }
+
+        /// <summary>Called by SceneSetup in Presence-only scenes to enable self-drive.</summary>
+        public void SetLocalRig(HardwareRig rig) => _localRig = rig;
+
         // ------------------------------------------------------------------ //
         //  Initialization
         // ------------------------------------------------------------------ //

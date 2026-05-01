@@ -4,8 +4,6 @@ from pydantic import BaseModel
 
 from Backend.db_session import SessionLocal
 from Backend.services.stimuli_service import get_all_stimuli
-import traceback
-
 router = APIRouter(prefix="/stimuli", tags=["stimuli"])
 
 class StimulusResponse(BaseModel):
@@ -13,7 +11,7 @@ class StimulusResponse(BaseModel):
     type_name: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 def get_db():
     db = SessionLocal()
@@ -28,7 +26,8 @@ def get_db():
     response_model=List[StimulusResponse],
     status_code=status.HTTP_200_OK,
     summary="List all stimuli types",
-    description="Retrieve a list of all available stimuli types."
+    description="Retrieve a list of all available stimuli types.",
+    responses={500: {"description": "Internal server error"}},
 )
 async def list_stimuli(
         db=Depends(get_db)

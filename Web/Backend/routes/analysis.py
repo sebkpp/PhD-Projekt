@@ -1,6 +1,6 @@
 import io
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, Path, status, Depends
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
@@ -27,6 +27,12 @@ from Backend.services.data_analysis.cross_study_service import compare_studies_d
 from Backend.services.data_analysis.exploratory_service import run_pca, run_clustering
 from Backend.services.data_analysis.export_service import export_handovers_csv, export_handovers_xlsx
 from Backend.db.handover_repository import HandoverRepository
+from Backend.models.analysis import (
+    CorrelationMatrixResponse,
+    CrossStudyResponse,
+    PCAResponse,
+    ClusteringResponse,
+)
 
 router = APIRouter(prefix="/analysis", tags=["analysis"])
 
@@ -41,12 +47,12 @@ def get_db():
 
 @router.get(
     "/questionnaires",
-    status_code=status.HTTP_200_OK,
-    summary="Questionnaire analysis (all)",
-    description="Return questionnaire analysis for all studies/experiments (not implemented).",
+    status_code=status.HTTP_501_NOT_IMPLEMENTED,
+    summary="Questionnaire analysis (all) — not implemented",
+    description="Aggregate questionnaire analysis across all studies/experiments. This endpoint is not yet implemented.",
 )
 async def questionnaire_analysis():
-    return None
+    raise HTTPException(status_code=501, detail="Not yet implemented")
 
 
 @router.get(
@@ -54,8 +60,12 @@ async def questionnaire_analysis():
     status_code=status.HTTP_200_OK,
     summary="Questionnaire analysis for a study",
     description="Return questionnaire analysis aggregated across all experiments in a study.",
+    responses={404: {"description": "No data found"}, 500: {"description": "Internal server error"}},
 )
-async def study_questionnaires_analysis(study_id: int, db=Depends(get_db)):
+async def study_questionnaires_analysis(
+        study_id: int = Path(..., description="Numeric ID of the study"),
+        db=Depends(get_db),
+):
     try:
         result = analyze_study_questionnaires(db, study_id)
         if not result:
@@ -73,10 +83,11 @@ async def study_questionnaires_analysis(study_id: int, db=Depends(get_db)):
     status_code=status.HTTP_200_OK,
     summary="Questionnaire analysis for an experiment",
     description="Return questionnaire analysis for a specific experiment.",
+    responses={404: {"description": "No data found"}, 500: {"description": "Internal server error"}},
 )
 async def experiment_questionnaire_analysis(
-        experiment_id: int,
-        db=Depends(get_db)
+        experiment_id: int = Path(..., description="Numeric ID of the experiment"),
+        db=Depends(get_db),
 ):
     try:
         result = analyze_experiment_questionnaires(db, experiment_id)
@@ -92,12 +103,12 @@ async def experiment_questionnaire_analysis(
 
 @router.get(
     "/performance",
-    status_code=status.HTTP_200_OK,
-    summary="Performance analysis (all)",
-    description="Return performance analysis for all studies/experiments (not implemented).",
+    status_code=status.HTTP_501_NOT_IMPLEMENTED,
+    summary="Performance analysis (all) — not implemented",
+    description="Aggregate performance analysis across all studies/experiments. This endpoint is not yet implemented.",
 )
 async def all_performance_analysis():
-    return None
+    raise HTTPException(status_code=501, detail="Not yet implemented")
 
 
 @router.get(
@@ -105,8 +116,12 @@ async def all_performance_analysis():
     status_code=status.HTTP_200_OK,
     summary="Performance analysis for a study",
     description="Return handover performance analysis aggregated across all experiments in a study.",
+    responses={404: {"description": "No data found"}, 500: {"description": "Internal server error"}},
 )
-async def study_performance_analysis(study_id: int, db=Depends(get_db)):
+async def study_performance_analysis(
+        study_id: int = Path(..., description="Numeric ID of the study"),
+        db=Depends(get_db),
+):
     try:
         result = analyze_study_performance(db, study_id)
         if not result:
@@ -124,10 +139,11 @@ async def study_performance_analysis(study_id: int, db=Depends(get_db)):
     status_code=status.HTTP_200_OK,
     summary="Performance analysis for an experiment",
     description="Return performance analysis for a specific experiment.",
+    responses={404: {"description": "No data found"}, 500: {"description": "Internal server error"}},
 )
 async def experiment_performance_analysis(
-        experiment_id: int,
-        db=Depends(get_db)
+        experiment_id: int = Path(..., description="Numeric ID of the experiment"),
+        db=Depends(get_db),
 ):
     try:
         result = analyze_experiment_performance(db, experiment_id)
@@ -143,12 +159,12 @@ async def experiment_performance_analysis(
 
 @router.get(
     "/eyetracking",
-    status_code=status.HTTP_200_OK,
-    summary="Eyetracking analysis (all)",
-    description="Return eyetracking analysis for all studies/experiments (not implemented).",
+    status_code=status.HTTP_501_NOT_IMPLEMENTED,
+    summary="Eyetracking analysis (all) — not implemented",
+    description="Aggregate eye-tracking analysis across all studies/experiments. This endpoint is not yet implemented.",
 )
 async def all_eyetracking_analysis():
-    return None
+    raise HTTPException(status_code=501, detail="Not yet implemented")
 
 
 @router.get(

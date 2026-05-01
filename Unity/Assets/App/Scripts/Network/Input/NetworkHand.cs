@@ -1,6 +1,7 @@
 using Application.Scripts.Avatar;
 using Application.Scripts.Avatar.Driver;
 using Application.Scripts.Avatar.Hardware;
+using Application.Scripts.Avatar.Visuals;
 using Application.Scripts.Interaction.States;
 using Application.Scripts.Network.Input.States;
 using Fusion;
@@ -24,7 +25,7 @@ namespace Application.Scripts.Network.Input
         [SerializeField] private RigPart side;
         public RigPart Side => side;
 
-        [SerializeField] private Application.Scripts.Avatar.Driver.AvatarDriver avatarDriver;
+        [SerializeField] private AvatarDriver avatarDriver;
 
         /// <summary>
         /// The network-synchronized hand pose state.
@@ -33,6 +34,7 @@ namespace Application.Scripts.Network.Input
         [Networked] public HandStateNetworked HandState { get; set; }
 
         private NetworkRig _rig;
+        private PlayerVisuals _playerVisuals;
         private ChangeDetector _changeDetector;
 
         /// <summary>
@@ -56,7 +58,22 @@ namespace Application.Scripts.Network.Input
 
         private void Awake()
         {
-            _rig = GetComponentInParent<NetworkRig>();
+            _rig           = GetComponentInParent<NetworkRig>();
+            _playerVisuals = GetComponentInParent<PlayerVisuals>();
+            if (_playerVisuals != null)
+                _playerVisuals.AvatarInitialized.AddListener(OnAvatarInitialized);
+        }
+
+        private void OnAvatarInitialized(AvatarBoneReference bones)
+        {
+            bool isLeft = side == RigPart.LeftController;
+            AvatarHand = isLeft ? bones.LeftHand : bones.RightHand;
+        }
+
+        private void OnDestroy()
+        {
+            if (_playerVisuals != null)
+                _playerVisuals.AvatarInitialized.RemoveListener(OnAvatarInitialized);
         }
 
         /// <summary>
@@ -106,7 +123,7 @@ namespace Application.Scripts.Network.Input
             }
             else
             {
-                handState = (HandState)HandState;
+                handState = HandState;
                 head = new TransformState
                 {
                     Position = _rig.headset.transform.position,

@@ -1,6 +1,6 @@
-﻿from typing import List
+﻿from typing import Any, Dict, List
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, Path, status, Depends
 from pydantic import BaseModel
 
 from Backend.services.participant_service import (
@@ -41,6 +41,24 @@ class SubmitParticipantRequest(BaseModel):
     slot: int
     participant_id: int
 
+class JoinResponse(BaseModel):
+    status: str
+    player_id: str
+
+class HeartbeatResponse(BaseModel):
+    status: str
+    player_id: str
+
+class SlotReadinessResponse(BaseModel):
+    slot: str
+    ready: bool
+
+class ParticipantIdResponse(BaseModel):
+    participant_id: int
+
+class StatusResponse(BaseModel):
+    status: str
+
 readiness_status = {}
 
 def get_db():
@@ -52,9 +70,11 @@ def get_db():
 
 @router.post(
     "/join",
+    response_model=JoinResponse,
     status_code=status.HTTP_200_OK,
     summary="Participant join",
-    description="Set a participant as joined in the system."
+    description="Set a participant as joined in the system.",
+    responses={400: {"description": "Invalid participant ID"}}
 )
 async def player_join(
         payload: PlayerJoinRequest
@@ -65,9 +85,11 @@ async def player_join(
 
 @router.post(
     "/heartbeat",
+    response_model=HeartbeatResponse,
     status_code=status.HTTP_200_OK,
     summary="Participant Heartbeat",
-    description="Notify the system that a participant is still active."
+    description="Notify the system that a participant is still active.",
+    responses={400: {"description": "Invalid participant ID"}}
 )
 async def player_heartbeat(
         payload: HeartbeatRequest
@@ -79,6 +101,7 @@ async def player_heartbeat(
 
 @router.get(
     "/connection_status",
+    response_model=Dict[str, bool],
     status_code=status.HTTP_200_OK,
     summary="Get Connection Status",
     description="Retrieve the current connection status of participants."
@@ -89,16 +112,17 @@ async def connection_status():
 
 @router.get(
     "/readiness_status",
+    response_model=Dict[str, bool],
     status_code=status.HTTP_200_OK,
     summary="Get Readiness Status",
     description="Retrieve the readiness status of all slots."
-
 )
 async def get_readiness_status():
     return readiness_status
 
 @router.post(
     "/readiness_status",
+    response_model=SlotReadinessResponse,
     status_code=status.HTTP_200_OK,
     summary="Set Readiness Status",
     description="Set the readiness status for a specific slot."

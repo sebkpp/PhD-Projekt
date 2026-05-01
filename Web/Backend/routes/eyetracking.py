@@ -42,6 +42,10 @@ class EyeTrackingResponse(BaseModel):
     status_code=status.HTTP_201_CREATED,
     summary="Save Eye-Tracking fixation event",
     description="Save a single AOI fixation event from Unity. handover_id, participant_id, and aoi_id must exist.",
+    responses={
+        404: {"description": "Handover, participant, or AOI not found"},
+        500: {"description": "Internal server error"},
+    },
 )
 async def create_eye_tracking(
         payload: EyeTrackingCreateRequest,

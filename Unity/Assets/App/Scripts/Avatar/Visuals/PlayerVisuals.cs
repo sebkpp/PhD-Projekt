@@ -2,7 +2,6 @@ using Application.Scripts.Avatar.Driver;
 using Application.Scripts.Avatar.Mapping;
 using Application.Scripts.Avatar.Utils;
 using Application.Scripts.Experiment;
-using Application.Scripts.Network.Input;
 using Application.Scripts.Avatar;
 using UnityEngine;
 using UnityEngine.Events;
@@ -81,12 +80,6 @@ namespace Application.Scripts.Avatar.Visuals
 
             if (_avatarDriver != null && _avatarConfigReference?.Config != null)
                 _avatarDriver.Initialize(_boneRef, _avatarConfigReference.Config, verticalOffset);
-
-            foreach (NetworkHand nh in GetComponentsInChildren<NetworkHand>(includeInactive: true))
-            {
-                bool isLeft = nh.Side == RigPart.LeftController;
-                nh.AvatarHand = isLeft ? _boneRef.LeftHand : _boneRef.RightHand;
-            }
 
             Debug.Log($"<color=#ADD8E6>[Avatar]</color> Avatar swapped: {prefab.name} ({_gender})");
             AvatarInitialized?.Invoke(_boneRef);

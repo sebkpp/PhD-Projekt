@@ -2,7 +2,6 @@ using Application.Scripts.Avatar.Data;
 using Application.Scripts.Avatar.Hardware;
 using Application.Scripts.InteractableObject;
 using Application.Scripts.Network.Interaction;
-using Application.Scripts.Network.Interactable;
 using UnityEngine;
 using UnityEngine.XR.Hands;
 
@@ -24,7 +23,7 @@ namespace Application.Scripts.Avatar.Grab
         public float EffectiveGrip { get; private set; }
 
         /// <summary>The object currently being grabbed (or null).</summary>
-        public NetworkGrabbableObject HeldObject { get; private set; }
+        public Grabbable HeldObject { get; private set; }
 
         // Set by NetworkedGrabber.Spawned() after network spawn
         [HideInInspector] public NetworkedGrabber networkGrabber;
@@ -137,20 +136,19 @@ namespace Application.Scripts.Avatar.Grab
 
         private void TryGrab(Grabbable grabbable)
         {
-            NetworkGrabbableObject netGrabbable = grabbable.networkGrabbable;
-            if (netGrabbable == null) return;
-
             _isGrabbing = true;
-            HeldObject  = netGrabbable;
-            netGrabbable.LocalGrab(this);
+            HeldObject  = grabbable;
+            grabbable.LockObjectPhysics();
             grabbable.onGrab?.Invoke();
+            grabbable.networkGrabbable?.LocalGrab(this); // optional network hook
         }
 
         private void TryUngrab()
         {
             if (HeldObject == null) return;
-            HeldObject.LocalUngrab(this);
-            HeldObject.grabbable?.onUngrab?.Invoke();
+            HeldObject.networkGrabbable?.LocalUngrab(this); // optional network hook
+            HeldObject.UnlockObjectPhysics();
+            HeldObject.onUngrab?.Invoke();
             _candidateGrabbable?.ClearContacts(this);
             HeldObject  = null;
             _isGrabbing = false;
