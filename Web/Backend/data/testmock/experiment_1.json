@@ -1,0 +1,182 @@
+[
+  {
+    "experiment_id": 1,
+    "study_id": 1,
+    "description": "Experiment 1",
+    "created_at": "2025-09-07 09:00:00.000",
+    "started_at": "2025-09-08 10:00:00.000",
+    "completed_at": "2025-09-08 10:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 2,
+    "study_id": 1,
+    "description": "Experiment 2",
+    "created_at": "2025-09-07 09:00:00.000",
+    "started_at": "2025-09-08 11:00:00.000",
+    "completed_at": "2025-09-08 11:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 3,
+    "study_id": 1,
+    "description": "Experiment 3",
+    "created_at": "2025-09-07 09:00:00.000",
+    "started_at": "2025-09-09 10:00:00.000",
+    "completed_at": "2025-09-09 10:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 4,
+    "study_id": 1,
+    "description": "Experiment 4",
+    "created_at": "2025-09-07 09:00:00.000",
+    "started_at": "2025-09-09 11:00:00.000",
+    "completed_at": "2025-09-09 11:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 5,
+    "study_id": 1,
+    "description": "Experiment 5",
+    "created_at": "2025-09-08 09:00:00.000",
+    "started_at": "2025-09-10 10:00:00.000",
+    "completed_at": "2025-09-10 10:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 6,
+    "study_id": 1,
+    "description": "Experiment 6",
+    "created_at": "2025-09-08 09:00:00.000",
+    "started_at": "2025-09-10 11:00:00.000",
+    "completed_at": "2025-09-10 11:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 7,
+    "study_id": 1,
+    "description": "Experiment 7",
+    "created_at": "2025-09-09 09:00:00.000",
+    "started_at": "2025-09-11 10:00:00.000",
+    "completed_at": "2025-09-11 10:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 8,
+    "study_id": 1,
+    "description": "Experiment 8",
+    "created_at": "2025-09-09 09:00:00.000",
+    "started_at": "2025-09-11 11:00:00.000",
+    "completed_at": "2025-09-11 11:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 9,
+    "study_id": 1,
+    "description": "Experiment 9",
+    "created_at": "2025-09-09 09:00:00.000",
+    "started_at": "2025-09-12 10:00:00.000",
+    "completed_at": "2025-09-12 10:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 10,
+    "study_id": 1,
+    "description": "Experiment 10",
+    "created_at": "2025-09-09 09:00:00.000",
+    "started_at": "2025-09-12 11:00:00.000",
+    "completed_at": "2025-09-12 11:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 11,
+    "study_id": 1,
+    "description": "Experiment 11",
+    "created_at": "2025-09-10 09:00:00.000",
+    "started_at": "2025-09-15 10:00:00.000",
+    "completed_at": "2025-09-15 10:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 12,
+    "study_id": 1,
+    "description": "Experiment 12",
+    "created_at": "2025-09-10 09:00:00.000",
+    "started_at": "2025-09-15 11:00:00.000",
+    "completed_at": "2025-09-15 11:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 13,
+    "study_id": 1,
+    "description": "Experiment 13",
+    "created_at": "2025-09-11 09:00:00.000",
+    "started_at": "2025-09-16 10:00:00.000",
+    "completed_at": "2025-09-16 10:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 14,
+    "study_id": 1,
+    "description": "Experiment 14",
+    "created_at": "2025-09-11 09:00:00.000",
+    "started_at": "2025-09-16 11:00:00.000",
+    "completed_at": "2025-09-16 11:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 15,
+    "study_id": 1,
+    "description": "Experiment 15",
+    "created_at": "2025-09-12 09:00:00.000",
+    "started_at": "2025-09-17 10:00:00.000",
+    "completed_at": "2025-09-17 10:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 16,
+    "study_id": 1,
+    "description": "Experiment 16",
+    "created_at": "2025-09-12 09:00:00.000",
+    "started_at": "2025-09-17 11:00:00.000",
+    "completed_at": "2025-09-17 11:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 17,
+    "study_id": 1,
+    "description": "Experiment 17",
+    "created_at": "2025-09-12 09:00:00.000",
+    "started_at": "2025-09-18 10:00:00.000",
+    "completed_at": "2025-09-18 10:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 18,
+    "study_id": 1,
+    "description": "Experiment 18",
+    "created_at": "2025-09-13 09:00:00.000",
+    "started_at": "2025-09-18 11:00:00.000",
+    "completed_at": "2025-09-18 11:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 19,
+    "study_id": 1,
+    "description": "Experiment 19",
+    "created_at": "2025-09-13 09:00:00.000",
+    "started_at": "2025-09-19 10:00:00.000",
+    "completed_at": "2025-09-19 10:45:00.000",
+    "researcher": "Dr. Müller"
+  },
+  {
+    "experiment_id": 20,
+    "study_id": 1,
+    "description": "Experiment 20",
+    "created_at": "2025-09-13 09:00:00.000",
+    "started_at": "2025-09-19 11:00:00.000",
+    "completed_at": "2025-09-19 11:45:00.000",
+    "researcher": "Dr. Müller"
+  }
+]

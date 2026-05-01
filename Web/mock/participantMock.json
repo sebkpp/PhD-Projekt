@@ -1,0 +1,27 @@
+﻿{
+  "phase": "trial_overview",
+  "players": {
+    "104": {
+      "connected": true,
+      "ready": true
+    },
+    "105": {
+      "connected": true,
+      "ready": false
+    }
+  },
+  "questionnaireStatus": {
+    "104": {
+      "type": "nasatlx",
+      "ready": true,
+      "submitted": false,
+      "trialId": 3
+    },
+    "105": {
+      "type": "nasatlx",
+      "ready": false,
+      "submitted": false,
+      "trialId": 3
+    }
+  }
+}

@@ -1,0 +1,11 @@
+[
+  {
+    "study_config_id": 1,
+    "name": "inner_hand vs. outer_hand",
+    "description": "Vergleich der visuellen Stimuli inner_hand und outer_hand. Trial 1 = inner_hand, Trial 2 = outer_hand. Gleiche Bedingungen über alle Experimente.",
+    "principal_investigator": "Dr. Müller",
+    "study_id": 1,
+    "trial_number": 2,
+    "trials_permuted": true
+  }
+]

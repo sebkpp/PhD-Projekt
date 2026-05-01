@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+
+@theme {
+  --color-mint-500: oklch(0.72 0.11 178);
+
+  --color-background: #111827; /* Dunkelgrau/Blau als Hintergrund */
+  --color-foreground: #F9FAFB; /* Helles Grau für Text */
+  --color-border: #374151;     /* Etwas helleres Grau für Ränder */
+  --color-accent: #10B981;     /* Smaragdgrün für positive Zustände */
+  --color-danger: #EF4444;     /* Rot für negative Zustände */
+
+  --border-radius-md: 0.75rem; /* 12px */
+  --border-width-md: 1px;
+
+  /*--spacing-sm: 0.5rem;   /* 8px */
+  /*--spacing-md: 1rem;     /* 16px */
+  /*--spacing-lg: 1.5rem;   /* 24px */
+}
+
+/* Scrollbar für Trials und andere overflow-y-Scrolls */
+.trial-scrollbar {
+  scrollbar-width: thin;            /* Firefox: dünner Scrollbar */
+  scrollbar-color: #9ca3af #1f2937; /* Thumb-Farbe / Track-Farbe */
+}
+
+/* Chrome, Edge, Safari */
+.trial-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.trial-scrollbar::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.6); /* leicht transparentes Track */
+  border-radius: 6px;
+}
+
+.trial-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #9ca3af;       /* helles Grau für Sichtbarkeit */
+  border-radius: 6px;
+  border: 2px solid rgba(31, 41, 55, 0.6); /* leichter Rand für Kontrast */
+}
+
+.trial-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #d1d5db;       /* noch heller bei Hover */
+}
+
+body {
+@apply bg-[--color-background] text-[--color-foreground];
+}
+
+.export-light .recharts-text {
+  @apply text-black;
+  fill: #000 !important;
+}
+.export-light .recharts-legend-item-text {
+  @apply text-black;
+  color: #000 !important;
+}
+
+.export-light .export-hide {
+  display: none !important;
+}
+
+.custom-dark-row td {
+  background: #23272f !important;
+  color: #fff !important;
+  border-color: #444 !important;
+}
+.ant-table-thead > tr > th {
+  background: #222 !important;
+  color: #fff !important;
+  border-color: #444 !important;
+}
+.ant-table-wrapper, .ant-table, .ant-table-bordered {
+  border-color: #444 !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  background: transparent !important;
+}

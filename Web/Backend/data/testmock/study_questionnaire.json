@@ -1,0 +1,14 @@
+[
+  {
+    "study_id": 1,
+    "questionnaire_id": 1,
+    "order_index": 1,
+    "trigger_timing": "after_trial"
+  },
+  {
+    "study_id": 1,
+    "questionnaire_id": 2,
+    "order_index": 2,
+    "trigger_timing": "after_trial"
+  }
+]

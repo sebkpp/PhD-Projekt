@@ -1,0 +1,322 @@
+[
+  {
+    "trial_slot_id": 1,
+    "participant_id": 1
+  },
+  {
+    "trial_slot_id": 2,
+    "participant_id": 2
+  },
+  {
+    "trial_slot_id": 3,
+    "participant_id": 1
+  },
+  {
+    "trial_slot_id": 4,
+    "participant_id": 2
+  },
+  {
+    "trial_slot_id": 5,
+    "participant_id": 3
+  },
+  {
+    "trial_slot_id": 6,
+    "participant_id": 4
+  },
+  {
+    "trial_slot_id": 7,
+    "participant_id": 3
+  },
+  {
+    "trial_slot_id": 8,
+    "participant_id": 4
+  },
+  {
+    "trial_slot_id": 9,
+    "participant_id": 5
+  },
+  {
+    "trial_slot_id": 10,
+    "participant_id": 6
+  },
+  {
+    "trial_slot_id": 11,
+    "participant_id": 5
+  },
+  {
+    "trial_slot_id": 12,
+    "participant_id": 6
+  },
+  {
+    "trial_slot_id": 13,
+    "participant_id": 7
+  },
+  {
+    "trial_slot_id": 14,
+    "participant_id": 8
+  },
+  {
+    "trial_slot_id": 15,
+    "participant_id": 7
+  },
+  {
+    "trial_slot_id": 16,
+    "participant_id": 8
+  },
+  {
+    "trial_slot_id": 17,
+    "participant_id": 9
+  },
+  {
+    "trial_slot_id": 18,
+    "participant_id": 10
+  },
+  {
+    "trial_slot_id": 19,
+    "participant_id": 9
+  },
+  {
+    "trial_slot_id": 20,
+    "participant_id": 10
+  },
+  {
+    "trial_slot_id": 21,
+    "participant_id": 11
+  },
+  {
+    "trial_slot_id": 22,
+    "participant_id": 12
+  },
+  {
+    "trial_slot_id": 23,
+    "participant_id": 11
+  },
+  {
+    "trial_slot_id": 24,
+    "participant_id": 12
+  },
+  {
+    "trial_slot_id": 25,
+    "participant_id": 13
+  },
+  {
+    "trial_slot_id": 26,
+    "participant_id": 14
+  },
+  {
+    "trial_slot_id": 27,
+    "participant_id": 13
+  },
+  {
+    "trial_slot_id": 28,
+    "participant_id": 14
+  },
+  {
+    "trial_slot_id": 29,
+    "participant_id": 15
+  },
+  {
+    "trial_slot_id": 30,
+    "participant_id": 16
+  },
+  {
+    "trial_slot_id": 31,
+    "participant_id": 15
+  },
+  {
+    "trial_slot_id": 32,
+    "participant_id": 16
+  },
+  {
+    "trial_slot_id": 33,
+    "participant_id": 17
+  },
+  {
+    "trial_slot_id": 34,
+    "participant_id": 18
+  },
+  {
+    "trial_slot_id": 35,
+    "participant_id": 17
+  },
+  {
+    "trial_slot_id": 36,
+    "participant_id": 18
+  },
+  {
+    "trial_slot_id": 37,
+    "participant_id": 19
+  },
+  {
+    "trial_slot_id": 38,
+    "participant_id": 20
+  },
+  {
+    "trial_slot_id": 39,
+    "participant_id": 19
+  },
+  {
+    "trial_slot_id": 40,
+    "participant_id": 20
+  },
+  {
+    "trial_slot_id": 41,
+    "participant_id": 21
+  },
+  {
+    "trial_slot_id": 42,
+    "participant_id": 22
+  },
+  {
+    "trial_slot_id": 43,
+    "participant_id": 21
+  },
+  {
+    "trial_slot_id": 44,
+    "participant_id": 22
+  },
+  {
+    "trial_slot_id": 45,
+    "participant_id": 23
+  },
+  {
+    "trial_slot_id": 46,
+    "participant_id": 24
+  },
+  {
+    "trial_slot_id": 47,
+    "participant_id": 23
+  },
+  {
+    "trial_slot_id": 48,
+    "participant_id": 24
+  },
+  {
+    "trial_slot_id": 49,
+    "participant_id": 25
+  },
+  {
+    "trial_slot_id": 50,
+    "participant_id": 26
+  },
+  {
+    "trial_slot_id": 51,
+    "participant_id": 25
+  },
+  {
+    "trial_slot_id": 52,
+    "participant_id": 26
+  },
+  {
+    "trial_slot_id": 53,
+    "participant_id": 27
+  },
+  {
+    "trial_slot_id": 54,
+    "participant_id": 28
+  },
+  {
+    "trial_slot_id": 55,
+    "participant_id": 27
+  },
+  {
+    "trial_slot_id": 56,
+    "participant_id": 28
+  },
+  {
+    "trial_slot_id": 57,
+    "participant_id": 29
+  },
+  {
+    "trial_slot_id": 58,
+    "participant_id": 30
+  },
+  {
+    "trial_slot_id": 59,
+    "participant_id": 29
+  },
+  {
+    "trial_slot_id": 60,
+    "participant_id": 30
+  },
+  {
+    "trial_slot_id": 61,
+    "participant_id": 31
+  },
+  {
+    "trial_slot_id": 62,
+    "participant_id": 32
+  },
+  {
+    "trial_slot_id": 63,
+    "participant_id": 31
+  },
+  {
+    "trial_slot_id": 64,
+    "participant_id": 32
+  },
+  {
+    "trial_slot_id": 65,
+    "participant_id": 33
+  },
+  {
+    "trial_slot_id": 66,
+    "participant_id": 34
+  },
+  {
+    "trial_slot_id": 67,
+    "participant_id": 33
+  },
+  {
+    "trial_slot_id": 68,
+    "participant_id": 34
+  },
+  {
+    "trial_slot_id": 69,
+    "participant_id": 35
+  },
+  {
+    "trial_slot_id": 70,
+    "participant_id": 36
+  },
+  {
+    "trial_slot_id": 71,
+    "participant_id": 35
+  },
+  {
+    "trial_slot_id": 72,
+    "participant_id": 36
+  },
+  {
+    "trial_slot_id": 73,
+    "participant_id": 37
+  },
+  {
+    "trial_slot_id": 74,
+    "participant_id": 38
+  },
+  {
+    "trial_slot_id": 75,
+    "participant_id": 37
+  },
+  {
+    "trial_slot_id": 76,
+    "participant_id": 38
+  },
+  {
+    "trial_slot_id": 77,
+    "participant_id": 39
+  },
+  {
+    "trial_slot_id": 78,
+    "participant_id": 40
+  },
+  {
+    "trial_slot_id": 79,
+    "participant_id": 39
+  },
+  {
+    "trial_slot_id": 80,
+    "participant_id": 40
+  }
+]

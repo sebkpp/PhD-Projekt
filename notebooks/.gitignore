@@ -1,0 +1,3 @@
+# Jupyter artefacts — do not commit
+.ipynb_checkpoints/
+utils/__pycache__/

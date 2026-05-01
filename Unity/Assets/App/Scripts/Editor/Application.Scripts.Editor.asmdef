@@ -1,0 +1,11 @@
+{
+    "name": "Application.Scripts.Editor",
+    "references": [
+        "GUID:f1e2d3c4b5a697880123456789abcdef",
+        "GUID:ce522b6ed64c8be4c989a1d26d0e3275"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "autoReferenced": true
+}

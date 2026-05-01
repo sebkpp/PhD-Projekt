@@ -1,0 +1,149 @@
+name: CI
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+    paths:
+      - 'Web/Backend/**'
+      - 'sql/**'
+      - 'Web/pyproject.toml'
+      - 'Web/uv.lock'
+      - 'Unity/Assets/**'
+      - 'Unity/Packages/**'
+      - 'Unity/ProjectSettings/**'
+      - '.github/workflows/workflow.yml'
+  pull_request:
+    branches: [ main, development ]
+    paths:
+      - 'Web/Backend/**'
+      - 'sql/**'
+      - 'Web/pyproject.toml'
+      - 'Web/uv.lock'
+      - 'Unity/Assets/**'
+      - 'Unity/Packages/**'
+      - 'Unity/ProjectSettings/**'
+      - '.github/workflows/workflow.yml'
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      web: ${{ steps.filter.outputs.web }}
+      unity: ${{ steps.filter.outputs.unity }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            web:
+              - 'Web/Backend/**'
+              - 'sql/**'
+              - 'Web/pyproject.toml'
+              - 'Web/uv.lock'
+            unity:
+              - 'Unity/Assets/**'
+              - 'Unity/Packages/**'
+              - 'Unity/ProjectSettings/**'
+
+  api-tests:
+    needs: changes
+    if: needs.changes.outputs.web == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "Web/uv.lock"
+
+    - name: Install Dependencies
+      working-directory: ./Web
+      run: uv sync --frozen
+
+    - name: Create .env.test
+      working-directory: ./Web/Backend
+      run: |
+        printf 'DB_NAME=testdb\nDB_USER=testuser\nDB_PASSWORD=testpassword\nDB_HOST=localhost\nDB_PORT=5432\n' > .env.test
+
+    - name: Setup Database Schema
+      env:
+        PGPASSWORD: testpassword
+      run: |
+        psql -h localhost -U testuser -d testdb -f sql/schema.sql
+
+    - name: Run Tests
+      working-directory: ./Web
+      env:
+        TESTING: "true"
+      run: |
+        uv run pytest Backend/tests/ --cov=Backend --cov-report=xml
+
+    - name: Coverage Summary
+      working-directory: ./Web
+      run: |
+        echo "## Test Coverage" >> $GITHUB_STEP_SUMMARY
+        uv run coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload Coverage
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./Web/coverage.xml
+        fail_ci_if_error: false
+
+  unity-tests:
+    needs: changes
+    if: needs.changes.outputs.unity == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        lfs: true
+
+    - name: Run Unity EditMode Tests
+      uses: game-ci/unity-test-runner@v4
+      id: tests
+      env:
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      with:
+        projectPath: Unity
+        unityVersion: 6000.3.10f1
+        testMode: EditMode
+        artifactsPath: unity-test-results
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: unity-test-results
+        path: ${{ steps.tests.outputs.artifactsPath }}

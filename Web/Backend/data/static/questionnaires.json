@@ -1,0 +1,499 @@
+
+[
+  {
+    "name": "NASA-TLX",
+    "scale_type": "slider",
+    "scale_min": 0,
+    "scale_max": 100,
+    "items": [
+      {
+        "item_name": "mental_demand",
+        "item_label": "Geistige Anforderung",
+        "item_description": "Wie viel geistige Anstrengung war bei der Informationsaufnahme und -verarbeitung erforderlich?",
+        "min_label": "Niedrig",
+        "max_label": "Hoch",
+        "order_index": 0
+      },
+      {
+        "item_name": "physical_demand",
+        "item_label": "Körperliche Anforderung",
+        "item_description": "Wie viel körperliche Aktivität war erforderlich?",
+        "min_label": "Niedrig",
+        "max_label": "Hoch",
+        "order_index": 1
+      },
+      {
+        "item_name": "temporal_demand",
+        "item_label": "Zeitliche Anforderung",
+        "item_description": "Wie viel Zeitdruck empfanden Sie hinsichtlich der Häufigkeit oder dem Takt?",
+        "min_label": "Niedrig",
+        "max_label": "Hoch",
+        "order_index": 2
+      },
+      {
+        "item_name": "performance",
+        "item_label": "Leistung",
+        "item_description": "Wie gut haben Sie die Aufgabe Ihrer Meinung nach erledigt?",
+        "min_label": "Gut",
+        "max_label": "Schlecht",
+        "order_index": 3
+      },
+      {
+        "item_name": "effort",
+        "item_label": "Anstrengung",
+        "item_description": "Wie viel Mühe mussten Sie investieren, um das Ziel zu erreichen?",
+        "min_label": "Niedrig",
+        "max_label": "Hoch",
+        "order_index": 4
+      },
+      {
+        "item_name": "frustration",
+        "item_label": "Frustration",
+        "item_description": "Wie genervt, gestresst oder unsicher haben Sie sich gefühlt?",
+        "min_label": "Niedrig",
+        "max_label": "Hoch",
+        "order_index": 5
+      }
+    ]
+  },
+  {
+    "name": "AttrakDiff2",
+    "scale_type": "bipolar",
+    "scale_min": 1,
+    "scale_max": 7,
+    "items": [
+      {
+        "item_name": "pq_technisch_menschlich",
+        "item_label": "technisch — menschlich",
+        "item_description": "Pragmatische Qualität",
+        "min_label": "technisch",
+        "max_label": "menschlich",
+        "order_index": 0
+      },
+      {
+        "item_name": "pq_kompliziert_einfach",
+        "item_label": "kompliziert — einfach",
+        "item_description": "Pragmatische Qualität",
+        "min_label": "kompliziert",
+        "max_label": "einfach",
+        "order_index": 1
+      },
+      {
+        "item_name": "pq_unpraktisch_praktisch",
+        "item_label": "unpraktisch — praktisch",
+        "item_description": "Pragmatische Qualität",
+        "min_label": "unpraktisch",
+        "max_label": "praktisch",
+        "order_index": 2
+      },
+      {
+        "item_name": "pq_laestig_angenehm",
+        "item_label": "lästig — angenehm",
+        "item_description": "Pragmatische Qualität",
+        "min_label": "lästig",
+        "max_label": "angenehm",
+        "order_index": 3
+      },
+      {
+        "item_name": "pq_unberechenbar_berechenbar",
+        "item_label": "unberechenbar — berechenbar",
+        "item_description": "Pragmatische Qualität",
+        "min_label": "unberechenbar",
+        "max_label": "berechenbar",
+        "order_index": 4
+      },
+      {
+        "item_name": "pq_verwirrend_uebersichtlich",
+        "item_label": "verwirrend — übersichtlich",
+        "item_description": "Pragmatische Qualität",
+        "min_label": "verwirrend",
+        "max_label": "übersichtlich",
+        "order_index": 5
+      },
+      {
+        "item_name": "pq_unprofessionell_professionell",
+        "item_label": "unprofessionell — professionell",
+        "item_description": "Pragmatische Qualität",
+        "min_label": "unprofessionell",
+        "max_label": "professionell",
+        "order_index": 6
+      },
+      {
+        "item_name": "hqs_phantasielos_kreativ",
+        "item_label": "phantasielos — kreativ",
+        "item_description": "Hedonische Qualität – Stimulation",
+        "min_label": "phantasielos",
+        "max_label": "kreativ",
+        "order_index": 7
+      },
+      {
+        "item_name": "hqs_langweilig_fesselnd",
+        "item_label": "langweilig — fesselnd",
+        "item_description": "Hedonische Qualität – Stimulation",
+        "min_label": "langweilig",
+        "max_label": "fesselnd",
+        "order_index": 8
+      },
+      {
+        "item_name": "hqs_uninteressant_interessant",
+        "item_label": "uninteressant — interessant",
+        "item_description": "Hedonische Qualität – Stimulation",
+        "min_label": "uninteressant",
+        "max_label": "interessant",
+        "order_index": 9
+      },
+      {
+        "item_name": "hqs_konventionell_originell",
+        "item_label": "konventionell — originell",
+        "item_description": "Hedonische Qualität – Stimulation",
+        "min_label": "konventionell",
+        "max_label": "originell",
+        "order_index": 10
+      },
+      {
+        "item_name": "hqs_standard_gestylt",
+        "item_label": "standard — gestylt",
+        "item_description": "Hedonische Qualität – Stimulation",
+        "min_label": "standard",
+        "max_label": "gestylt",
+        "order_index": 11
+      },
+      {
+        "item_name": "hqs_ueberfluessig_wertvoll",
+        "item_label": "überflüssig — wertvoll",
+        "item_description": "Hedonische Qualität – Stimulation",
+        "min_label": "überflüssig",
+        "max_label": "wertvoll",
+        "order_index": 12
+      },
+      {
+        "item_name": "hqs_konservativ_innovativ",
+        "item_label": "konservativ — innovativ",
+        "item_description": "Hedonische Qualität – Stimulation",
+        "min_label": "konservativ",
+        "max_label": "innovativ",
+        "order_index": 13
+      },
+      {
+        "item_name": "hqi_isolierend_verbindend",
+        "item_label": "isolierend — verbindend",
+        "item_description": "Hedonische Qualität – Identität",
+        "min_label": "isolierend",
+        "max_label": "verbindend",
+        "order_index": 14
+      },
+      {
+        "item_name": "hqi_unprofessionell_professionell",
+        "item_label": "unprofessionell — professionell",
+        "item_description": "Hedonische Qualität – Identität",
+        "min_label": "unprofessionell",
+        "max_label": "professionell",
+        "order_index": 15
+      },
+      {
+        "item_name": "hqi_hässlich_schön",
+        "item_label": "hässlich — schön",
+        "item_description": "Hedonische Qualität – Identität",
+        "min_label": "hässlich",
+        "max_label": "schön",
+        "order_index": 16
+      },
+      {
+        "item_name": "hqi_entfremdend_einbeziehend",
+        "item_label": "entfremdend — einbeziehend",
+        "item_description": "Hedonische Qualität – Identität",
+        "min_label": "entfremdend",
+        "max_label": "einbeziehend",
+        "order_index": 17
+      },
+      {
+        "item_name": "hqi_minderwertig_wertvoll",
+        "item_label": "minderwertig — wertvoll",
+        "item_description": "Hedonische Qualität – Identität",
+        "min_label": "minderwertig",
+        "max_label": "wertvoll",
+        "order_index": 18
+      },
+      {
+        "item_name": "hqi_alltaeglich_aussergewoehnlich",
+        "item_label": "alltäglich — außergewöhnlich",
+        "item_description": "Hedonische Qualität – Identität",
+        "min_label": "alltäglich",
+        "max_label": "außergewöhnlich",
+        "order_index": 19
+      },
+      {
+        "item_name": "hqi_unauffaellig_auffaellig",
+        "item_label": "unauffällig — auffällig",
+        "item_description": "Hedonische Qualität – Identität",
+        "min_label": "unauffällig",
+        "max_label": "auffällig",
+        "order_index": 20
+      },
+      {
+        "item_name": "att_unangenehm_angenehm",
+        "item_label": "unangenehm — angenehm",
+        "item_description": "Attraktivität",
+        "min_label": "unangenehm",
+        "max_label": "angenehm",
+        "order_index": 21
+      },
+      {
+        "item_name": "att_haesslich_schoen",
+        "item_label": "hässlich — schön",
+        "item_description": "Attraktivität",
+        "min_label": "hässlich",
+        "max_label": "schön",
+        "order_index": 22
+      },
+      {
+        "item_name": "att_abstossend_anziehend",
+        "item_label": "abstoßend — anziehend",
+        "item_description": "Attraktivität",
+        "min_label": "abstoßend",
+        "max_label": "anziehend",
+        "order_index": 23
+      },
+      {
+        "item_name": "att_schlecht_gut",
+        "item_label": "schlecht — gut",
+        "item_description": "Attraktivität",
+        "min_label": "schlecht",
+        "max_label": "gut",
+        "order_index": 24
+      },
+      {
+        "item_name": "att_entmutigend_motivierend",
+        "item_label": "entmutigend — motivierend",
+        "item_description": "Attraktivität",
+        "min_label": "entmutigend",
+        "max_label": "motivierend",
+        "order_index": 25
+      },
+      {
+        "item_name": "att_minderwertig_wertvoll",
+        "item_label": "minderwertig — wertvoll",
+        "item_description": "Attraktivität",
+        "min_label": "minderwertig",
+        "max_label": "wertvoll",
+        "order_index": 26
+      },
+      {
+        "item_name": "att_unaesthetisch_aesthetisch",
+        "item_label": "unästhetisch — ästhetisch",
+        "item_description": "Attraktivität",
+        "min_label": "unästhetisch",
+        "max_label": "ästhetisch",
+        "order_index": 27
+      }
+    ]
+  },
+  {
+    "name": "SUS",
+    "scale_type": "likert",
+    "scale_min": 1,
+    "scale_max": 5,
+    "items": [
+      {
+        "item_name": "sus_01",
+        "item_label": "Ich denke, dass ich dieses System gerne regelmäßig nutzen würde.",
+        "item_description": null,
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 0
+      },
+      {
+        "item_name": "sus_02",
+        "item_label": "Ich fand das System unnötig komplex.",
+        "item_description": null,
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 1
+      },
+      {
+        "item_name": "sus_03",
+        "item_label": "Ich fand das System einfach zu bedienen.",
+        "item_description": null,
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 2
+      },
+      {
+        "item_name": "sus_04",
+        "item_label": "Ich denke, ich würde die Hilfe einer technischen Fachkraft benötigen, um das System nutzen zu können.",
+        "item_description": null,
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 3
+      },
+      {
+        "item_name": "sus_05",
+        "item_label": "Ich fand, dass die verschiedenen Funktionen des Systems gut integriert waren.",
+        "item_description": null,
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 4
+      },
+      {
+        "item_name": "sus_06",
+        "item_label": "Ich fand, dass das System zu viele Inkonsistenzen aufwies.",
+        "item_description": null,
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 5
+      },
+      {
+        "item_name": "sus_07",
+        "item_label": "Ich kann mir vorstellen, dass die meisten Menschen den Umgang mit diesem System sehr schnell lernen.",
+        "item_description": null,
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 6
+      },
+      {
+        "item_name": "sus_08",
+        "item_label": "Ich fand das System sehr umständlich zu bedienen.",
+        "item_description": null,
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 7
+      },
+      {
+        "item_name": "sus_09",
+        "item_label": "Ich fühlte mich bei der Bedienung des Systems sehr sicher.",
+        "item_description": null,
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 8
+      },
+      {
+        "item_name": "sus_10",
+        "item_label": "Ich musste viele Dinge lernen, bevor ich anfangen konnte, mit dem System zu arbeiten.",
+        "item_description": null,
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 9
+      }
+    ]
+  },
+  {
+    "name": "ISO-Metrics",
+    "scale_type": "likert",
+    "scale_min": 1,
+    "scale_max": 5,
+    "items": [
+      {
+        "item_name": "isometrics_01",
+        "item_label": "Das System gibt mir alle Informationen, die ich für die Aufgabenerledigung benötige.",
+        "item_description": "Aufgabenangemessenheit",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 0
+      },
+      {
+        "item_name": "isometrics_02",
+        "item_label": "Das System informiert mich angemessen über seinen Verarbeitungsstatus.",
+        "item_description": "Selbstbeschreibungsfähigkeit",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 1
+      },
+      {
+        "item_name": "isometrics_03",
+        "item_label": "Ich kann die Bearbeitung einer Aufgabe jederzeit unterbrechen und an der gleichen Stelle wieder aufnehmen.",
+        "item_description": "Steuerbarkeit",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 2
+      },
+      {
+        "item_name": "isometrics_04",
+        "item_label": "Das System reagiert konsistent auf gleichartige Eingaben.",
+        "item_description": "Erwartungskonformität",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 3
+      },
+      {
+        "item_name": "isometrics_05",
+        "item_label": "Das System berücksichtigt individuelle Unterschiede zwischen Benutzern.",
+        "item_description": "Individualisierbarkeit",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 4
+      },
+      {
+        "item_name": "isometrics_06",
+        "item_label": "Fehlermeldungen des Systems helfen mir, Fehler zu korrigieren.",
+        "item_description": "Fehlertoleranz",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 5
+      },
+      {
+        "item_name": "isometrics_07",
+        "item_label": "Das System ist leicht zu erlernen.",
+        "item_description": "Lernförderlichkeit",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 6
+      },
+      {
+        "item_name": "isometrics_08",
+        "item_label": "Das System unterstützt mich effektiv bei der Erledigung meiner Aufgaben.",
+        "item_description": "Aufgabenangemessenheit",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 7
+      },
+      {
+        "item_name": "isometrics_09",
+        "item_label": "Das System erklärt seine Funktionen klar und verständlich.",
+        "item_description": "Selbstbeschreibungsfähigkeit",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 8
+      },
+      {
+        "item_name": "isometrics_10",
+        "item_label": "Ich kann Eingaben leicht rückgängig machen oder korrigieren.",
+        "item_description": "Steuerbarkeit",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 9
+      },
+      {
+        "item_name": "isometrics_11",
+        "item_label": "Das Erscheinungsbild und die Bedienung des Systems sind konsistent.",
+        "item_description": "Erwartungskonformität",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 10
+      },
+      {
+        "item_name": "isometrics_12",
+        "item_label": "Ich kann das System an meine persönlichen Bedürfnisse anpassen.",
+        "item_description": "Individualisierbarkeit",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 11
+      },
+      {
+        "item_name": "isometrics_13",
+        "item_label": "Das System verhindert, dass ich unbeabsichtigt Fehler mache.",
+        "item_description": "Fehlertoleranz",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 12
+      },
+      {
+        "item_name": "isometrics_14",
+        "item_label": "Neue Funktionen des Systems kann ich schnell erlernen.",
+        "item_description": "Lernförderlichkeit",
+        "min_label": "Stimme gar nicht zu",
+        "max_label": "Stimme voll zu",
+        "order_index": 13
+      }
+    ]
+  }
+]

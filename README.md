@@ -1,44 +1,103 @@
-# projekt_ws24
-Projektstudium 2 (PS) - Entwicklung einer immersiven VR-Simulation zur Optimierung chirurgischer Abläufe
+# Collaborative Manual Tasks in Distributed Virtual Environments
 
+A PhD research project investigating multisensory feedback strategies for collaborative object handovers in VR. Two participants wearing VR headsets share a virtual workspace and pass surgical instruments to each other while different visual, auditory, and tactile feedback conditions are applied. The goal is to identify which feedback combinations best support safe and effective handovers.
 
-## Install
-clone repository via: 
-HTTPS: https://gitlab.rz.htw-berlin.de/s0583646/projekt_ws24.git 
-SSH: git@gitlab.rz.htw-berlin.de:s0583646/projekt_ws24.git
+---
 
-We use
-Rider for writing scripts in C# and integration with Unity: https://www.jetbrains.com/rider/
-Unity Editor version 6000.0.24f1
+## Repository Structure
 
-App-ID zum starten von Photon-Fusion 5c77e000-f752-43ad-996a-25c8149edcf6
-Link zur Präsentation: https://docs.google.com/presentation/d/18H9MO7WaeibtrPGkoeIOe2Euw6h_182z3YXetdKaGrA/edit#slide=id.g2af481c8749_0_33
-
-## Add your files
 ```
-cd existing_repo
-git remote add origin https://gitlab.rz.htw-berlin.de/s0583646/projekt_ws24.git
-git branch -M main
-git push -uf origin main
+projekt_ws24/
+├── Unity/          VR application (C#, Photon Fusion, OpenXR)
+├── Web/            Study management & analysis platform (Python/FastAPI + React)
+├── sql/            PostgreSQL database schema
+└── notebooks/      Data analysis notebooks (Jupyter, planned)
 ```
 
-## Collaborate with your team
+| Subsystem | Description | README |
+|---|---|---|
+| **Unity** | Multiplayer VR app — runs on two Meta Quest headsets simultaneously | [Unity/README.md](Unity/README.md) |
+| **Web** | Browser-based platform for configuring studies, controlling sessions, and analysing results | [Web/README.md](Web/README.md) |
+| **SQL** | Database schema reference — all tables with descriptions | [sql/README.md](sql/README.md) |
+| **Notebooks** | Jupyter notebooks for statistical analysis and visualisation of study data | [notebooks/README.md](notebooks/README.md) |
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+---
 
-## Test and Deploy
+## Architecture
 
-Use the built-in continuous integration in GitLab.
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Unity VR Application (×2 headsets)                         │
+│  Photon Fusion (multiplayer) · OpenXR · Meta Quest          │
+│  Reports handover events and eye tracking via REST          │
+└──────────────────────┬──────────────────────────────────────┘
+                       │ HTTP/REST
+┌──────────────────────▼──────────────────────────────────────┐
+│  Web Backend  (FastAPI · Python 3.12 · port 5000)           │
+│  Business logic · REST API · DB access via SQLAlchemy       │
+└──────────────────────┬──────────────────────────────────────┘
+                       │ SQLAlchemy / psycopg2
+┌──────────────────────▼──────────────────────────────────────┐
+│  PostgreSQL 17  (port 5432)                                  │
+│  Studies · Experiments · Trials · Handovers · Eye Tracking  │
+└─────────────────────────────────────────────────────────────┘
+                       ▲
+                       │ REST API  (/api → port 5000)
+┌──────────────────────┴──────────────────────────────────────┐
+│  Web Frontend  (React · Vite · port 5173)                   │
+│  Study configuration · Live session control · Analysis UI   │
+└─────────────────────────────────────────────────────────────┘
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+**Data flow during a study session:**
 
-***
+1. Researcher configures a study (stimuli, questionnaires, participant slots) in the web frontend.
+2. The Unity application polls the backend for the active experiment and loads the assigned stimulus configuration.
+3. During the trial, Unity sends handover events and eye tracking fixations to the backend in real time.
+4. After each trial, participants fill in questionnaires via the web frontend.
+5. After the study, the researcher accesses the analysis section to review results and export data.
 
+---
+
+## Quick Start
+
+See [Web/README.md](Web/README.md) for full setup and start instructions. The short version:
+
+```bash
+# Windows — one-time setup
+Web\setup_windows.bat
+
+# macOS — one-time setup
+chmod +x Web/setup_mac.sh && ./Web/setup_mac.sh
+
+# Start both backend and frontend
+Web\start_windows.bat      # Windows
+./Web/start_mac.sh         # macOS
+```
+
+Open **http://localhost:5173** in your browser.
+
+---
+
+## Branch Strategy
+
+| Branch | Purpose |
+|---|---|
+| `main` | Stable releases — only receives merges from `development` |
+| `development` | Integration branch — all feature and fix branches merge here first |
+| `feature/*` | New features, branched off `development` |
+| `fix/*` | Bug fixes, branched off `development` |
+
+New work is always branched from `development`. Once a set of changes has been tested and is considered stable, `development` is merged into `main`. Never commit directly to `main`.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| VR Runtime | Unity, C#, Photon Fusion 2 (Shared Mode), OpenXR |
+| Backend | Python 3.12, FastAPI, SQLAlchemy, uv |
+| Frontend | React, Vite, MUI, Ant Design, Tailwind CSS |
+| Database | PostgreSQL 17 |
+| Charts | Recharts, Chart.js, ApexCharts, Plotly |

@@ -1,0 +1,322 @@
+[
+  {
+    "trial_slot_id": 1,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 2,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 3,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 4,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 5,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 6,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 7,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 8,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 9,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 10,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 11,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 12,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 13,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 14,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 15,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 16,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 17,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 18,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 19,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 20,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 21,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 22,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 23,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 24,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 25,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 26,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 27,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 28,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 29,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 30,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 31,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 32,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 33,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 34,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 35,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 36,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 37,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 38,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 39,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 40,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 41,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 42,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 43,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 44,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 45,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 46,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 47,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 48,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 49,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 50,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 51,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 52,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 53,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 54,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 55,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 56,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 57,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 58,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 59,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 60,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 61,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 62,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 63,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 64,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 65,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 66,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 67,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 68,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 69,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 70,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 71,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 72,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 73,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 74,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 75,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 76,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 77,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 78,
+    "stimulus_id": 1
+  },
+  {
+    "trial_slot_id": 79,
+    "stimulus_id": 2
+  },
+  {
+    "trial_slot_id": 80,
+    "stimulus_id": 2
+  }
+]

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Verbunden Spieler</title>
+  <style>
+    body { font-family: sans-serif; }
+    h1 { color: #2a2a2a; }
+    li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Aktuell verbundene Spieler</h1>
+  <ul id="playerList"></ul>
+
+  <script>
+    async function fetchPlayers() {
+      const res = await fetch('/players');
+      const players = await res.json();
+      const list = document.getElementById("playerList");
+      list.innerHTML = '';
+
+      for (const [id, time] of Object.entries(players)) {
+        const li = document.createElement('li');
+        li.textContent = `${id} (seit ${new Date(time).toLocaleTimeString()})`;
+        list.appendChild(li);
+      }
+    }
+
+    setInterval(fetchPlayers, 2000);
+    fetchPlayers();
+  </script>
+</body>
+</html>
