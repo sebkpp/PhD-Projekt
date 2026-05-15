@@ -1,1 +1,35 @@
-{}
+{
+  "form": {
+    "title": "General Information",
+    "researcher": "Researcher",
+    "description": "Description (optional)",
+    "descriptionPlaceholder": "Detailed description, objectives, etc."
+  },
+  "tile": {
+    "finished": "Finished",
+    "open": "Open",
+    "researcher": "Researcher:",
+    "viewData": "View Data Overview",
+    "toExperiment": "Go to Experiment",
+    "unknown": "Unknown"
+  },
+  "studyInfo": {
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "notStarted": "Not yet started",
+    "notFinished": "Not yet completed",
+    "participants": "Participants",
+    "experiments": "Experiments",
+    "researcher": "Principal Investigator",
+    "closeStudy": "Close Study",
+    "closeStudyTitle": "Close Study",
+    "closeStudyMessage": "Are you sure you want to close this study? This action cannot be undone."
+  },
+  "participants": {
+    "slot1": "Participant 1",
+    "slot2": "Participant 2"
+  },
+  "tabs": {
+    "deleteTab": "Delete Tab"
+  }
+}

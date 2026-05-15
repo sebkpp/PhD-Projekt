@@ -3,6 +3,7 @@ import {useCloseStudy} from "@/features/experiment/hooks/useCloseStudy.js";
 import SaveConfirmDialog from "@/features/study/components/SaveConfirmDialog";
 import {useEffect, useState} from "react";
 import StimulusIcon from "@/features/study/utils/stimuliUtils.jsx";
+import { useTranslation } from 'react-i18next';
 
 export default function StudyInfoTile({
                                           studyId,
@@ -25,6 +26,7 @@ export default function StudyInfoTile({
         pending: "border-yellow-500 shadow-yellow-500/30",
     };
 
+    const { t } = useTranslation('experiment');
     const { close, loading, error, result } = useCloseStudy(studyId);
     const [showCloseDialog, setShowCloseDialog] = useState(false);
     const isFinished = status === "Beendet";
@@ -68,12 +70,12 @@ export default function StudyInfoTile({
 
                 <span className="text-gray-400">Start:</span>
                 <span className="text-gray-100">
-          {startDate || "Noch nicht begonnen"}
+          {startDate || t('studyInfo.notStarted')}
         </span>
 
                 <span className="text-gray-400">Ende:</span>
                 <span className="text-gray-100">
-          {endDate || "Noch nicht abgeschlossen"}
+          {endDate || t('studyInfo.notFinished')}
         </span>
 
                 <span className="text-gray-400 flex items-center gap-1">
@@ -145,7 +147,7 @@ export default function StudyInfoTile({
                         disabled={loading || isFinished}
                         className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Studie schließen
+                        {t('studyInfo.closeStudy')}
                     </button>
                     {error && <span className="text-red-400 mt-2">Fehler: {error.message || error.toString()}</span>}
                     {result && <span className="text-green-400 mt-2">Studie wurde geschlossen!</span>}
@@ -153,8 +155,8 @@ export default function StudyInfoTile({
 
             <SaveConfirmDialog
                 open={showCloseDialog}
-                title="Studie schließen"
-                message="Möchtest du die Studie wirklich schließen? Dieser Vorgang kann nicht rückgängig gemacht werden."
+                title={t('studyInfo.closeStudyTitle')}
+                message={t('studyInfo.closeStudyMessage')}
                 onCancel={() => setShowCloseDialog(false)}
                 onConfirm={ async () => {
                     setShowCloseDialog(false);

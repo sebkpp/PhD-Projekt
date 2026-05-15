@@ -3,10 +3,12 @@ import dayjs from "dayjs";
 import {useNavigate} from "react-router-dom";
 import duration from "dayjs/plugin/duration";
 import StimulusIcon from "@/features/study/utils/stimuliUtils.jsx";
+import { useTranslation } from 'react-i18next';
 
 dayjs.extend(duration);
 
 export default function ExperimentTile({experiment, study_id, index, onOpen, onViewData}) {
+    const { t } = useTranslation('experiment');
     const navigate = useNavigate();
     const {
         experiment_id,
@@ -46,7 +48,7 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
                             : "bg-green-900 text-green-200"
                     }`}
                 >
-                    {isFinished ? "Beendet" : "Offen"}
+                    {isFinished ? t('tile.finished') : t('tile.open')}
                 </span>
             </div>
 
@@ -54,8 +56,8 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
             <div className="grid grid-cols-1 gap-2 text-gray-300 text-sm mb-4">
                 <div className="flex items-center gap-2">
                     <UserCog className="w-4 h-4 text-orange-400"/>
-                    <span className="font-medium">Versuchsleiter:in:</span>
-                    <span>{researcher || "Unbekannt"}</span>
+                    <span className="font-medium">{t('tile.researcher')}</span>
+                    <span>{researcher || t('tile.unknown')}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -175,7 +177,7 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
                     : "bg-blue-600 hover:bg-blue-500 text-white"
             }`}
             >
-                {isFinished ? "Daten-Übersicht ansehen" : "Zum Experiment"}
+                {isFinished ? t('tile.viewData') : t('tile.toExperiment')}
             </button>
         </div>
     );

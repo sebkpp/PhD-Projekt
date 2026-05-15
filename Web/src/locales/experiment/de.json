@@ -1,1 +1,35 @@
-{}
+{
+  "form": {
+    "title": "Generelle Informationen",
+    "researcher": "Versuchsleiter:in",
+    "description": "Beschreibung (optional)",
+    "descriptionPlaceholder": "Detaillierte Beschreibung, Zielsetzung usw."
+  },
+  "tile": {
+    "finished": "Beendet",
+    "open": "Offen",
+    "researcher": "Versuchsleiter:in:",
+    "viewData": "Daten-Übersicht ansehen",
+    "toExperiment": "Zum Experiment",
+    "unknown": "Unbekannt"
+  },
+  "studyInfo": {
+    "startDate": "Startdatum",
+    "endDate": "Enddatum",
+    "notStarted": "Noch nicht begonnen",
+    "notFinished": "Noch nicht abgeschlossen",
+    "participants": "Teilnehmer",
+    "experiments": "Experimente",
+    "researcher": "Hauptforscher:in",
+    "closeStudy": "Studie schließen",
+    "closeStudyTitle": "Studie schließen",
+    "closeStudyMessage": "Möchtest du die Studie wirklich schließen? Dieser Vorgang kann nicht rückgängig gemacht werden."
+  },
+  "participants": {
+    "slot1": "Proband 1",
+    "slot2": "Proband 2"
+  },
+  "tabs": {
+    "deleteTab": "Tab löschen"
+  }
+}
