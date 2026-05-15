@@ -1,1 +1,40 @@
-{}
+{
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "start": "Start",
+    "stop": "Stop",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "back": "Back",
+    "continue": "Continue",
+    "close": "Close",
+    "confirm": "Confirm",
+    "refresh": "Refresh",
+    "compare": "Compare",
+    "evaluate": "Go to Analysis"
+  },
+  "status": {
+    "loading": "Loading…",
+    "saving": "Saving…",
+    "error": "Error",
+    "active": "Active",
+    "finished": "Finished",
+    "draft": "Draft",
+    "open": "Open",
+    "unknown": "Unknown",
+    "notStarted": "Not yet started",
+    "notFinished": "Not yet completed"
+  },
+  "labels": {
+    "yes": "Yes",
+    "no": "No",
+    "participant": "Participant",
+    "participant_n": "Participant {{n}}",
+    "slot_n": "Slot {{n}}",
+    "experiment": "Experiment",
+    "study": "Study",
+    "trial": "Trial"
+  }
+}
