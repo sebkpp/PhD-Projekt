@@ -3,6 +3,7 @@ import HandoverSimulator from "@/debug/HandoverSimulator.jsx"
 import ParticipantJoinSimulator from "@/debug/ParticipantJoinSimulator.jsx"
 import ParticipantReadinessSimulator from "@/debug/ParticipantReadinessSimulator.jsx"
 import { useTranslation } from 'react-i18next'
+import LanguageSwitcher from '@/components/LanguageSwitcher.jsx'
 
 export default function SimulatorController() {
     const { t } = useTranslation('debug')
@@ -51,6 +52,7 @@ export default function SimulatorController() {
                     <p className="text-sm text-gray-400 mt-0.5">{t('controller.subtitle')}</p>
                 </div>
                 <div className="flex items-center gap-3">
+                    <LanguageSwitcher />
                     <button
                         onClick={fetchTrialState}
                         className="px-3 py-1.5 text-xs rounded bg-gray-800 hover:bg-gray-700 border border-gray-700 transition-colors"
