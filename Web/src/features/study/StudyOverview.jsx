@@ -5,9 +5,11 @@ import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import { useStudies } from "./hooks/useStudies";
 import StudyOverviewActions from "@/features/study/components/StudyOverviewActions.jsx";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { useTranslation } from 'react-i18next';
 
 export default function StudyOverview() {
-    const breadcrumbItems = [{ label: "Studienübersicht" }];
+    const { t } = useTranslation('navigation');
+    const breadcrumbItems = [{ label: t('breadcrumbs.studyOverview') }];
 
     const { studies, loading, error, removeStudy } = useStudies();
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -34,7 +36,7 @@ export default function StudyOverview() {
         <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
             <Breadcrumbs items={breadcrumbItems} styled={true} className="mb-6"/>
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 transition-colors">Studienübersicht</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 transition-colors">{t('breadcrumbs.studyOverview')}</h1>
                 <StudyOverviewActions
                     onNewStudy={() => navigate("/study/configure")}
                     onStatistics={() => navigate("/analysis")}

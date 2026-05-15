@@ -6,11 +6,7 @@ import CrossStudyChart from "@/features/Analysis/components/CrossStudyChart.jsx"
 import LoadingSpinner from "@/features/Analysis/components/shared/LoadingSpinner.jsx";
 import ErrorMessage from "@/features/Analysis/components/shared/ErrorMessage.jsx";
 import DescriptiveOnlyWarning from "@/features/Analysis/components/shared/DescriptiveOnlyWarning.jsx";
-
-const breadcrumbItems = [
-    { label: "Studienübersicht", to: "/" },
-    { label: "Studien-Meta-Analyse" },
-];
+import { useTranslation } from 'react-i18next';
 
 function aggregateStudyPerformance(studyId, studyName, performanceData) {
     const byCondition = performanceData?.performance?.by_condition;
@@ -38,6 +34,11 @@ function aggregateStudyPerformance(studyId, studyName, performanceData) {
 }
 
 export default function AnalysisPage() {
+    const { t } = useTranslation(['analysis', 'navigation']);
+    const breadcrumbItems = [
+        { label: t('navigation:breadcrumbs.studyOverview'), to: "/" },
+        { label: t('navigation:breadcrumbs.metaAnalysis') },
+    ];
     const { studies, loading: studiesLoading, error: studiesError } = useStudies();
     const [selectedIds, setSelectedIds] = useState(new Set());
     const [baselineMs, setBaselineMs] = useState(300);
@@ -92,7 +93,7 @@ export default function AnalysisPage() {
     return (
         <div className="p-6 relative bg-gray-900 min-h-screen text-gray-100">
             <Breadcrumbs items={breadcrumbItems} styled={true} className="mb-6" />
-            <h1 className="text-2xl font-bold mb-6">Studien-Meta-Analyse</h1>
+            <h1 className="text-2xl font-bold mb-6">{t('analysis:meta.title')}</h1>
 
             {/* Study selection panel */}
             <div className="bg-gray-800 rounded-xl p-4 mb-6">

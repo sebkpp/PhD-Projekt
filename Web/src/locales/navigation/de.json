@@ -1,1 +1,8 @@
-{}
+{
+  "breadcrumbs": {
+    "studyOverview": "Studienübersicht",
+    "study": "Studie {{id}}",
+    "experiment": "Experiment {{id}}",
+    "metaAnalysis": "Studien-Meta-Analyse"
+  }
+}
