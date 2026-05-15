@@ -19,6 +19,38 @@
     "participants": "Teilnehmer",
     "experimentsCount": "Experimente"
   },
+  "tile": {
+    "noData": "Keine Studiendaten vorhanden",
+    "experiments": "Experimente",
+    "participants": "Teilnehmer",
+    "createdAt": "Erstellt am",
+    "description": "Beschreibung",
+    "viewExperiments": "Experimente anzeigen",
+    "configure": "Study konfigurieren",
+    "analyse": "Analyse",
+    "deleteTitle": "Studie löschen",
+    "deleteConfirm": "Möchtest du diese Studie wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
+    "confirmDelete": "Ja, löschen"
+  },
+  "generalInfo": {
+    "title": "Allgemeine Informationen",
+    "nameLabel": "Name *",
+    "namePlaceholder": "z.B. Studie zur visuellen Stimuli",
+    "piLabel": "Principal Investigator",
+    "piPlaceholder": "z.B. Mustermann",
+    "descriptionLabel": "Beschreibung",
+    "descriptionPlaceholder": "Kurze Beschreibung der Studie"
+  },
+  "stimuliCard": {
+    "title": "Studienweite Stimuli & Avatar",
+    "activeStimuli": "Aktive Stimuli:",
+    "avatarVisibility": "Avatarsichtbarkeit:",
+    "pleaseSelect": "Bitte wählen",
+    "trialCount": "Anzahl der Trials:",
+    "permutate": "Trials permutieren:",
+    "permutated": "Permutiert",
+    "fixedOrder": "Fixe Reihenfolge"
+  },
   "config": {
     "title": "Studie konfigurieren",
     "newStudy": "Neue Studie",
