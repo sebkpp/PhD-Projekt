@@ -18,5 +18,16 @@
     "researcher": "Versuchsleiter:in",
     "participants": "Teilnehmer",
     "experimentsCount": "Experimente"
+  },
+  "config": {
+    "title": "Studie konfigurieren",
+    "newStudy": "Neue Studie",
+    "questionnairesSection": "Fragebögen",
+    "questionnairesHint": "Wählen Sie die Fragebögen aus, die für alle Experimente gelten sollen.",
+    "confirmTitle": "Studiekonfiguration abschließen",
+    "confirmMessage": "Sind Sie sicher, dass Sie die Konfiguration der Studie abschließen möchten? Danach können keine Änderungen mehr gemacht werden.",
+    "saveDraftButton": "Als Entwurf speichern",
+    "savingButton": "Speichern...",
+    "finalizeButton": "Studienkonfiguration abschließen"
   }
 }

@@ -1,6 +1,7 @@
 ﻿import Breadcrumbs from "@/components/Breadcrumbs";
 import ExperimentForm from "./components/ExperimentForm";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import TrialTabs from "@/features/experiment/components/TrialTabs.jsx";
 import TrialParticipantsTile from "@/features/experiment/components/TrialParticipantsTile.jsx";
 import {useTrialConfigs} from "@/features/experiment/hooks/useTrialConfigs.js";
@@ -11,6 +12,7 @@ import {useState} from "react";
 import {useExperiments} from "@/features/experiment/hooks/useExperiments.js";
 
 export default function ExperimentConfigPage() {
+    const { t } = useTranslation(['experiment', 'navigation']);
     const { studyId } = useParams();
     const { localConfig } = useStudyConfig(studyId);
 
@@ -47,9 +49,9 @@ export default function ExperimentConfigPage() {
     } = useValidation(trialConfigs, tabs.length);
 
     const breadcrumbItems = [
-        { label: "Studienübersicht", to: "/" },
-        { label: `Studie ${studyId}`, to: `/study/${studyId}/experiments` },
-        { label: "Neues Experiment" }
+        { label: t('navigation:breadcrumbs.studyOverview'), to: "/" },
+        { label: t('navigation:breadcrumbs.study', { id: studyId }), to: `/study/${studyId}/experiments` },
+        { label: t('experiment:breadcrumbs.newExperiment') }
     ];
 
     function onSave() {

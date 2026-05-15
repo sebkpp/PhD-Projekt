@@ -18,5 +18,16 @@
     "researcher": "Researcher",
     "participants": "Participants",
     "experimentsCount": "Experiments"
+  },
+  "config": {
+    "title": "Configure Study",
+    "newStudy": "New Study",
+    "questionnairesSection": "Questionnaires",
+    "questionnairesHint": "Select the questionnaires that should apply to all experiments.",
+    "confirmTitle": "Finalize Study Configuration",
+    "confirmMessage": "Are you sure you want to finalize the study configuration? No further changes can be made after this.",
+    "saveDraftButton": "Save as Draft",
+    "savingButton": "Saving...",
+    "finalizeButton": "Finalize Study Configuration"
   }
 }

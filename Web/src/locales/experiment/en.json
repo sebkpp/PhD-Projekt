@@ -31,5 +31,8 @@
   },
   "tabs": {
     "deleteTab": "Delete Tab"
+  },
+  "breadcrumbs": {
+    "newExperiment": "New Experiment"
   }
 }
