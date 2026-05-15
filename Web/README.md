@@ -33,9 +33,11 @@ The frontend runs in your browser and communicates with the backend via a REST A
 |---|---|
 | `AppRouter.jsx` | All client-side routes; main admin paths are under `/study/:studyId/...` |
 | `features/` | Feature-per-folder: study, experiment, participant, questionnaire, Analysis, overview, configuration, shared |
-| `components/` | Shared UI components |
+| `components/` | Shared UI components (including `LanguageSwitcher`, `Timeline`, `Breadcrumbs`) |
 | `context/` | React context / global state |
 | `layout/` | Header, navigation shell |
+| `i18n.js` | i18next configuration; loads all 10 namespaces from `locales/` |
+| `locales/` | Translation files per namespace (DE + EN): common, navigation, study, experiment, configuration, overview, participant, questionnaire, analysis, debug |
 
 UI libraries: MUI, Ant Design, Tailwind CSS. Charts: Recharts, Chart.js, ApexCharts, Plotly.
 
@@ -187,6 +189,24 @@ While the backend is running, FastAPI automatically provides interactive API doc
 | http://localhost:5000/redoc | **ReDoc** — clean read-only reference, better for browsing |
 
 The Swagger UI at `/docs` is particularly useful for debugging: you can expand any endpoint, fill in parameters, send a real request, and see the exact response the backend returns. All request and response schemas are documented automatically based on the Pydantic models defined in the backend code.
+
+---
+
+## Internationalisation (i18n)
+
+The frontend supports **German (DE)** and **English (EN)**. The language switcher is displayed in the breadcrumb bar on all admin pages and in the debug simulator header.
+
+**Implementation:**
+- Library: `react-i18next` + `i18next`
+- Translation files: `src/locales/<namespace>/<de|en>.json`
+- 10 namespaces: `common`, `navigation`, `study`, `experiment`, `configuration`, `overview`, `participant`, `questionnaire`, `analysis`, `debug`
+
+**Adding a new translation key:**
+1. Add the key to both `src/locales/<namespace>/de.json` and `en.json`
+2. Use `const { t } = useTranslation('<namespace>')` in React components
+3. For non-React contexts (hooks, service functions): `import i18n from '@/i18n'` and call `i18n.t('<namespace>:<key>')`
+
+**Note:** Backend status strings (`"Entwurf"`, `"Aktiv"`, `"Beendet"`, `"Versuch"`, `"Vorbereitung"`, `"Fragebogen"`) are used as identifiers in API calls and conditional logic — they must **not** be translated. Only their display labels are passed through `t()`.
 
 ---
 

@@ -199,6 +199,19 @@ FeedbackManager  ← HandoverFeedbackController
 
 ---
 
+## Available Scenes
+
+| Scene | Purpose |
+|---|---|
+| `Netzwerk` | Presence + Multiplayer test |
+| `Handover` | Presence + Multiplayer + handover interaction test |
+| `Experiment` | Presence + Multiplayer + Study (offline) |
+| `Vollstaendig` | Full production scene; uses `session_LocalOnline` config |
+
+Offline scenes run without a backend connection (`offlineMode = true` in `StudySessionConfig`). The production scene `Vollstaendig` requires a running backend.
+
+---
+
 ## Checklist: Building a New Scene
 
 ### Prerequisites
