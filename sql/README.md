@@ -8,7 +8,7 @@ PostgreSQL 17. Source of truth: `schema.sql`. The SQLAlchemy ORM models in `Web/
 
 | Table | Description |
 |---|---|
-| `study` | Top-level container for a research study. Tracks status (`created`, `active`, `Beendet`) and dates. |
+| `study` | Top-level container for a research study. Tracks status (`Entwurf`, `Aktiv`, `Beendet`) and dates. |
 | `study_config` | Configuration attached to a study: name, principal investigator, number of trials, randomisation flag, study type. |
 | `experiment` | A single run of a study with a specific group of participants. Belongs to a `study`. |
 | `trial` | One task block within an experiment. Belongs to an `experiment`. Tracks completion status. |

@@ -98,6 +98,6 @@ New work is always branched from `development`. Once a set of changes has been t
 |---|---|
 | VR Runtime | Unity, C#, Photon Fusion 2 (Shared Mode), OpenXR |
 | Backend | Python 3.12, FastAPI, SQLAlchemy, uv |
-| Frontend | React, Vite, MUI, Ant Design, Tailwind CSS |
+| Frontend | React, Vite, MUI, Ant Design, Tailwind CSS, react-i18next (DE/EN) |
 | Database | PostgreSQL 17 |
 | Charts | Recharts, Chart.js, ApexCharts, Plotly |

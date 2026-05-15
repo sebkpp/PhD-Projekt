@@ -199,6 +199,32 @@ FeedbackManager  ← HandoverFeedbackController
 
 ---
 
+## Available Scenes
+
+### Production Scenes (`Assets/App/Scenes/`)
+
+| Scene | Purpose |
+|---|---|
+| `Operational Room` | Main VR environment (operating room) |
+| `StudyScene` | Full production scene for running studies with backend |
+
+### Test Scenes (`Assets/App/Scenes/TestScenes/`)
+
+| Scene | Purpose |
+|---|---|
+| `01_Avatar` | Avatar rendering and tracking calibration |
+| `02_Grabbing` | Grab and release mechanics |
+| `03_Feedback` | Multisensory feedback (visual, auditory, tactile) |
+| `04_Network` | Presence + Multiplayer networking |
+| `05_Handover` | Presence + Multiplayer + handover interaction |
+| `06_Experiment` | Presence + Multiplayer + Study (offline, no backend) |
+| `07_OnlineExperiment` | Full experiment with live backend connection |
+| `Arduino` | Arduino/tactile hardware integration test |
+
+Test scenes 01–06 run without a backend (`offlineMode = true`). `07_OnlineExperiment` and the production scenes require a running backend.
+
+---
+
 ## Checklist: Building a New Scene
 
 ### Prerequisites
