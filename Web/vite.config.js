@@ -14,6 +14,19 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'), // @ auf src gemappt
     },
   },
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      '@mui/material',
+      '@emotion/react',
+      '@emotion/styled',
+      'antd',
+      'dayjs',
+      'recharts',
+    ],
+  },
   server: {
     host: true,
     proxy: {

@@ -155,6 +155,28 @@ uv run python manage_imports.py
 
 ---
 
+## Debug Simulator
+
+The application includes a browser-based simulator for testing frontend behaviour without a running Unity application. It lets you simulate participant connections, readiness signals, and handover events directly from the browser.
+
+**URL:** http://localhost:5173/simulator
+
+The simulator requires the backend and a started trial. Start a trial via the normal study flow first (Study → Experiment → Overview → Start Trial), then open the simulator in a second browser tab.
+
+### Available panels
+
+| Panel | What it does |
+|---|---|
+| **Participant Join** | Connects or disconnects Proband 1 / Proband 2. While connected, a heartbeat is sent every 2 seconds to keep the session alive. Disconnecting stops the heartbeat; the backend marks the participant as inactive after the configured timeout. |
+| **Participant Readiness** | Toggles the readiness status of each participant slot. The Trial Overview page polls this state to decide when the trial can begin. |
+| **Handover Simulation** | Starts an automated loop that generates a random handover every 2 seconds. Each iteration picks a random object and random giver/receiver from the current trial's participants. Requires an active trial with at least two participants. |
+
+### Source files
+
+All simulator code lives in `src/debug/` and is only referenced by the `/simulator` route — it is never included in other pages.
+
+---
+
 ## API Documentation
 
 While the backend is running, FastAPI automatically provides interactive API documentation in the browser. No additional setup is required.

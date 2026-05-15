@@ -1,4 +1,5 @@
 ﻿import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
 import Layout from './layout/Layout.jsx'
 import ConfigPage from './features/configuration/ConfigPage.jsx'
 import TrialOverview from "./features/overview/TrialOverview.jsx";
@@ -14,9 +15,9 @@ import QuestionnairePreviewPage from "./features/questionnaire/QuestionnairePrev
 import StudyOverview from "./features/study/StudyOverview.jsx";
 import StudyConfigurationPage from "@/features/study/StudyConfigPage.jsx";
 import ExperimentConfigPage from "@/features/experiment/ExperimentConfigPage.jsx";
-import AnalysisPage from '@/features/Analysis/AnalysisPage.jsx'
-import StudyAnalysisPage from '@/features/Analysis/StudyAnalysisPage.jsx'
-import ExperimentAnalysisPage from '@/features/Analysis/ExperimentAnalysisPage.jsx'
+const AnalysisPage = lazy(() => import('@/features/Analysis/AnalysisPage.jsx'))
+const StudyAnalysisPage = lazy(() => import('@/features/Analysis/StudyAnalysisPage.jsx'))
+const ExperimentAnalysisPage = lazy(() => import('@/features/Analysis/ExperimentAnalysisPage.jsx'))
 
 export default function AppRouter() {
     const playerSlots = [
@@ -41,9 +42,9 @@ export default function AppRouter() {
                         <Route path="/study/:studyId/experiment/:experimentId/overview" element={<TrialOverview />} />
                     </Route>
 
-                    <Route path="/analysis" element={<AnalysisPage />} />
-                    <Route path="/study/:studyId/analysis" element={<StudyAnalysisPage />} />
-                    <Route path="/study/:studyId/experiment/:experimentId/analysis" element={<ExperimentAnalysisPage />} />
+                    <Route path="/analysis" element={<Suspense fallback={null}><AnalysisPage /></Suspense>} />
+                    <Route path="/study/:studyId/analysis" element={<Suspense fallback={null}><StudyAnalysisPage /></Suspense>} />
+                    <Route path="/study/:studyId/experiment/:experimentId/analysis" element={<Suspense fallback={null}><ExperimentAnalysisPage /></Suspense>} />
 
                     <Route path="/participant/questionnaires" element={<QuestionnaireRouter />} />
                     <Route path="/questionnaire/closing" element={<QuestionnaireClosing />} />
