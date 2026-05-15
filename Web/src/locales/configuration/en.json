@@ -6,7 +6,18 @@
     "saveButton": "Continue to \"Waiting for Participants\"",
     "savingButton": "Saving Trials...",
     "errorTitle": "Please fix the following errors:",
-    "submitError": "Error submitting the configuration"
+    "submitError": "Error submitting the configuration",
+    "bothConnectedRequired": "⚠️ Both participants must be connected before configuration can proceed."
+  },
+  "participantBox": {
+    "title": "Participant Configuration",
+    "loadError": "Error loading data. Please reload the page."
+  },
+  "demography": {
+    "submitted": "✅ Demographics questionnaire submitted",
+    "notFilled": "❌ Not yet filled in",
+    "loadingStatus": "Loading questionnaire status...",
+    "answered": "{{completed}} / {{total}} questionnaires answered"
   },
   "participantCard": {
     "participant": "Participant {{id}}",

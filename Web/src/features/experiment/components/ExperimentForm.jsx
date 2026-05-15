@@ -38,7 +38,7 @@ export default function ExperimentForm({ studyGeneralInfo, onChange }) {
                     className="w-full bg-gray-800 border border-border rounded px-3 py-2"
                     value={researcher}
                     onChange={(e) => setResearcher(e.target.value)}
-                    placeholder="z.B. Mustermann"
+                    placeholder={t('form.researcherPlaceholder')}
                 />
 
                 <label htmlFor="description" className="block text-sm mt-3">{t('form.description')}</label>

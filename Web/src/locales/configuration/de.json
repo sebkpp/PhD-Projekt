@@ -6,7 +6,18 @@
     "saveButton": "Weiter zu \"Warten auf Probanden\"",
     "savingButton": "Speichere Trials...",
     "errorTitle": "Bitte beheben Sie folgende Fehler:",
-    "submitError": "Fehler beim Absenden der Konfiguration"
+    "submitError": "Fehler beim Absenden der Konfiguration",
+    "bothConnectedRequired": "⚠️ Beide Probanden müssen verbunden sein, bevor konfiguriert werden kann."
+  },
+  "participantBox": {
+    "title": "Probanden-Konfiguration",
+    "loadError": "Fehler beim Laden der Daten. Bitte Seite neu laden."
+  },
+  "demography": {
+    "submitted": "✅ Demographie-Fragebogen abgeschickt",
+    "notFilled": "❌ Noch nicht ausgefüllt",
+    "loadingStatus": "Fragebogen-Status wird geladen...",
+    "answered": "{{completed}} / {{total}} Fragebögen beantwortet"
   },
   "participantCard": {
     "participant": "Proband {{id}}",

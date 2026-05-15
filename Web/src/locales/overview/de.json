@@ -31,5 +31,11 @@
     "currentTrial": "Aktueller Trial",
     "nextTrial": "Nächster Trial",
     "participantSlot": "Proband Slot {{n}}"
+  },
+  "qr": {
+    "participantRegistration": "Probanden Registierung",
+    "questionnaireLink": "Fragebogen-Link für die Probanden (nach Demographie)",
+    "loadingStatus": "Lade Status...",
+    "questionnairesFilled": "Fragebögen: {{completed}} / {{total}} ausgefüllt"
   }
 }

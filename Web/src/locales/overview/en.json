@@ -31,5 +31,11 @@
     "currentTrial": "Current Trial",
     "nextTrial": "Next Trial",
     "participantSlot": "Participant Slot {{n}}"
+  },
+  "qr": {
+    "participantRegistration": "Participant Registration",
+    "questionnaireLink": "Questionnaire link for participants (after demographics)",
+    "loadingStatus": "Loading status...",
+    "questionnairesFilled": "Questionnaires: {{completed}} / {{total}} completed"
   }
 }

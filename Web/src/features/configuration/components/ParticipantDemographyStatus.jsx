@@ -1,5 +1,6 @@
 ﻿import QRCodeCard from '../../shared/components/QRCodeCard.jsx'
 import { useParticipantQrUrl } from '../../overview/hooks/useParticipantQRCode.js'
+import { useTranslation } from 'react-i18next'
 import {getParticipantSubmissionStatus} from "@/features/participant/demography/participantQuestionnaireService.js";
 import {useEffect, useRef, useState} from "react";
 import {
@@ -10,6 +11,7 @@ import {getTrialsForExperiment} from "@/features/questionnaire/service/questionn
 import {getTrialById} from "@/features/overview/services/trialOverviewService.js";
 
 export default function ParticipantDemographyStatus({ study_id,  experiment_id, trial_id, slot }) {
+    const { t } = useTranslation('configuration')
     const [status, setStatus] = useState(null)
     const [questionnaireStatus, setQuestionnaireStatus] = useState(null)
     const intervalRef = useRef(null)
@@ -78,27 +80,27 @@ export default function ParticipantDemographyStatus({ study_id,  experiment_id, 
                 {!trial_id ? (
                     status ? (
                         <span className="text-green-400">
-                ✅ Demographie-Fragebogen abgeschickt
+                {t('demography.submitted')}
             </span>
                     ) : (
-                        <span className="text-yellow-300">❌ Noch nicht ausgefüllt</span>
+                        <span className="text-yellow-300">{t('demography.notFilled')}</span>
                     )
                 ) : !participant_id ? (
-                    <span className="text-yellow-300">❌ Noch nicht ausgefüllt</span>
+                    <span className="text-yellow-300">{t('demography.notFilled')}</span>
                 ) : isTrialFinished ? (
                     loading ? (
-                        <span className="text-gray-400">Fragebogen-Status wird geladen...</span>
+                        <span className="text-gray-400">{t('demography.loadingStatus')}</span>
                     ) : (
                         <span>
-                {completedCount} / {totalCount} Fragebögen beantwortet
+                {t('demography.answered', { completed: completedCount, total: totalCount })}
             </span>
                     )
                 ) : status ? (
                     <span className="text-green-400">
-            ✅ Demographie-Fragebogen abgeschickt
+            {t('demography.submitted')}
         </span>
                 ) : (
-                    <span className="text-yellow-300">❌ Noch nicht ausgefüllt</span>
+                    <span className="text-yellow-300">{t('demography.notFilled')}</span>
                 )}
             </div>
         </div>

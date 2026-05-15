@@ -25,7 +25,7 @@ export default function ConfigurationForm({
 
             {!bothConnected && (
                 <p className="text-red-400 mb-4">
-                    ⚠️ Beide Probanden müssen verbunden sein, bevor konfiguriert werden kann.
+                    {t('form.bothConnectedRequired')}
                 </p>
             )}
 

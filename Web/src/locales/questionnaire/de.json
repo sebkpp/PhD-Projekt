@@ -1,4 +1,31 @@
 {
+  "router": {
+    "participant": "Proband {{slot}}",
+    "progress": "Fragebogen {{current}} von {{total}}"
+  },
+  "preview": {
+    "loading": "Lade Fragebogen...",
+    "mode": "Vorschau-Modus – keine Daten werden gespeichert"
+  },
+  "dynamic": {
+    "noItems": "Keine Items für diesen Fragebogen vorhanden."
+  },
+  "selector": {
+    "title": "Verfügbare Fragebögen",
+    "filter": "Filter...",
+    "loading": "Lade...",
+    "loadError": "Fehler beim Laden der Fragebögen",
+    "noResults": "Keine Fragebögen gefunden",
+    "preview": "Vorschau",
+    "prevPage": "Zurück",
+    "page": "Seite {{current}} von {{total}}",
+    "nextPage": "Weiter",
+    "selectedTitle": "Ausgewählte Fragebögen (Reihenfolge)",
+    "noneSelected": "Keine Fragebögen ausgewählt",
+    "moveUp": "Nach oben verschieben",
+    "moveDown": "Nach unten verschieben",
+    "remove": "Entfernen"
+  },
   "waiting": {
     "waitText": "Bitte warte, bis der aktuelle Trial beendet ist und die Fragebögen freigeschaltet werden.",
     "readyText": "Die Fragebögen sind jetzt bereit.",

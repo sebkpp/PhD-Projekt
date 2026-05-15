@@ -3,7 +3,8 @@
     "title": "Generelle Informationen",
     "researcher": "Versuchsleiter:in",
     "description": "Beschreibung (optional)",
-    "descriptionPlaceholder": "Detaillierte Beschreibung, Zielsetzung usw."
+    "descriptionPlaceholder": "Detaillierte Beschreibung, Zielsetzung usw.",
+    "researcherPlaceholder": "z.B. Mustermann"
   },
   "tile": {
     "finished": "Beendet",
@@ -11,9 +12,23 @@
     "researcher": "Versuchsleiter:in:",
     "viewData": "Daten-Übersicht ansehen",
     "toExperiment": "Zum Experiment",
-    "unknown": "Unbekannt"
+    "unknown": "Unbekannt",
+    "experimentNumber": "{{n}}. Experiment",
+    "date": "Datum:",
+    "times": "Uhrzeiten:",
+    "notStarted": "Noch nicht gestartet",
+    "notCompleted": "Noch nicht beendet",
+    "description": "Beschreibung:",
+    "trialOverview": "Trial Übersicht",
+    "slot": "Slot {{n}}:"
   },
   "studyInfo": {
+    "title": "Studien-Übersicht",
+    "studyId": "Studien-ID:",
+    "name": "Name:",
+    "description": "Beschreibung:",
+    "start": "Start:",
+    "end": "Ende:",
     "startDate": "Startdatum",
     "endDate": "Enddatum",
     "notStarted": "Noch nicht begonnen",
@@ -21,6 +36,11 @@
     "participants": "Teilnehmer",
     "experiments": "Experimente",
     "researcher": "Hauptforscher:in",
+    "stimuli": "Stimuli",
+    "none": "Keine",
+    "questionnaires": "Fragebögen",
+    "error": "Fehler: {{msg}}",
+    "closedSuccess": "Studie wurde geschlossen!",
     "closeStudy": "Studie schließen",
     "closeStudyTitle": "Studie schließen",
     "closeStudyMessage": "Möchtest du die Studie wirklich schließen? Dieser Vorgang kann nicht rückgängig gemacht werden."

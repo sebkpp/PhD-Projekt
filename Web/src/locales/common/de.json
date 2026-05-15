@@ -13,7 +13,9 @@
     "confirm": "Bestätigen",
     "refresh": "Aktualisieren",
     "compare": "Vergleichen",
-    "evaluate": "Zur Auswertung"
+    "evaluate": "Zur Auswertung",
+    "retry": "Wiederholen",
+    "finalizeConfirm": "Ja, abschließen"
   },
   "status": {
     "loading": "Wird geladen…",
@@ -33,6 +35,8 @@
     "participant": "Proband",
     "participant_n": "Proband {{n}}",
     "slot_n": "Slot {{n}}",
+    "participantSlot": "Probanden Slot {{n}}",
+    "participantId": "(Probanden ID: {{id}})",
     "experiment": "Experiment",
     "study": "Studie",
     "trial": "Trial"

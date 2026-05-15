@@ -4,9 +4,11 @@ import { useStudyQuestionnaires } from '@/features/questionnaire/hooks/useStudyQ
 import {useHandleAllDone} from "@/features/questionnaire/hooks/useHandleAllDone.js";
 import {useQuestionnaireNavigator} from "@/features/questionnaire/hooks/useQuestionnaireNavigator.js";
 import {useEffect, useState} from "react";
-import {getParticipantSubmissionStatus} from "@/features/participant/demography/participantQuestionnaireService.js"; // Dein Demographie-Fragebogen
+import {getParticipantSubmissionStatus} from "@/features/participant/demography/participantQuestionnaireService.js";
+import { useTranslation } from 'react-i18next'
 
 export default function QuestionnaireRouter() {
+    const { t } = useTranslation('questionnaire')
     const [searchParams] = useSearchParams()
     const { studyId, experimentId } = useParams()
     const slot = searchParams.get('slot')
@@ -37,10 +39,10 @@ export default function QuestionnaireRouter() {
         <div className="min-h-screen bg-background text-foreground p-8 flex flex-col items-center">
             <div className="ml-16 w-full max-w-3xl flex items-center mb-6">
                 <h2 className="text-xl font-semibold mr-8">
-                    {currentQuestionnaire?.name} - Proband {slot}
+                    {currentQuestionnaire?.name} - {t('router.participant', { slot })}
                 </h2>
                 <span className="text-gray-400 whitespace-nowrap">
-                    Fragebogen {currentIndex + 1} von {questionnaires.length}
+                    {t('router.progress', { current: currentIndex + 1, total: questionnaires.length })}
                 </span>
             </div>
             <QuestionnaireForm

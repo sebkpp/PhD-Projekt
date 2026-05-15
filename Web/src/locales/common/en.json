@@ -13,7 +13,9 @@
     "confirm": "Confirm",
     "refresh": "Refresh",
     "compare": "Compare",
-    "evaluate": "Go to Analysis"
+    "evaluate": "Go to Analysis",
+    "retry": "Retry",
+    "finalizeConfirm": "Yes, finalize"
   },
   "status": {
     "loading": "Loading…",
@@ -33,6 +35,8 @@
     "participant": "Participant",
     "participant_n": "Participant {{n}}",
     "slot_n": "Slot {{n}}",
+    "participantSlot": "Participant Slot {{n}}",
+    "participantId": "(Participant ID: {{id}})",
     "experiment": "Experiment",
     "study": "Study",
     "trial": "Trial"

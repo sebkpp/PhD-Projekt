@@ -1,7 +1,9 @@
 ﻿import { useQuestionnaires } from './useQuestionnaires.js'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export default function QuestionnaireSelector({ selectedQuestionnaires, onChange }) {
+    const { t } = useTranslation('questionnaire')
     const { allQuestionnaires, loading, error } = useQuestionnaires()
     const [filter, setFilter] = useState('')
 
@@ -41,11 +43,11 @@ export default function QuestionnaireSelector({ selectedQuestionnaires, onChange
         <div className="flex gap-8">
             {/* Linke Seite: Verfügbare Fragebögen */}
             <div className="flex-1 border border-gray-600 p-4 rounded bg-gray-800 max-h-[400px] flex flex-col">
-                <h2 className="font-bold mb-4 text-white">Verfügbare Fragebögen</h2>
+                <h2 className="font-bold mb-4 text-white">{t('selector.title')}</h2>
 
                 <input
                     type="text"
-                    placeholder="Filter..."
+                    placeholder={t('selector.filter')}
                     className="w-full mb-4 p-2 rounded border border-gray-600 bg-gray-900 text-white"
                     value={filter}
                     onChange={e => {
@@ -55,14 +57,14 @@ export default function QuestionnaireSelector({ selectedQuestionnaires, onChange
                 />
 
                 {loading ? (
-                    <p className="text-gray-400">Lade...</p>
+                    <p className="text-gray-400">{t('selector.loading')}</p>
                 ) : error ? (
-                    <p className="text-red-400">Fehler beim Laden der Fragebögen</p>
+                    <p className="text-red-400">{t('selector.loadError')}</p>
                 ) : (
                     <>
                         <div className="grid grid-cols-2 gap-4 overflow-auto flex-grow">
                             {pagedQuestionnaires.length === 0 && (
-                                <p className="text-gray-400 col-span-2 text-center">Keine Fragebögen gefunden</p>
+                                <p className="text-gray-400 col-span-2 text-center">{t('selector.noResults')}</p>
                             )}
                             {pagedQuestionnaires.map(q => {
                                 const isSelected = selectedQuestionnaires.some(s => s.questionnaire_id === q.questionnaire_id)
@@ -85,7 +87,7 @@ export default function QuestionnaireSelector({ selectedQuestionnaires, onChange
                                                 onClick={e => e.stopPropagation()}
                                                 className="text-xs text-blue-400 hover:underline shrink-0"
                                             >
-                                                Vorschau
+                                                {t('selector.preview')}
                                             </a>
                                         </div>
                                     </div>
@@ -100,17 +102,17 @@ export default function QuestionnaireSelector({ selectedQuestionnaires, onChange
                                 disabled={currentPage === 1}
                                 className="px-3 py-1 rounded bg-gray-700 text-white disabled:opacity-50"
                             >
-                                Zurück
+                                {t('selector.prevPage')}
                             </button>
                             <span className="text-white self-center">
-                Seite {currentPage} von {totalPages}
-              </span>
+                                {t('selector.page', { current: currentPage, total: totalPages })}
+                            </span>
                             <button
                                 onClick={goNext}
                                 disabled={currentPage === totalPages}
                                 className="px-3 py-1 rounded bg-gray-700 text-white disabled:opacity-50"
                             >
-                                Weiter
+                                {t('selector.nextPage')}
                             </button>
                         </div>
                     </>
@@ -119,11 +121,11 @@ export default function QuestionnaireSelector({ selectedQuestionnaires, onChange
 
             {/* Rechte Seite: Ausgewählte Fragebögen (bleibt unverändert) */}
             <div className="flex-1 border border-gray-600 p-4 rounded bg-gray-800 max-h-[400px] overflow-auto">
-                <h2 className="font-bold mb-4 text-white">Ausgewählte Fragebögen (Reihenfolge)</h2>
+                <h2 className="font-bold mb-4 text-white">{t('selector.selectedTitle')}</h2>
 
                 <ul className="space-y-2">
                     {selectedQuestionnaires.length === 0 && (
-                        <li className="text-gray-400">Keine Fragebögen ausgewählt</li>
+                        <li className="text-gray-400">{t('selector.noneSelected')}</li>
                     )}
                     {selectedQuestionnaires.map((q, i) => {
                         const full = allQuestionnaires.find(aq => aq.questionnaire_id === q.questionnaire_id);
@@ -145,7 +147,7 @@ export default function QuestionnaireSelector({ selectedQuestionnaires, onChange
                                         }}
                                         disabled={i === 0}
                                         className="disabled:opacity-50 px-2"
-                                        title="Nach oben verschieben"
+                                        title={t('selector.moveUp')}
                                     >
                                         ↑
                                     </button>
@@ -159,7 +161,7 @@ export default function QuestionnaireSelector({ selectedQuestionnaires, onChange
                                         }}
                                         disabled={i === selectedQuestionnaires.length - 1}
                                         className="disabled:opacity-50 px-2"
-                                        title="Nach unten verschieben"
+                                        title={t('selector.moveDown')}
                                     >
                                         ↓
                                     </button>
@@ -168,7 +170,7 @@ export default function QuestionnaireSelector({ selectedQuestionnaires, onChange
                                             onChange(selectedQuestionnaires.filter(s => s.questionnaire_id !== q.questionnaire_id))
                                         }}
                                         className="text-red-500 px-2"
-                                        title="Entfernen"
+                                        title={t('selector.remove')}
                                     >
                                         ✕
                                     </button>

@@ -1,4 +1,31 @@
 {
+  "router": {
+    "participant": "Participant {{slot}}",
+    "progress": "Questionnaire {{current}} of {{total}}"
+  },
+  "preview": {
+    "loading": "Loading questionnaire...",
+    "mode": "Preview mode – no data will be saved"
+  },
+  "dynamic": {
+    "noItems": "No items available for this questionnaire."
+  },
+  "selector": {
+    "title": "Available Questionnaires",
+    "filter": "Filter...",
+    "loading": "Loading...",
+    "loadError": "Error loading questionnaires",
+    "noResults": "No questionnaires found",
+    "preview": "Preview",
+    "prevPage": "Back",
+    "page": "Page {{current}} of {{total}}",
+    "nextPage": "Next",
+    "selectedTitle": "Selected Questionnaires (Order)",
+    "noneSelected": "No questionnaires selected",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "remove": "Remove"
+  },
   "waiting": {
     "waitText": "Please wait until the current trial has ended and the questionnaires are unlocked.",
     "readyText": "The questionnaires are now available.",

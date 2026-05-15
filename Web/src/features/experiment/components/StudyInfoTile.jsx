@@ -42,7 +42,7 @@ export default function StudyInfoTile({
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                     <ClipboardList className="w-5 h-5 text-blue-400" />
-                    Studien-Übersicht
+                    {t('studyInfo.title')}
                 </h2>
                 <span
                     className={`px-3 py-1 text-sm rounded-full ${
@@ -59,41 +59,41 @@ export default function StudyInfoTile({
 
             {/* Grid Layout */}
             <div className="grid grid-cols-2 gap-y-3 text-sm">
-                <span className="text-gray-400">Studien-ID:</span>
+                <span className="text-gray-400">{t('studyInfo.studyId')}</span>
                 <span className="text-gray-100">{studyId}</span>
 
-                <span className="text-gray-400">Name:</span>
+                <span className="text-gray-400">{t('studyInfo.name')}</span>
                 <span className="text-gray-100">{name}</span>
 
-                <span className="text-gray-400">Beschreibung:</span>
+                <span className="text-gray-400">{t('studyInfo.description')}</span>
                 <span className="text-gray-100">{description}</span>
 
-                <span className="text-gray-400">Start:</span>
+                <span className="text-gray-400">{t('studyInfo.start')}</span>
                 <span className="text-gray-100">
           {startDate || t('studyInfo.notStarted')}
         </span>
 
-                <span className="text-gray-400">Ende:</span>
+                <span className="text-gray-400">{t('studyInfo.end')}</span>
                 <span className="text-gray-100">
           {endDate || t('studyInfo.notFinished')}
         </span>
 
                 <span className="text-gray-400 flex items-center gap-1">
           <FlaskConical className="w-4 h-4 text-purple-400" />
-          Experimente:
+          {t('studyInfo.experiments')}
         </span>
                 <span className="text-gray-100">{experimentCount}</span>
 
                 <span className="text-gray-400 flex items-center gap-1">
           <Users className="w-4 h-4 text-teal-400" />
-          Teilnehmer:
+          {t('studyInfo.participants')}
         </span>
                 <span className="text-gray-100">{participantCount}</span>
 
 
                 <span className="text-gray-400 flex items-center gap-1">
           <UserCog className="w-4 h-4 text-orange-400" />
-          Forscher:
+          {t('studyInfo.researcher')}
         </span>
                 <span className="text-gray-100">{researcher}</span>
 
@@ -101,7 +101,7 @@ export default function StudyInfoTile({
 
             {/* Stimuli */}
             <div className="mt-5">
-                <h3 className="text-gray-300 text-sm mb-2">Stimuli</h3>
+                <h3 className="text-gray-300 text-sm mb-2">{t('studyInfo.stimuli')}</h3>
                 <div className="flex flex-wrap gap-2">
                     {stimuliTypes?.length > 0 ? (
                         stimuliTypes.map((s, i) => (
@@ -114,14 +114,14 @@ export default function StudyInfoTile({
                             </span>
                         ))
                     ) : (
-                        <span className="text-gray-500 text-sm">Keine</span>
+                        <span className="text-gray-500 text-sm">{t('studyInfo.none')}</span>
                     )}
                 </div>
             </div>
 
             {/* Fragebögen */}
             <div className="mt-5">
-                <h3 className="text-gray-300 text-sm mb-2">Fragebögen</h3>
+                <h3 className="text-gray-300 text-sm mb-2">{t('studyInfo.questionnaires')}</h3>
                 <div className="flex flex-wrap gap-2">
                     {questionnaires?.length > 0 ? (
                         questionnaires.map((q) => (
@@ -133,7 +133,7 @@ export default function StudyInfoTile({
               </span>
                         ))
                     ) : (
-                        <span className="text-gray-500 text-sm">Keine</span>
+                        <span className="text-gray-500 text-sm">{t('studyInfo.none')}</span>
                     )}
                 </div>
             </div>
@@ -149,8 +149,8 @@ export default function StudyInfoTile({
                     >
                         {t('studyInfo.closeStudy')}
                     </button>
-                    {error && <span className="text-red-400 mt-2">Fehler: {error.message || error.toString()}</span>}
-                    {result && <span className="text-green-400 mt-2">Studie wurde geschlossen!</span>}
+                    {error && <span className="text-red-400 mt-2">{t('studyInfo.error', { msg: error.message || error.toString() })}</span>}
+                    {result && <span className="text-green-400 mt-2">{t('studyInfo.closedSuccess')}</span>}
                 </div>
 
             <SaveConfirmDialog

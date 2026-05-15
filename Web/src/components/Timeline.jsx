@@ -1,9 +1,17 @@
 ﻿import { usePhase } from './PhaseProvider.jsx'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 export default function Timeline() {
+    const { t } = useTranslation('navigation')
     const { currentPhase, totalTrials, completedTrials } = usePhase()
     const phases = ['Vorbereitung', 'Versuch', 'Fragebogen', 'Beendet']
+    const phaseLabels = {
+        'Vorbereitung': t('timeline.preparation'),
+        'Versuch': t('timeline.trial'),
+        'Fragebogen': t('timeline.questionnaire'),
+        'Beendet': t('timeline.finished'),
+    }
     const remaining = Math.max(totalTrials - completedTrials, 0)
 
     return (
@@ -45,7 +53,7 @@ export default function Timeline() {
 
                             {/* Label */}
                             <div className="mt-2 text-center text-sm text-gray-300">
-                                {phase}
+                                {phaseLabels[phase] ?? phase}
                             </div>
 
                             {/* Wiederholungsanzeige */}
