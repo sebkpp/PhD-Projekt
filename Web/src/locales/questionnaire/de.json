@@ -9,6 +9,10 @@
     "saved": "Deine Antworten wurden erfolgreich gespeichert.",
     "instructions": "Du kannst das Fenster jetzt schließen oder auf weitere Anweisungen warten."
   },
+  "validation": {
+    "noAnswers": "Keine Antworten vorhanden",
+    "required": "Bitte ausfüllen"
+  },
   "form": {
     "resetButton": "Zurücksetzen",
     "nextButton": "Weiter",

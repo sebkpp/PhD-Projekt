@@ -6,6 +6,12 @@
     "experiment": "Experiment",
     "slot": "Slot"
   },
+  "validation": {
+    "ageRequired": "Please enter an age between 18 and 100.",
+    "genderRequired": "Please select a gender.",
+    "handednessRequired": "Please select a handedness.",
+    "submitError": "Error while submitting. Please try again."
+  },
   "demography": {
     "title": "Participant Questionnaire",
     "subtitle": "Please fill in the following details. Your participation remains anonymous.",

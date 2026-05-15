@@ -5,7 +5,8 @@
     "deleteTrial": "Trial löschen",
     "saveButton": "Weiter zu „Warten auf Probanden"",
     "savingButton": "Speichere Trials...",
-    "errorTitle": "Bitte beheben Sie folgende Fehler:"
+    "errorTitle": "Bitte beheben Sie folgende Fehler:",
+    "submitError": "Fehler beim Absenden der Konfiguration"
   },
   "participantCard": {
     "participant": "Proband {{id}}",

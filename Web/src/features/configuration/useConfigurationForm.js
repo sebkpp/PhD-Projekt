@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom'
 import { fetchParticipantStatus, submitTrialConfiguration, getConnectionStatus  } from './configurationService'
 import { validateTrialConfigs } from './configurationValidation'
+import i18n from '@/i18n'
 const MAX_TRIALS = 10
 import { usePhase } from '../../components/PhaseProvider'
 
@@ -52,7 +53,7 @@ export function useConfigurationForm(experimentId) {
             setCurrentPhase('Warten auf Probanden')
             navigate(`/experiment/${experimentId}/overview`)
         } catch (e) {
-            alert(e.message || 'Fehler beim Absenden der Konfiguration')
+            alert(e.message || i18n.t('configuration:form.submitError'))
         }
     }
 

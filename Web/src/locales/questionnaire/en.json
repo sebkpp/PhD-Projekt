@@ -9,6 +9,10 @@
     "saved": "Your answers have been saved successfully.",
     "instructions": "You can close this window or wait for further instructions."
   },
+  "validation": {
+    "noAnswers": "No answers available",
+    "required": "Please fill in"
+  },
   "form": {
     "resetButton": "Reset",
     "nextButton": "Continue",
