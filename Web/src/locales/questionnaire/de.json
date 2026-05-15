@@ -11,7 +11,8 @@
   },
   "validation": {
     "noAnswers": "Keine Antworten vorhanden",
-    "required": "Bitte ausfüllen"
+    "required": "Bitte ausfüllen",
+    "statusCheckError": "Fehler beim Prüfen des Fragebogen-Status"
   },
   "form": {
     "resetButton": "Zurücksetzen",

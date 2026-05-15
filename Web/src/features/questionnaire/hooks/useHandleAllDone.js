@@ -1,5 +1,6 @@
 ﻿import { useNavigate } from 'react-router-dom'
 import {getNextQuestionnaireRoute, getTrialsForExperiment} from '../service/questionnaireFlowService.js'
+import i18n from '@/i18n'
 
 export function useHandleAllDone({ participantId, studyId, experimentId, trialId, slot }) {
     const navigate = useNavigate()
@@ -21,7 +22,7 @@ export function useHandleAllDone({ participantId, studyId, experimentId, trialId
             //const route = await getNextQuestionnaireRoute({ participantId, studyId, experimentId, trialId, slot })
             //navigate(route)
         } catch (err) {
-            alert('Fehler beim Prüfen des Fragebogen-Status: ' + err.message)
+            alert(i18n.t('questionnaire:validation.statusCheckError') + ': ' + err.message)
             navigate('/questionnaire/closing')
         }
     }
