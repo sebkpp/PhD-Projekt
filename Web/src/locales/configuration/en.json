@@ -6,5 +6,14 @@
     "saveButton": "Continue to \"Waiting for Participants\"",
     "savingButton": "Saving Trials...",
     "errorTitle": "Please fix the following errors:"
+  },
+  "participantCard": {
+    "participant": "Participant {{id}}",
+    "activeStimuli": "Active Stimuli:",
+    "avatarVisibility": "Avatar Visibility:",
+    "pleaseSelect": "Please select",
+    "visualStimulus": "Visual Stimulus",
+    "auditoryStimulus": "Auditory Stimulus",
+    "tactileStimulus": "Tactile Stimulus"
   }
 }

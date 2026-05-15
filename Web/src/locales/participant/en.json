@@ -5,5 +5,23 @@
     "startQuestionnaire": "Start Questionnaire",
     "experiment": "Experiment",
     "slot": "Slot"
+  },
+  "demography": {
+    "title": "Participant Questionnaire",
+    "subtitle": "Please fill in the following details. Your participation remains anonymous.",
+    "age": "Age",
+    "gender": "Gender",
+    "handedness": "Handedness",
+    "pleaseSelect": "Please select",
+    "male": "Male",
+    "female": "Female",
+    "diverse": "Diverse",
+    "rightHanded": "Right-handed",
+    "leftHanded": "Left-handed",
+    "ambidextrous": "Ambidextrous",
+    "submitButton": "Submit",
+    "submittingButton": "Submitting...",
+    "successTitle": "Thank you!",
+    "successText": "Your details have been saved."
   }
 }

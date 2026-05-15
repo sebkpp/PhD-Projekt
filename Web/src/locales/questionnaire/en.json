@@ -8,5 +8,13 @@
     "title": "Thank you!",
     "saved": "Your answers have been saved successfully.",
     "instructions": "You can close this window or wait for further instructions."
+  },
+  "form": {
+    "resetButton": "Reset",
+    "nextButton": "Continue",
+    "sendingButton": "Sending...",
+    "pleaseFill": "Please fill in the questionnaire.",
+    "pleaseAnswerAll": "Please answer all questions: {{missing}}",
+    "pleaseCompleteAll": "Please complete all fields:"
   }
 }

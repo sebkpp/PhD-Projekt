@@ -1,5 +1,6 @@
 // src/features/Analysis/components/shared/LoadingSpinner.jsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Einfacher zentrierter Lade-Spinner.
@@ -7,7 +8,9 @@ import React from 'react';
  *   - message: string (optional)
  *   - size: number (optional, default 40)
  */
-export default function LoadingSpinner({ message = 'Laden...', size = 40 }) {
+export default function LoadingSpinner({ message, size = 40 }) {
+  const { t } = useTranslation('analysis');
+  const displayMessage = message !== undefined ? message : t('shared.loading');
   return (
     <div
       style={{
@@ -30,7 +33,7 @@ export default function LoadingSpinner({ message = 'Laden...', size = 40 }) {
           animation: 'spin 1s linear infinite',
         }}
       />
-      <span style={{ fontSize: '14px' }}>{message}</span>
+      <span style={{ fontSize: '14px' }}>{displayMessage}</span>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );

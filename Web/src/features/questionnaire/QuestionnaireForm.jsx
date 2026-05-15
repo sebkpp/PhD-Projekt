@@ -1,4 +1,5 @@
 import {useEffect, useMemo, useState} from 'react'
+import { useTranslation } from 'react-i18next'
 import DynamicQuestionnaireForm from './components/dynamic/DynamicQuestionnaireForm.jsx'
 import { useSubmitQuestionnaire } from '@/features/questionnaire/hooks/useSubmitQuestionnaire'
 
@@ -9,6 +10,7 @@ export default function QuestionnaireForm({
                                               trialId,
                                               resetSignal
 }) {
+    const { t } = useTranslation('questionnaire');
     const initialValues = useMemo(() => ({}), [])
     const [isValid, setIsValid] = useState(false);
 
@@ -34,7 +36,7 @@ export default function QuestionnaireForm({
         const questionKeys = questionnaire?.items?.map(i => i.item_name) ?? []
 
         if (!responses || Object.keys(responses).length === 0) {
-            alert('Bitte füllen Sie den Fragebogen aus.');
+            alert(t('form.pleaseFill'));
             return;
         }
 
@@ -48,7 +50,7 @@ export default function QuestionnaireForm({
         });
 
         if (missing.length > 0) {
-            alert('Bitte alle Fragen beantworten: ' + missing.join(', '));
+            alert(t('form.pleaseAnswerAll', { missing: missing.join(', ') }));
             return;
         }
 
@@ -83,7 +85,7 @@ export default function QuestionnaireForm({
 
             {validationErrors && Object.keys(validationErrors).length > 0 && (
                 <div className="text-red-600">
-                    <p>Bitte füllen Sie alle Felder aus:</p>
+                    <p>{t('form.pleaseCompleteAll')}</p>
                     <ul>
                         {Object.entries(validationErrors).map(([field, msg]) => (
                             <li key={field}>{field}: {msg}</li>
@@ -99,7 +101,7 @@ export default function QuestionnaireForm({
                     disabled={loading}
                     className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-500 transition"
                 >
-                    Zurücksetzen
+                    {t('form.resetButton')}
                 </button>
 
                 <button
@@ -107,7 +109,7 @@ export default function QuestionnaireForm({
                     disabled={loading || !isValid}
                     className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition"
                 >
-                    {loading ? 'Senden...' : 'Weiter'}
+                    {loading ? t('form.sendingButton') : t('form.nextButton')}
                 </button>
             </div>
         </form>

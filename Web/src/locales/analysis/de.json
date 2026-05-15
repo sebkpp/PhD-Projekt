@@ -10,5 +10,69 @@
     "descriptiveWarning": "Deskriptiver Vergleich — kein inferenzieller Test (unterschiedliche Teilnehmer je Studie)",
     "loadingStudies": "Studien laden...",
     "loadingData": "Daten werden geladen..."
+  },
+  "study": {
+    "title": "Studien-Analyse",
+    "breadcrumb": "Studien-Analyse",
+    "breadcrumbStudy": "Studie",
+    "breadcrumbOverview": "Studienübersicht",
+    "tabs": {
+      "performance": "Performance",
+      "questionnaires": "Fragebögen",
+      "eyetracking": "Eye-Tracking",
+      "export": "Export"
+    },
+    "loading": {
+      "performance": "Performance-Daten laden...",
+      "questionnaires": "Fragebogen-Daten laden...",
+      "eyetracking": "Eye-Tracking-Daten laden..."
+    },
+    "inferential": {
+      "title": "Inferenzielle Analyse",
+      "transferDuration": "Inferenzielle Analyse — Transfer-Dauer",
+      "aoiDwellTime": "Inferenzielle Analyse — AOI Dwell-Time",
+      "noData": "Zu wenig Daten für inferenzielle Tests (n < 3 pro Bedingung)."
+    },
+    "export": {
+      "title": "Daten exportieren",
+      "csvButton": "CSV herunterladen",
+      "xlsxButton": "Excel herunterladen",
+      "exportingButton": "Wird exportiert...",
+      "hint": "Exportiert alle Handover-Daten der Studie {{studyId}}."
+    }
+  },
+  "experiment": {
+    "title": "Experiment-Analyse",
+    "breadcrumb": "Experiment-Analyse",
+    "tabs": {
+      "details": "Experiment Info",
+      "performance": "Performance",
+      "eyetracking": "Eye-Tracking",
+      "ux": "Fragebögen / UX",
+      "compare": "Vergleiche"
+    },
+    "loading": {
+      "performance": "Performance-Daten laden...",
+      "questionnaires": "Fragebogen-Daten laden...",
+      "eyetracking": "Eye-Tracking-Daten laden...",
+      "phases": "Phasen & Transitionen laden...",
+      "ppi": "PPI berechnen...",
+      "saccade": "Sakkaden-Rate berechnen...",
+      "compare": "Vergleichsdaten laden..."
+    },
+    "descriptiveWarning": "Deskriptive Analyse eines Messdurchgangs. Inferenzielle Auswertung über alle Experimente → Studien-Analyse.",
+    "placeholder": {
+      "correlationMatrix": "Korrelationsmatrix (kommt in Session B)"
+    }
+  },
+  "shared": {
+    "loading": "Laden...",
+    "significant": "Signifikant",
+    "notSignificant": "Nicht signifikant",
+    "noAnalysis": "Keine Analyse",
+    "mainEffect": "Haupteffekt:",
+    "posthoc": "Post-hoc ({{count}} Paare):",
+    "test": "Test:",
+    "descriptiveOnlyDefault": "Dieser Vergleich ist rein deskriptiv. Da verschiedene Studien unterschiedliche Teilnehmer haben, sind inferenzielle Tests zwischen Studien nicht zulässig."
   }
 }

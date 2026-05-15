@@ -8,5 +8,13 @@
     "title": "Vielen Dank!",
     "saved": "Deine Antworten wurden erfolgreich gespeichert.",
     "instructions": "Du kannst das Fenster jetzt schließen oder auf weitere Anweisungen warten."
+  },
+  "form": {
+    "resetButton": "Zurücksetzen",
+    "nextButton": "Weiter",
+    "sendingButton": "Senden...",
+    "pleaseFill": "Bitte füllen Sie den Fragebogen aus.",
+    "pleaseAnswerAll": "Bitte alle Fragen beantworten: {{missing}}",
+    "pleaseCompleteAll": "Bitte füllen Sie alle Felder aus:"
   }
 }

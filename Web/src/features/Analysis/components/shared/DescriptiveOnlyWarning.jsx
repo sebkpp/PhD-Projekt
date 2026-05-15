@@ -1,5 +1,6 @@
 // src/features/Analysis/components/shared/DescriptiveOnlyWarning.jsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Zeigt einen Warnhinweis für deskriptive Cross-Study-Vergleiche.
@@ -7,9 +8,8 @@ import React from 'react';
  *   - message: string (optional, überschreibt Standard-Text)
  */
 export default function DescriptiveOnlyWarning({ message }) {
-  const text =
-    message ||
-    'Dieser Vergleich ist rein deskriptiv. Da verschiedene Studien unterschiedliche Teilnehmer haben, sind inferenzielle Tests zwischen Studien nicht zulässig.';
+  const { t } = useTranslation('analysis');
+  const text = message || t('shared.descriptiveOnlyDefault');
   return (
     <div
       style={{

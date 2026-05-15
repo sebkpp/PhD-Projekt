@@ -5,5 +5,23 @@
     "startQuestionnaire": "Fragebogen starten",
     "experiment": "Experiment",
     "slot": "Slot"
+  },
+  "demography": {
+    "title": "Teilnehmer-Fragebogen",
+    "subtitle": "Bitte beantworte die folgenden Angaben. Deine Teilnahme bleibt anonym.",
+    "age": "Alter",
+    "gender": "Geschlecht",
+    "handedness": "Händigkeit",
+    "pleaseSelect": "Bitte auswählen",
+    "male": "Männlich",
+    "female": "Weiblich",
+    "diverse": "Divers",
+    "rightHanded": "Rechtshändig",
+    "leftHanded": "Linkshändig",
+    "ambidextrous": "Beidhändig",
+    "submitButton": "Absenden",
+    "submittingButton": "Absenden...",
+    "successTitle": "Vielen Dank!",
+    "successText": "Deine Angaben wurden gespeichert."
   }
 }

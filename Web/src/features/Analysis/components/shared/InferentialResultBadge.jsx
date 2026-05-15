@@ -1,5 +1,6 @@
 // src/features/Analysis/components/shared/InferentialResultBadge.jsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Zeigt das Ergebnis eines inferentiellen Tests als Badge an.
@@ -16,9 +17,10 @@ const TEST_LABELS = {
 };
 
 function SignificanceBadge({ significant, pValue }) {
+  const { t } = useTranslation('analysis');
   const color = significant ? '#2e7d32' : '#757575';
   const bg = significant ? '#e8f5e9' : '#f5f5f5';
-  const label = significant ? 'Signifikant' : 'Nicht signifikant';
+  const label = significant ? t('shared.significant') : t('shared.notSignificant');
   return (
     <span
       style={{
@@ -38,7 +40,8 @@ function SignificanceBadge({ significant, pValue }) {
 }
 
 export default function InferentialResultBadge({ result }) {
-  if (!result) return <span style={{ color: '#999', fontSize: '13px' }}>Keine Analyse</span>;
+  const { t } = useTranslation('analysis');
+  if (!result) return <span style={{ color: '#999', fontSize: '13px' }}>{t('shared.noAnalysis')}</span>;
 
   const { test_used, main_effect, posthoc } = result;
   const testLabel = TEST_LABELS[test_used] || test_used;
@@ -46,12 +49,12 @@ export default function InferentialResultBadge({ result }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       <div style={{ fontSize: '13px', color: '#555' }}>
-        Test: <strong>{testLabel}</strong>
+        {t('shared.test')} <strong>{testLabel}</strong>
       </div>
 
       {main_effect && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '13px' }}>Haupteffekt:</span>
+          <span style={{ fontSize: '13px' }}>{t('shared.mainEffect')}</span>
           <SignificanceBadge
             significant={main_effect.significant}
             pValue={main_effect.p_value}
@@ -67,7 +70,7 @@ export default function InferentialResultBadge({ result }) {
       {posthoc && posthoc.length > 0 && (
         <div>
           <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
-            Post-hoc ({posthoc.length} Paare):
+            {t('shared.posthoc', { count: posthoc.length })}
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
             {posthoc.map((pair, i) => (

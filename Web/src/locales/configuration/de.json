@@ -6,5 +6,14 @@
     "saveButton": "Weiter zu „Warten auf Probanden"",
     "savingButton": "Speichere Trials...",
     "errorTitle": "Bitte beheben Sie folgende Fehler:"
+  },
+  "participantCard": {
+    "participant": "Proband {{id}}",
+    "activeStimuli": "Aktive Stimuli:",
+    "avatarVisibility": "Avatarsichtbarkeit:",
+    "pleaseSelect": "Bitte wählen",
+    "visualStimulus": "Visueller Stimulus",
+    "auditoryStimulus": "Auditiver Stimulus",
+    "tactileStimulus": "Taktiler Stimulus"
   }
 }
