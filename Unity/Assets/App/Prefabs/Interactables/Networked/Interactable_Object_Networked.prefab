@@ -160,7 +160,7 @@ GameObject:
   - component: {fileID: 9133060515803760448}
   - component: {fileID: -4433867418779823691}
   m_Layer: 8
-  m_Name: Block_Original
+  m_Name: Interactable_Object_Networked
   m_TagString: Interactable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

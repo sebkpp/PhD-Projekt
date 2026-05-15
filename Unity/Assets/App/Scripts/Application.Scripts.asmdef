@@ -1,5 +1,6 @@
 {
     "name": "Application.Scripts",
+    "rootNamespace": "",
     "references": [
         "GUID:1baf1ffff1031e948b3b228ab3453251",
         "GUID:ee448cb1442054024b3c982e54100a6a",
@@ -11,5 +12,13 @@
         "GUID:f64c9ebcd7899c3448a08dc9f9ddbe30",
         "GUID:fe685ec1767f73d42b749ea8045bfe43"
     ],
-    "autoReferenced": true
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

@@ -13,8 +13,6 @@ GameObject:
   - component: {fileID: 8999768868802648454}
   - component: {fileID: 5443345650587124483}
   - component: {fileID: 8606518239681032994}
-  - component: {fileID: 4845763355160653479}
-  - component: {fileID: 974363782157927043}
   - component: {fileID: -4353265008629761527}
   - component: {fileID: 504482321287172801}
   - component: {fileID: 154770721197499973}
@@ -85,7 +83,9 @@ MonoBehaviour:
   - {fileID: 2953039867553769635}
   - {fileID: 3631889731789918474}
   - {fileID: 5812378204078339880}
+  - {fileID: 2898286093809488860}
   - {fileID: 2703680951254494370}
+  - {fileID: 559043930489158611}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &5443345650587124483
 MonoBehaviour:
@@ -118,39 +118,6 @@ MonoBehaviour:
   headset: {fileID: 3631889731789918474}
   networkTransform: {fileID: 0}
   handMesh: {fileID: 0}
---- !u!114 &4845763355160653479
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 451835419924468508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7cbed1303e2581448234c6332029898, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Avatar.Visuals.PlayerVisuals
-  _avatarSet: {fileID: 11400000, guid: b2ca1d604074107428330a5d239b1d51, type: 2}
-  _avatarDriver: {fileID: 974363782157927043}
-  _avatarConfigReference: {fileID: 5443345650587124483}
-  _hmdCameraTransform: {fileID: 0}
-  _avatarVisibility: 0
-  AvatarInitialized:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &974363782157927043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 451835419924468508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 579f0ceecebea054fadaf4f0f418dba8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Avatar.Driver.AvatarDriver
-  bodyYawSmoothing: 0.1
 --- !u!114 &-4353265008629761527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,7 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3802271540954efc87d6a7b748cb8162, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Feedback.Visual.HandRenderingController
-  _playerVisuals: {fileID: 4845763355160653479}
+  _playerVisuals: {fileID: 2980748791773969172}
   _grabSettings: {fileID: 11400000, guid: 51c297ee472f22341b6a9746612b7770, type: 2}
 --- !u!114 &504482321287172801
 MonoBehaviour:
@@ -308,6 +275,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3061366876209638436}
   - component: {fileID: 2703680951254494370}
+  - component: {fileID: 559043930489158611}
   m_Layer: 0
   m_Name: Hand_Right
   m_TagString: Untagged
@@ -343,7 +311,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Network.Input.NetworkHand
   side: 3
-  avatarDriver: {fileID: 974363782157927043}
+  avatarDriver: {fileID: 893494447859531947}
+--- !u!114 &559043930489158611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2893093111136909811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 894ed56ddd6d4816a35f44ec40c07ec4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Network.Interaction.NetworkedGrabber
+  hand: {fileID: 0}
 --- !u!1 &3189415299197343043
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,6 +334,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5586967093383174329}
+  - component: {fileID: 2980748791773969172}
+  - component: {fileID: 893494447859531947}
   m_Layer: 0
   m_Name: Visuals
   m_TagString: Untagged
@@ -375,6 +358,40 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2981578583637872704}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2980748791773969172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3189415299197343043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7cbed1303e2581448234c6332029898, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Avatar.Visuals.PlayerVisuals
+  _avatarSet: {fileID: 11400000, guid: b2ca1d604074107428330a5d239b1d51, type: 2}
+  _avatarDriver: {fileID: 893494447859531947}
+  _avatarConfigReference: {fileID: 5443345650587124483}
+  _hmdCameraTransform: {fileID: 0}
+  _avatarVisibility: 0
+  AvatarInitialized:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &893494447859531947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3189415299197343043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 579f0ceecebea054fadaf4f0f418dba8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Avatar.Driver.AvatarDriver
+  bodyYawSmoothing: 0.1
+  _localRig: {fileID: 0}
 --- !u!1 &5623498801314053765
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,6 +402,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8450720750998556764}
   - component: {fileID: 5812378204078339880}
+  - component: {fileID: 2898286093809488860}
   m_Layer: 0
   m_Name: Hand_Left
   m_TagString: Untagged
@@ -420,7 +438,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Network.Input.NetworkHand
   side: 2
-  avatarDriver: {fileID: 974363782157927043}
+  avatarDriver: {fileID: 893494447859531947}
+--- !u!114 &2898286093809488860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5623498801314053765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 894ed56ddd6d4816a35f44ec40c07ec4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Application.Scripts::Application.Scripts.Network.Interaction.NetworkedGrabber
+  hand: {fileID: 0}
 --- !u!1 &5694276174699763601
 GameObject:
   m_ObjectHideFlags: 0
