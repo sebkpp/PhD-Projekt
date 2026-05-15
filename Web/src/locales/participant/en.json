@@ -1,1 +1,9 @@
-{}
+{
+  "landing": {
+    "welcome": "Welcome to the Experiment",
+    "demographyPrompt": "Please start with the short demography questionnaire.",
+    "startQuestionnaire": "Start Questionnaire",
+    "experiment": "Experiment",
+    "slot": "Slot"
+  }
+}
