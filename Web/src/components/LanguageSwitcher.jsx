@@ -12,7 +12,7 @@ export default function LanguageSwitcher() {
     }
 
     return (
-        <div className="fixed top-4 right-4 z-50 flex items-center gap-0.5 bg-gray-800 border border-gray-700 rounded-lg p-1 shadow-lg">
+        <div className="flex items-center gap-0.5 bg-gray-700/60 border border-gray-600 rounded-md p-0.5">
             {LANGUAGES.map((lang) => {
                 const isActive = active === lang
                 return (
