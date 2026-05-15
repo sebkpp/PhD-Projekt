@@ -1,1 +1,14 @@
-{}
+{
+  "meta": {
+    "title": "Studies Meta-Analysis",
+    "selectStudies": "Select Studies",
+    "noStudies": "No completed or active studies available.",
+    "baseline": "Baseline (ms):",
+    "compareButton": "Compare Studies",
+    "comparingButton": "Comparing...",
+    "minStudiesHint": "Select at least 2 studies",
+    "descriptiveWarning": "Descriptive comparison — no inferential test (different participants per study)",
+    "loadingStudies": "Loading studies...",
+    "loadingData": "Loading data..."
+  }
+}

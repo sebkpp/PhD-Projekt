@@ -1,1 +1,14 @@
-{}
+{
+  "meta": {
+    "title": "Studien-Meta-Analyse",
+    "selectStudies": "Studien auswählen",
+    "noStudies": "Keine abgeschlossenen oder aktiven Studien vorhanden.",
+    "baseline": "Baseline (ms):",
+    "compareButton": "Studien vergleichen",
+    "comparingButton": "Vergleiche...",
+    "minStudiesHint": "Mindestens 2 Studien auswählen",
+    "descriptiveWarning": "Deskriptiver Vergleich — kein inferenzieller Test (unterschiedliche Teilnehmer je Studie)",
+    "loadingStudies": "Studien laden...",
+    "loadingData": "Daten werden geladen..."
+  }
+}
