@@ -1,1 +1,22 @@
-{}
+{
+  "overview": {
+    "title": "Studienübersicht",
+    "newStudy": "Neue Studie anlegen",
+    "noStudies": "Keine Studien vorhanden.",
+    "experiments": "Experimente",
+    "newExperiment": "Neues Experiment anlegen",
+    "noExperiments": "Keine Experimente vorhanden."
+  },
+  "actions": {
+    "evaluate": "Zur Auswertung",
+    "closeStudy": "Studie schließen",
+    "closeStudyConfirm": "Möchtest du die Studie wirklich schließen? Dieser Vorgang kann nicht rückgängig gemacht werden."
+  },
+  "info": {
+    "startDate": "Startdatum",
+    "endDate": "Enddatum",
+    "researcher": "Versuchsleiter:in",
+    "participants": "Teilnehmer",
+    "experimentsCount": "Experimente"
+  }
+}

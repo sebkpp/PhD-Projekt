@@ -1,1 +1,22 @@
-{}
+{
+  "overview": {
+    "title": "Study Overview",
+    "newStudy": "Create New Study",
+    "noStudies": "No studies available.",
+    "experiments": "Experiments",
+    "newExperiment": "Create New Experiment",
+    "noExperiments": "No experiments available."
+  },
+  "actions": {
+    "evaluate": "Go to Analysis",
+    "closeStudy": "Close Study",
+    "closeStudyConfirm": "Are you sure you want to close this study? This action cannot be undone."
+  },
+  "info": {
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "researcher": "Researcher",
+    "participants": "Participants",
+    "experimentsCount": "Experiments"
+  }
+}
