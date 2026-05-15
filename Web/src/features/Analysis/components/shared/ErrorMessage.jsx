@@ -1,5 +1,5 @@
-// src/features/Analysis/components/shared/ErrorMessage.jsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Fehler-Darstellung.
@@ -8,6 +8,7 @@ import React from 'react';
  *   - onRetry: function (optional)
  */
 export default function ErrorMessage({ error, onRetry }) {
+  const { t } = useTranslation('common')
   if (!error) return null;
   const message = error instanceof Error ? error.message : String(error);
   return (
@@ -39,7 +40,7 @@ export default function ErrorMessage({ error, onRetry }) {
             fontSize: '12px',
           }}
         >
-          Wiederholen
+          {t('actions.retry')}
         </button>
       )}
     </div>

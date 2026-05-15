@@ -1,8 +1,10 @@
 ﻿import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { createParticipant, submitParticipant } from './participantQuestionnaireService'
 
 export function useParticipantQuestionnaire(studyId, experimentId, trial_id, slot) {
+    const { t } = useTranslation('participant')
     const [age, setAge] = useState('')
     const [gender, setGender] = useState('')
     const [handedness, setHandedness] = useState('')
@@ -15,9 +17,9 @@ export function useParticipantQuestionnaire(studyId, experimentId, trial_id, slo
 
     const validate = () => {
         if (!age || isNaN(parseInt(age)) || parseInt(age) < 18 || parseInt(age) > 100)
-            return 'Bitte gib ein Alter zwischen 18 und 100 ein.'
-        if (!gender) return 'Bitte wähle ein Geschlecht aus.'
-        if (!handedness) return 'Bitte wähle eine Händigkeit aus.'
+            return t('validation.ageRequired')
+        if (!gender) return t('validation.genderRequired')
+        if (!handedness) return t('validation.handednessRequired')
         return null
     }
 
@@ -48,7 +50,7 @@ export function useParticipantQuestionnaire(studyId, experimentId, trial_id, slo
             setSubmitted(true)
             navigate(`/study/${studyId}/experiment/${experimentId}/questionnaire?slot=${slot}&participant=${participantData.participant_id}&trial=${trial_id}`)
         } catch (e) {
-            setError(e.message || 'Fehler beim Absenden. Bitte erneut versuchen.')
+            setError(e.message || t('validation.submitError'))
         } finally {
             setLoading(false)
         }

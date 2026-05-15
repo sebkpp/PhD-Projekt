@@ -1,0 +1,65 @@
+{
+  "overview": {
+    "title": "Studienübersicht",
+    "newStudy": "Neue Studie anlegen",
+    "noStudies": "Keine Studien vorhanden.",
+    "experiments": "Experimente",
+    "newExperiment": "Neues Experiment anlegen",
+    "noExperiments": "Keine Experimente vorhanden."
+  },
+  "actions": {
+    "evaluate": "Zur Auswertung",
+    "closeStudy": "Studie schließen",
+    "closeStudyConfirm": "Möchtest du die Studie wirklich schließen? Dieser Vorgang kann nicht rückgängig gemacht werden."
+  },
+  "info": {
+    "startDate": "Startdatum",
+    "endDate": "Enddatum",
+    "researcher": "Versuchsleiter:in",
+    "participants": "Teilnehmer",
+    "experimentsCount": "Experimente"
+  },
+  "tile": {
+    "noData": "Keine Studiendaten vorhanden",
+    "experiments": "Experimente",
+    "participants": "Teilnehmer",
+    "createdAt": "Erstellt am",
+    "description": "Beschreibung",
+    "viewExperiments": "Experimente anzeigen",
+    "configure": "Study konfigurieren",
+    "analyse": "Analyse",
+    "deleteTitle": "Studie löschen",
+    "deleteConfirm": "Möchtest du diese Studie wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
+    "confirmDelete": "Ja, löschen"
+  },
+  "generalInfo": {
+    "title": "Allgemeine Informationen",
+    "nameLabel": "Name *",
+    "namePlaceholder": "z.B. Studie zur visuellen Stimuli",
+    "piLabel": "Principal Investigator",
+    "piPlaceholder": "z.B. Mustermann",
+    "descriptionLabel": "Beschreibung",
+    "descriptionPlaceholder": "Kurze Beschreibung der Studie"
+  },
+  "stimuliCard": {
+    "title": "Studienweite Stimuli & Avatar",
+    "activeStimuli": "Aktive Stimuli:",
+    "avatarVisibility": "Avatarsichtbarkeit:",
+    "pleaseSelect": "Bitte wählen",
+    "trialCount": "Anzahl der Trials:",
+    "permutate": "Trials permutieren:",
+    "permutated": "Permutiert",
+    "fixedOrder": "Fixe Reihenfolge"
+  },
+  "config": {
+    "title": "Studie konfigurieren",
+    "newStudy": "Neue Studie",
+    "questionnairesSection": "Fragebögen",
+    "questionnairesHint": "Wählen Sie die Fragebögen aus, die für alle Experimente gelten sollen.",
+    "confirmTitle": "Studiekonfiguration abschließen",
+    "confirmMessage": "Sind Sie sicher, dass Sie die Konfiguration der Studie abschließen möchten? Danach können keine Änderungen mehr gemacht werden.",
+    "saveDraftButton": "Als Entwurf speichern",
+    "savingButton": "Speichern...",
+    "finalizeButton": "Studienkonfiguration abschließen"
+  }
+}

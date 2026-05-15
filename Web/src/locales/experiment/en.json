@@ -1,0 +1,58 @@
+{
+  "form": {
+    "title": "General Information",
+    "researcher": "Researcher",
+    "description": "Description (optional)",
+    "descriptionPlaceholder": "Detailed description, objectives, etc.",
+    "researcherPlaceholder": "e.g. Smith"
+  },
+  "tile": {
+    "finished": "Finished",
+    "open": "Open",
+    "researcher": "Researcher:",
+    "viewData": "View Data Overview",
+    "toExperiment": "Go to Experiment",
+    "unknown": "Unknown",
+    "experimentNumber": "{{n}}. Experiment",
+    "date": "Date:",
+    "times": "Times:",
+    "notStarted": "Not yet started",
+    "notCompleted": "Not yet completed",
+    "description": "Description:",
+    "trialOverview": "Trial Overview",
+    "slot": "Slot {{n}}:"
+  },
+  "studyInfo": {
+    "title": "Study Overview",
+    "studyId": "Study ID:",
+    "name": "Name:",
+    "description": "Description:",
+    "start": "Start:",
+    "end": "End:",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "notStarted": "Not yet started",
+    "notFinished": "Not yet completed",
+    "participants": "Participants",
+    "experiments": "Experiments",
+    "researcher": "Principal Investigator",
+    "stimuli": "Stimuli",
+    "none": "None",
+    "questionnaires": "Questionnaires",
+    "error": "Error: {{msg}}",
+    "closedSuccess": "Study has been closed!",
+    "closeStudy": "Close Study",
+    "closeStudyTitle": "Close Study",
+    "closeStudyMessage": "Are you sure you want to close this study? This action cannot be undone."
+  },
+  "participants": {
+    "slot1": "Participant 1",
+    "slot2": "Participant 2"
+  },
+  "tabs": {
+    "deleteTab": "Delete Tab"
+  },
+  "breadcrumbs": {
+    "newExperiment": "New Experiment"
+  }
+}

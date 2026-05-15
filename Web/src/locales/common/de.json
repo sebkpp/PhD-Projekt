@@ -1,0 +1,44 @@
+{
+  "actions": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "start": "Starten",
+    "stop": "Stoppen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "add": "Hinzufügen",
+    "back": "Zurück",
+    "continue": "Weiter",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "refresh": "Aktualisieren",
+    "compare": "Vergleichen",
+    "evaluate": "Zur Auswertung",
+    "retry": "Wiederholen",
+    "finalizeConfirm": "Ja, abschließen"
+  },
+  "status": {
+    "loading": "Wird geladen…",
+    "saving": "Wird gespeichert…",
+    "error": "Fehler",
+    "active": "Aktiv",
+    "finished": "Beendet",
+    "draft": "Entwurf",
+    "open": "Offen",
+    "unknown": "Unbekannt",
+    "notStarted": "Noch nicht begonnen",
+    "notFinished": "Noch nicht abgeschlossen"
+  },
+  "labels": {
+    "yes": "Ja",
+    "no": "Nein",
+    "participant": "Proband",
+    "participant_n": "Proband {{n}}",
+    "slot_n": "Slot {{n}}",
+    "participantSlot": "Probanden Slot {{n}}",
+    "participantId": "(Probanden ID: {{id}})",
+    "experiment": "Experiment",
+    "study": "Studie",
+    "trial": "Trial"
+  }
+}

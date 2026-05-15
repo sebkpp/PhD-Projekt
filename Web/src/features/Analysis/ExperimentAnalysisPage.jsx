@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Breadcrumbs from "@/components/Breadcrumbs.jsx";
 import { useParams } from "react-router-dom";
 import { useExperiment } from "@/features/Analysis/hooks/useExperiment.js";
@@ -21,18 +22,8 @@ import ErrorMessage from "@/features/Analysis/components/shared/ErrorMessage.jsx
 import DescriptiveOnlyWarning from "@/features/Analysis/components/shared/DescriptiveOnlyWarning.jsx";
 import PlaceholderChart from "@/features/Analysis/components/shared/PlaceholderChart.jsx";
 
-const TABS = [
-    { key: "details", label: "Experiment Info" },
-    { key: "performance", label: "Performance" },
-    { key: "eyetracking", label: "Eye-Tracking" },
-    { key: "ux", label: "Fragebögen / UX" },
-    { key: "compare", label: "Vergleiche" },
-];
-
-const DESCRIPTIVE_WARNING =
-    "Deskriptive Analyse eines Messdurchgangs. Inferenzielle Auswertung über alle Experimente → Studien-Analyse.";
-
 export default function ExperimentAnalysisPage() {
+    const { t } = useTranslation(['analysis', 'navigation']);
     const { studyId, experimentId } = useParams();
     const [loadedTabs, setLoadedTabs] = useState(new Set(["details"]));
 
@@ -54,6 +45,14 @@ export default function ExperimentAnalysisPage() {
     const { data: saccadeData, loading: saccadeLoading, error: saccadeError } =
         useSaccadeRate(experimentId, loadedTabs.has("eyetracking"));
 
+    const TABS = [
+        { key: "details", label: t('analysis:experiment.tabs.details') },
+        { key: "performance", label: t('analysis:experiment.tabs.performance') },
+        { key: "eyetracking", label: t('analysis:experiment.tabs.eyetracking') },
+        { key: "ux", label: t('analysis:experiment.tabs.ux') },
+        { key: "compare", label: t('analysis:experiment.tabs.compare') },
+    ];
+
     function handleTabChange(tabKey) {
         if (tabKey === "compare") {
             setLoadedTabs(prev => new Set([...prev, tabKey, "performance", "ux"]));
@@ -63,9 +62,9 @@ export default function ExperimentAnalysisPage() {
     }
 
     const breadcrumbItems = [
-        { label: "Studienübersicht", to: "/" },
-        { label: "Studie", to: `/study/${studyId}/experiments` },
-        { label: "Experiment-Analyse" },
+        { label: t('navigation:breadcrumbs.studyOverview'), to: "/" },
+        { label: t('analysis:study.breadcrumbStudy'), to: `/study/${studyId}/experiments` },
+        { label: t('analysis:experiment.breadcrumb') },
     ];
 
     const experimentDetails = experiment ? {
@@ -78,15 +77,17 @@ export default function ExperimentAnalysisPage() {
         completed_at: experiment.completed_at,
     } : null;
 
+    const descriptiveWarning = t('analysis:experiment.descriptiveWarning');
+
     return (
         <div className="p-6 relative bg-gray-900 min-h-screen text-gray-100">
             <Breadcrumbs items={breadcrumbItems} styled={true} className="mb-6" />
-            <h1 className="text-2xl font-bold mb-6">Experiment-Analyse</h1>
+            <h1 className="text-2xl font-bold mb-6">{t('analysis:experiment.title')}</h1>
             <ExperimentAnalyseTabs tabs={TABS} defaultKey="details" onTabChange={handleTabChange}>
 
                 {/* === DETAILS === */}
                 <TabPanel tabKey="details">
-                    {expLoading && <LoadingSpinner message="Experiment laden..." />}
+                    {expLoading && <LoadingSpinner message={t('analysis:experiment.loading.performance')} />}
                     {expError && <ErrorMessage error={expError} />}
                     {experimentDetails && (
                         <ExperimentDetails experimentDetails={experimentDetails} participants={participants} />
@@ -95,23 +96,23 @@ export default function ExperimentAnalysisPage() {
 
                 {/* === PERFORMANCE === */}
                 <TabPanel tabKey="performance">
-                    <DescriptiveOnlyWarning message={DESCRIPTIVE_WARNING} />
-                    {perfLoading && <LoadingSpinner message="Performance-Daten laden..." />}
+                    <DescriptiveOnlyWarning message={descriptiveWarning} />
+                    {perfLoading && <LoadingSpinner message={t('analysis:experiment.loading.performance')} />}
                     {perfError && <ErrorMessage error={perfError} />}
                     {performanceMetrics && <PerformanceCharts chartData={performanceMetrics} />}
                 </TabPanel>
 
                 {/* === EYE-TRACKING === */}
                 <TabPanel tabKey="eyetracking">
-                    <DescriptiveOnlyWarning message={DESCRIPTIVE_WARNING} />
-                    {etLoading && <LoadingSpinner message="Eye-Tracking-Daten laden..." />}
+                    <DescriptiveOnlyWarning message={descriptiveWarning} />
+                    {etLoading && <LoadingSpinner message={t('analysis:experiment.loading.eyetracking')} />}
                     {etError && <ErrorMessage error={etError} />}
-                    {(phasesLoading || transLoading) && <LoadingSpinner message="Phasen & Transitionen laden..." />}
+                    {(phasesLoading || transLoading) && <LoadingSpinner message={t('analysis:experiment.loading.phases')} />}
                     {phasesError && <ErrorMessage error={phasesError} />}
                     {transError && <ErrorMessage error={transError} />}
-                    {ppiLoading && <LoadingSpinner message="PPI berechnen..." />}
+                    {ppiLoading && <LoadingSpinner message={t('analysis:experiment.loading.ppi')} />}
                     {ppiError && <ErrorMessage error={ppiError} />}
-                    {saccadeLoading && <LoadingSpinner message="Sakkaden-Rate berechnen..." />}
+                    {saccadeLoading && <LoadingSpinner message={t('analysis:experiment.loading.saccade')} />}
                     {saccadeError && <ErrorMessage error={saccadeError} />}
                     <EyeTrackingCharts
                         chartData={eyeTrackingData}
@@ -124,22 +125,22 @@ export default function ExperimentAnalysisPage() {
 
                 {/* === UX / QUESTIONNAIRES === */}
                 <TabPanel tabKey="ux">
-                    <DescriptiveOnlyWarning message={DESCRIPTIVE_WARNING} />
-                    {uxLoading && <LoadingSpinner message="Fragebogen-Daten laden..." />}
+                    <DescriptiveOnlyWarning message={descriptiveWarning} />
+                    {uxLoading && <LoadingSpinner message={t('analysis:experiment.loading.questionnaires')} />}
                     {uxError && <ErrorMessage error={uxError} />}
                     {uxMetrics && <QuestionnaireCharts chartData={uxMetrics} />}
                 </TabPanel>
 
                 {/* === COMPARE === */}
                 <TabPanel tabKey="compare">
-                    <DescriptiveOnlyWarning message={DESCRIPTIVE_WARNING} />
-                    {(perfLoading || uxLoading) && <LoadingSpinner message="Vergleichsdaten laden..." />}
+                    <DescriptiveOnlyWarning message={descriptiveWarning} />
+                    {(perfLoading || uxLoading) && <LoadingSpinner message={t('analysis:experiment.loading.compare')} />}
                     {(perfError || uxError) && <ErrorMessage error={perfError || uxError} />}
                     {performanceMetrics && uxMetrics && (
                         <ComparisonCharts uxMetrics={uxMetrics} performanceMetrics={performanceMetrics} />
                     )}
                     {/* SESSION B placeholders */}
-                    <PlaceholderChart label="Korrelationsmatrix (kommt in Session B)" />
+                    <PlaceholderChart label={t('analysis:experiment.placeholder.correlationMatrix')} />
                 </TabPanel>
 
             </ExperimentAnalyseTabs>

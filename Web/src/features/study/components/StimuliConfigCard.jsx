@@ -1,8 +1,10 @@
 ﻿import React, {useMemo} from "react";
 import {useAvatarOptions} from "@/features/configuration/components/useAvatarOptions.js";
 import { stimuliIdToShortcode, shortcodeToStimuliId } from "../utils/stimuliUtils.jsx";
+import { useTranslation } from 'react-i18next';
 
 export default function StimuliConfigCard({ config, onChange }) {
+    const { t } = useTranslation('study')
 
     const activeStimuli = useMemo(() => {
         const result = {};
@@ -32,9 +34,9 @@ export default function StimuliConfigCard({ config, onChange }) {
 
     return (
         <div className="rounded-2xl border border-border bg-gray-800 p-6 shadow-md mb-6">
-            <h2 className="text-lg font-semibold mb-4">Studienweite Stimuli & Avatar</h2>
+            <h2 className="text-lg font-semibold mb-4">{t('stimuliCard.title')}</h2>
             <div className="mb-2 text-sm">
-                <label className="block font-medium mb-1">Aktive Stimuli:</label>
+                <label className="block font-medium mb-1">{t('stimuliCard.activeStimuli')}</label>
                 <div className="flex gap-4 rounded px-2 py-1">
                     {["vis", "aud", "tak"].map(type => (
                         <label key={type} className="flex items-center gap-1">
@@ -49,7 +51,7 @@ export default function StimuliConfigCard({ config, onChange }) {
                 </div>
             </div>
             <div className="mb-2 text-sm">
-                <label className="block font-medium mb-1">Avatarsichtbarkeit:</label>
+                <label className="block font-medium mb-1">{t('stimuliCard.avatarVisibility')}</label>
                 <select
                     className="bg-gray-700 rounded px-2 py-1 w-full"
                     value={config?.config?.avatar || ""}
@@ -59,7 +61,7 @@ export default function StimuliConfigCard({ config, onChange }) {
                             avatar: e.target.value
                         })}
                 >
-                    <option value="">Bitte wählen</option>
+                    <option value="">{t('stimuliCard.pleaseSelect')}</option>
                     {avatarOptions.map(opt => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
@@ -67,7 +69,7 @@ export default function StimuliConfigCard({ config, onChange }) {
             </div>
             <div className="mb-2 text-sm flex gap-4">
                 <div>
-                    <label className="block font-medium mb-1">Anzahl der Trials:</label>
+                    <label className="block font-medium mb-1">{t('stimuliCard.trialCount')}</label>
                     <input
                         type="number"
                         min={1}
@@ -81,7 +83,7 @@ export default function StimuliConfigCard({ config, onChange }) {
                 </div>
             </div>
             <div>
-                <label className="block font-medium mb-1">Trials permutieren:</label>
+                <label className="block font-medium mb-1">{t('stimuliCard.permutate')}</label>
                 <input
                     type="checkbox"
                     checked={!!config?.config?.trials_permuted}
@@ -90,7 +92,7 @@ export default function StimuliConfigCard({ config, onChange }) {
                         trials_permuted: e.target.checked})}
                     className="ml-2"
                 />
-                <span className="ml-1">{config?.config?.trials_permuted ? "Permutiert" : "Fixe Reihenfolge"}</span>
+                <span className="ml-1">{config?.config?.trials_permuted ? t('stimuliCard.permutated') : t('stimuliCard.fixedOrder')}</span>
             </div>
         </div>
     );

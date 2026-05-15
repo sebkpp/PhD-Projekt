@@ -1,7 +1,9 @@
 ﻿import { QRCodeSVG } from 'qrcode.react'
 import { useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export default function QRCodeCard({ url, slot, participant_id }) {
+    const { t } = useTranslation('common')
     const textRef = useRef(null)
 
     const handleUrlClick = () => {
@@ -12,10 +14,10 @@ export default function QRCodeCard({ url, slot, participant_id }) {
 
     return (
         <div className="text-center p-4 border border-border rounded-xl bg-gray-800 w-full max-w-[360px]">
-            <h3 className="text-lg font-semibold mb-2">Probanden Slot {slot}
+            <h3 className="text-lg font-semibold mb-2">{t('labels.participantSlot', { n: slot })}
                 {participant_id && (
                     <span className="text-sm text-gray-400 ml-2">
-                        (Probanden ID: {participant_id})
+                        {t('labels.participantId', { id: participant_id })}
                     </span>
                 )}
             </h3>

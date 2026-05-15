@@ -1,11 +1,12 @@
 ﻿import { useState, useCallback } from 'react';
 import { submitQuestionnaire } from '../service/questionnaireService';
+import i18n from '@/i18n';
 
 function validate(values, requiredFields) {
     const errors = {};
 
     if (!values || Object.keys(values).length === 0) {
-        errors._form = 'Keine Antworten vorhanden';
+        errors._form = i18n.t('questionnaire:validation.noAnswers');
         return errors;
     }
 
@@ -16,7 +17,7 @@ function validate(values, requiredFields) {
             value === '' ||
             (Array.isArray(value) && value.length === 0) ||
             (typeof value === 'number' && isNaN(value))) {
-            errors[key] = 'Bitte ausfüllen';
+            errors[key] = i18n.t('questionnaire:validation.required');
         }
     });
 

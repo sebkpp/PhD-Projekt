@@ -1,4 +1,5 @@
 ﻿import {useNavigate, useParams} from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import Breadcrumbs from "@/components/Breadcrumbs";
 import StudyInfoTile from "@/features/experiment/components/StudyInfoTile.jsx";
 import {useExperiments} from "@/features/experiment/hooks/useExperiments.js";
@@ -11,6 +12,7 @@ import {useEffect, useState} from "react";
 export default function ExperimentOverview() {
     const { studyId } = useParams();
     const navigate = useNavigate();
+    const { t } = useTranslation('navigation');
     const { experiments } = useExperiments(studyId);
     const { localConfig } = useStudyConfig(studyId);
     const { participants, loading } = useStudyParticipants(studyId);
@@ -31,8 +33,8 @@ export default function ExperimentOverview() {
     }, [localConfig?.status]);
 
     const breadcrumbItems = [
-        { label: "Studienübersicht", to: "/" },
-        { label: `Studie ${studyId}` }
+        { label: t('breadcrumbs.studyOverview'), to: "/" },
+        { label: t('breadcrumbs.study', { id: studyId }) }
     ];
 
     return (

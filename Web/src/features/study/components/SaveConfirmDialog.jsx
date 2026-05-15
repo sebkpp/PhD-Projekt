@@ -1,4 +1,7 @@
-﻿export default function ConfirmDialog({ open, title, message, onConfirm, onCancel }) {
+﻿import { useTranslation } from 'react-i18next'
+
+export default function ConfirmDialog({ open, title, message, onConfirm, onCancel }) {
+    const { t } = useTranslation('common')
     if (!open) return null;
 
     return (
@@ -12,13 +15,13 @@
                         className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500"
                         onClick={onCancel}
                     >
-                        Abbrechen
+                        {t('actions.cancel')}
                     </button>
                     <button
                         className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-500"
                         onClick={onConfirm}
                     >
-                        Ja, abschließen
+                        {t('actions.finalizeConfirm')}
                     </button>
                 </div>
             </div>

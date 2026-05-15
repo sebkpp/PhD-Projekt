@@ -1,0 +1,41 @@
+{
+  "control": {
+    "startTrial": "▶️ Start Trial",
+    "endTrial": "⏹️ End Trial",
+    "waitingBothReady": "⏳ Waiting for both participants to be ready.",
+    "waitingQuestionnaires": "⏳ Waiting for all questionnaires to be completed.",
+    "allTrialsFinished": "✅ All trials have been completed.",
+    "readyToStart": "✅ Both participants are ready. You can start the trial.",
+    "trialRunning": "▶️ Trial {{current}} of {{total}} running...",
+    "trialEnded": "⏹️ Trial {{completed}} of {{total}} ended.",
+    "demographyPending": "The trial can only be started once both participants have completed the demography questionnaire and are ready."
+  },
+  "readiness": {
+    "title": "Participant Readiness",
+    "participant": "Participant {{id}}",
+    "ready": "🟢 yes",
+    "notReady": "🔴 no",
+    "label": "Readiness:"
+  },
+  "handover": {
+    "title": "Handover Interactions",
+    "empty": "No handovers yet.",
+    "columns": {
+      "object": "Object",
+      "giver": "Giver",
+      "receiver": "Receiver"
+    }
+  },
+  "stimuli": {
+    "allDone": "All trials completed.",
+    "currentTrial": "Current Trial",
+    "nextTrial": "Next Trial",
+    "participantSlot": "Participant Slot {{n}}"
+  },
+  "qr": {
+    "participantRegistration": "Participant Registration",
+    "questionnaireLink": "Questionnaire link for participants (after demographics)",
+    "loadingStatus": "Loading status...",
+    "questionnairesFilled": "Questionnaires: {{completed}} / {{total}} completed"
+  }
+}

@@ -1,7 +1,7 @@
 ﻿import ParticipantConfigBox from './components/ParticipantConfigurationBox.jsx'
 import QuestionnaireQRCodeGroup from '../overview/components/QRCode/ParticipantStartQRCodeGroup.jsx'
 import QuestionnaireSelector from '@/features/questionnaire/components/questionnaireSelector/QuestionnaireSelector.jsx';
-import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function ConfigurationForm({
                                               trialConfigs,
@@ -17,14 +17,15 @@ export default function ConfigurationForm({
                                               loading, experiment_id,
                                               selectedQuestionnaires, setSelectedQuestionnaires
                                           }) {
+    const { t } = useTranslation('configuration');
 
     return (
         <div>
-            <h1 className="text-2xl font-bold mb-6">Versuchs-Konfiguration</h1>
+            <h1 className="text-2xl font-bold mb-6">{t('form.title')}</h1>
 
             {!bothConnected && (
                 <p className="text-red-400 mb-4">
-                    ⚠️ Beide Probanden müssen verbunden sein, bevor konfiguriert werden kann.
+                    {t('form.bothConnectedRequired')}
                 </p>
             )}
 
@@ -55,7 +56,7 @@ export default function ConfigurationForm({
                                         }
                                     }}
                                     className="absolute -top-2 -right-2 bg-gray-700 text-white hover:bg-red-500 transition-colors rounded-full w-5 h-5 text-xs shadow"
-                                    title="Trial löschen"
+                                    title={t('form.deleteTrial')}
                                 >
                                     ✕
                                 </button>
@@ -95,7 +96,7 @@ export default function ConfigurationForm({
             </div>
 
             <div className="my-6">
-                <h2 className="text-xl font-semibold mb-2 text-white">Fragebögen für die Probanden</h2>
+                <h2 className="text-xl font-semibold mb-2 text-white">{t('form.questionnairesSection')}</h2>
                 <QuestionnaireSelector
                     selectedQuestionnaires={selectedQuestionnaires}
                     setSelectedQuestionnaires={setSelectedQuestionnaires}
@@ -113,12 +114,12 @@ export default function ConfigurationForm({
                     disabled={!bothConnected || loading}
                     className="px-6 py-3 bg-accent text-white rounded hover:bg-green-600 disabled:opacity-50"
                 >
-                    {loading ? "Speichere Trials..." : "➡️ Weiter zu „Warten auf Probanden“"}
+                    {loading ? t('form.savingButton') : `➡️ ${t('form.saveButton')}`}
                 </button>
 
                 {validationErrors.length > 0 && (
                     <div className="mt-4 bg-red-950 border border-red-700 p-4 rounded text-sm text-red-300 space-y-1">
-                        <strong className="block text-red-400 mb-2">Bitte beheben Sie folgende Fehler:</strong>
+                        <strong className="block text-red-400 mb-2">{t('form.errorTitle')}</strong>
                         {validationErrors.map((err, idx) => (
                             <div key={idx}>• {err.message}</div>
                         ))}

@@ -1,4 +1,8 @@
-﻿export default function ParticipantConfigCard({ id, config, status, disabled, validationErrors, stimulusOptions, avatarOptions, setConfigs }) {
+import { useTranslation } from 'react-i18next';
+
+export default function ParticipantConfigCard({ id, config, status, disabled, validationErrors, stimulusOptions, avatarOptions, setConfigs }) {
+    const { t } = useTranslation('configuration');
+
     const hasError = (field) =>
         validationErrors?.some(e => e.participant_id === id && e.field === field)
 
@@ -14,10 +18,17 @@
         setConfigs(id, 'avatar', value)
     }
 
+    const stimulusTypeLabel = (type) => {
+        if (type === 'vis') return t('participantCard.visualStimulus');
+        if (type === 'aud') return t('participantCard.auditoryStimulus');
+        if (type === 'tak') return t('participantCard.tactileStimulus');
+        return type;
+    };
+
     return (
         <div className="rounded-2xl border border-border bg-gray-800 p-6 shadow-md hover:shadow-lg transition-all">
             <h3 className="text-lg font-semibold text-foreground mb-4 border-b border-border pb-1">
-                Proband {id}
+                {t('participantCard.participant', { id })}
                 {status?.participant_id && (
                     <span className="text-gray-400 text-sm ml-2">(ID: {status.participant_id})</span>
                 )}
@@ -25,7 +36,7 @@
 
             {/* Stimuli aktiv */}
             <div className="mb-2 text-sm">
-                <label className="block font-medium mb-1">Aktive Stimuli:</label>
+                <label className="block font-medium mb-1">{t('participantCard.activeStimuli')}</label>
                 <div className={`flex gap-4 border rounded px-2 py-1 ${
                     hasError('stimuli') ? 'border-red-500 bg-red-950' : 'border-transparent'
                 }`}>
@@ -45,7 +56,7 @@
 
             {/* Avatarsichtbarkeit */}
             <div className="mb-2 text-sm">
-                <label className="block font-medium mb-1">Avatarsichtbarkeit:</label>
+                <label className="block font-medium mb-1">{t('participantCard.avatarVisibility')}</label>
                 <select
                     disabled={disabled}
                     className={`bg-gray-700 border rounded px-2 py-1 w-full ${
@@ -54,7 +65,7 @@
                     value={config.avatar || ''}
                     onChange={e => handleAvatarChange(e.target.value)}
                 >
-                    <option value="">Bitte wählen</option>
+                    <option value="">{t('participantCard.pleaseSelect')}</option>
                     {avatarOptions.map(opt => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
@@ -66,9 +77,7 @@
                     config.stimuli?.[type] && (
                         <div key={type} className="mb-2 text-sm">
                             <label className="block font-medium mb-1">
-                                {type === 'vis' && 'Visueller Stimulus'}
-                                {type === 'aud' && 'Auditiver Stimulus'}
-                                {type === 'tak' && 'Taktiler Stimulus'}
+                                {stimulusTypeLabel(type)}
                             </label>
                             <select
                                 disabled={disabled}
@@ -78,7 +87,7 @@
                                 value={config.selectedStimuli?.[type] || ''}
                                 onChange={e => handleSelectedStimuliChange(type, e.target.value)}
                             >
-                                <option value="">Bitte wählen</option>
+                                <option value="">{t('participantCard.pleaseSelect')}</option>
                                 {stimulusOptions[type].map(option => (
                                     <option key={option.value} value={option.value}>
                                         {option.label}

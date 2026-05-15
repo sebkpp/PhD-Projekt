@@ -1,12 +1,14 @@
-﻿import {useSearchParams, useNavigate, useParams} from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import {useSearchParams, useNavigate, useParams} from 'react-router-dom'
 import { useQuestionnaireAvailability } from '@/features/questionnaire/hooks/useQuestionnaireAvailability.js'
 import { useSyncTrialIdInUrl } from '@/features/questionnaire/hooks/useSyncTrialIdInUrl.js'
 
 function WaitingContent(){
+    const { t } = useTranslation('questionnaire')
     return (
         <>
             <p className="text-lg text-gray-400 max-w-md mb-6">
-                Bitte warte, bis der aktuelle Trial beendet ist und die Fragebögen freigeschaltet werden.
+                {t('waiting.waitText')}
             </p>
             <div className="animate-pulse text-accent text-4xl">⏳</div>
         </>
@@ -14,16 +16,17 @@ function WaitingContent(){
 }
 
 function ReadyContent({ onContinue }) {
+    const { t } = useTranslation('questionnaire')
     return (
         <>
             <p className="text-lg text-accent font-semibold max-w-md mb-4">
-                Die Fragebögen sind jetzt bereit.
+                {t('waiting.readyText')}
             </p>
             <button
                 onClick={onContinue}
                 className="px-6 py-3 bg-accent text-white rounded hover:bg-green-600 transition"
             >
-                Weiter zum nächsten Fragebogen 🚀
+                {t('waiting.continueButton')}
             </button>
         </>
     )

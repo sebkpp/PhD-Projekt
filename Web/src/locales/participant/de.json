@@ -1,0 +1,33 @@
+{
+  "landing": {
+    "welcome": "Willkommen zum Experiment",
+    "demographyPrompt": "Bitte beginnen Sie mit dem kurzen Demographie-Fragebogen.",
+    "startQuestionnaire": "Fragebogen starten",
+    "experiment": "Experiment",
+    "slot": "Slot"
+  },
+  "validation": {
+    "ageRequired": "Bitte gib ein Alter zwischen 18 und 100 ein.",
+    "genderRequired": "Bitte wähle ein Geschlecht aus.",
+    "handednessRequired": "Bitte wähle eine Händigkeit aus.",
+    "submitError": "Fehler beim Absenden. Bitte erneut versuchen."
+  },
+  "demography": {
+    "title": "Teilnehmer-Fragebogen",
+    "subtitle": "Bitte beantworte die folgenden Angaben. Deine Teilnahme bleibt anonym.",
+    "age": "Alter",
+    "gender": "Geschlecht",
+    "handedness": "Händigkeit",
+    "pleaseSelect": "Bitte auswählen",
+    "male": "Männlich",
+    "female": "Weiblich",
+    "diverse": "Divers",
+    "rightHanded": "Rechtshändig",
+    "leftHanded": "Linkshändig",
+    "ambidextrous": "Beidhändig",
+    "submitButton": "Absenden",
+    "submittingButton": "Absenden...",
+    "successTitle": "Vielen Dank!",
+    "successText": "Deine Angaben wurden gespeichert."
+  }
+}

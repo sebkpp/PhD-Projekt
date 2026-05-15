@@ -3,10 +3,12 @@ import dayjs from "dayjs";
 import {useNavigate} from "react-router-dom";
 import duration from "dayjs/plugin/duration";
 import StimulusIcon from "@/features/study/utils/stimuliUtils.jsx";
+import { useTranslation } from 'react-i18next';
 
 dayjs.extend(duration);
 
 export default function ExperimentTile({experiment, study_id, index, onOpen, onViewData}) {
+    const { t } = useTranslation('experiment');
     const navigate = useNavigate();
     const {
         experiment_id,
@@ -36,7 +38,7 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-base font-semibold text-gray-100 flex items-center gap-2">
-                    <span> {index}. Experiment</span>
+                    <span>{t('tile.experimentNumber', { n: index })}</span>
                     <span className="text-sm text-gray-400">(ID: {experiment_id})</span>
                 </h2>
                 <span
@@ -46,7 +48,7 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
                             : "bg-green-900 text-green-200"
                     }`}
                 >
-                    {isFinished ? "Beendet" : "Offen"}
+                    {isFinished ? t('tile.finished') : t('tile.open')}
                 </span>
             </div>
 
@@ -54,23 +56,23 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
             <div className="grid grid-cols-1 gap-2 text-gray-300 text-sm mb-4">
                 <div className="flex items-center gap-2">
                     <UserCog className="w-4 h-4 text-orange-400"/>
-                    <span className="font-medium">Versuchsleiter:in:</span>
-                    <span>{researcher || "Unbekannt"}</span>
+                    <span className="font-medium">{t('tile.researcher')}</span>
+                    <span>{researcher || t('tile.unknown')}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-purple-400"/>
-                    <span className="font-medium">Datum:</span>
+                    <span className="font-medium">{t('tile.date')}</span>
                     <span>{formatDateTime(created_at).split(" ")[0]}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="font-medium">Uhrzeiten:</span>
+                    <span className="font-medium">{t('tile.times')}</span>
                     {started_at ? (
                         <span>{dayjs(started_at).format("HH:mm")}</span>
                     ) : (
                         <span className="flex items-center gap-1 text-gray-400">
             <Clock className="w-4 h-4" />
-            Noch nicht gestartet
+            {t('tile.notStarted')}
         </span>
                     )}
                     <span>–</span>
@@ -79,7 +81,7 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
                     ) : (
                         <span className="flex items-center gap-1 text-gray-400">
             <Clock className="w-4 h-4" />
-            Noch nicht beendet
+            {t('tile.notCompleted')}
         </span>
                     )}
                     {started_at && completed_at && (
@@ -93,7 +95,7 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
             {/* Beschreibung */}
             {description && (
                 <>
-                    <h3 className="font-medium text-gray-300 text-sm mb-1">Beschreibung:</h3>
+                    <h3 className="font-medium text-gray-300 text-sm mb-1">{t('tile.description')}</h3>
                     <div className="bg-gray-800 rounded-lg p-3 mb-4 border border-gray-700 flex items-start gap-2">
                         <p className="text-gray-100 text-sm line-clamp-3">{description}</p>
                     </div>
@@ -105,7 +107,7 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
                 <div className="mb-4">
                     <h3 className="text-gray-300 text-xs mb-1 font-medium flex items-center gap-1">
                         <Layers className="w-3 h-3 text-yellow-400"/>
-                        Trial Übersicht
+                        {t('tile.trialOverview')}
                     </h3>
                     <div
                         className="flex flex-col gap-2 max-h-36 overflow-y-auto trial-scrollbar">                        {trials.map((trial) => (
@@ -121,7 +123,7 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
                                 {trial.slots?.[0] && (
                                 <div className="flex-1 flex flex-col gap-1">
     <span className="font-medium text-gray-400 text-[10px]">
-      Slot {trial.slots[0].slot}:
+      {t('tile.slot', { n: trial.slots[0].slot })}
     </span>
                                     <div className="flex flex-wrap gap-1">
                                         {trial.slots[0].stimuli.map((s) => (
@@ -141,7 +143,7 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
                                 <div className="w-px bg-gray-500 mx-2 my-1"></div>
                                 <div className="flex-1 flex flex-col gap-1">
     <span className="font-medium text-gray-400 text-[10px]">
-      Slot {trial.slots[1].slot}:
+      {t('tile.slot', { n: trial.slots[1].slot })}
     </span>
                                     <div className="flex flex-wrap gap-1">
                                         {trial.slots[1].stimuli.map((s) => (
@@ -175,7 +177,7 @@ export default function ExperimentTile({experiment, study_id, index, onOpen, onV
                     : "bg-blue-600 hover:bg-blue-500 text-white"
             }`}
             >
-                {isFinished ? "Daten-Übersicht ansehen" : "Zum Experiment"}
+                {isFinished ? t('tile.viewData') : t('tile.toExperiment')}
             </button>
         </div>
     );

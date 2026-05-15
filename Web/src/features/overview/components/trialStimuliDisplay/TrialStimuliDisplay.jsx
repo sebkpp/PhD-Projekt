@@ -1,7 +1,9 @@
-﻿import { useFormattedStimuli } from './useFormatStimuli.js'
+import { useTranslation } from 'react-i18next';
+import { useFormattedStimuli } from './useFormatStimuli.js'
 import TrialStimuliBox from './TrialStimuliBox.jsx'
 
 export default function TrialStimuliDisplay({ trialConfigs, stimulusMap, participants, currentTrialIndex }) {
+    const { t } = useTranslation('overview');
     //const formattedTrials = useFormattedStimuli(trialConfigs, stimulusMap);
     if (!trialConfigs.length || !stimulusMap) {
         return null;
@@ -15,7 +17,7 @@ export default function TrialStimuliDisplay({ trialConfigs, stimulusMap, partici
     if (!currentTrial && !nextTrial) {
         return (
             <div className="p-4 text-center text-gray-500">
-                Alle Trials beendet.
+                {t('stimuli.allDone')}
             </div>
         );
     }
@@ -26,7 +28,7 @@ export default function TrialStimuliDisplay({ trialConfigs, stimulusMap, partici
                 <TrialStimuliBox
                     trialNumber={currentTrial.trial_number}
                     slots={currentTrial.slots}
-                    title="Aktueller Trial"
+                    title={t('stimuli.currentTrial')}
                     highlight={true}
                 />
             )}
@@ -35,7 +37,7 @@ export default function TrialStimuliDisplay({ trialConfigs, stimulusMap, partici
                 <TrialStimuliBox
                     trialNumber={nextTrial.trial_number}
                     slots={nextTrial.slots}
-                    title="Nächster Trial"
+                    title={t('stimuli.nextTrial')}
                 />
             )}
         </div>

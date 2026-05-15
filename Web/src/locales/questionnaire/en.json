@@ -1,0 +1,52 @@
+{
+  "router": {
+    "participant": "Participant {{slot}}",
+    "progress": "Questionnaire {{current}} of {{total}}"
+  },
+  "preview": {
+    "loading": "Loading questionnaire...",
+    "mode": "Preview mode – no data will be saved"
+  },
+  "dynamic": {
+    "noItems": "No items available for this questionnaire."
+  },
+  "selector": {
+    "title": "Available Questionnaires",
+    "filter": "Filter...",
+    "loading": "Loading...",
+    "loadError": "Error loading questionnaires",
+    "noResults": "No questionnaires found",
+    "preview": "Preview",
+    "prevPage": "Back",
+    "page": "Page {{current}} of {{total}}",
+    "nextPage": "Next",
+    "selectedTitle": "Selected Questionnaires (Order)",
+    "noneSelected": "No questionnaires selected",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "remove": "Remove"
+  },
+  "waiting": {
+    "waitText": "Please wait until the current trial has ended and the questionnaires are unlocked.",
+    "readyText": "The questionnaires are now available.",
+    "continueButton": "Continue to next questionnaire 🚀"
+  },
+  "closing": {
+    "title": "Thank you!",
+    "saved": "Your answers have been saved successfully.",
+    "instructions": "You can close this window or wait for further instructions."
+  },
+  "validation": {
+    "noAnswers": "No answers available",
+    "required": "Please fill in",
+    "statusCheckError": "Error checking questionnaire status"
+  },
+  "form": {
+    "resetButton": "Reset",
+    "nextButton": "Continue",
+    "sendingButton": "Sending...",
+    "pleaseFill": "Please fill in the questionnaire.",
+    "pleaseAnswerAll": "Please answer all questions: {{missing}}",
+    "pleaseCompleteAll": "Please complete all fields:"
+  }
+}

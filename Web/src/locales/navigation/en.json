@@ -1,0 +1,14 @@
+{
+  "breadcrumbs": {
+    "studyOverview": "Study Overview",
+    "study": "Study {{id}}",
+    "experiment": "Experiment {{id}}",
+    "metaAnalysis": "Studies Meta-Analysis"
+  },
+  "timeline": {
+    "preparation": "Preparation",
+    "trial": "Trial",
+    "questionnaire": "Questionnaire",
+    "finished": "Finished"
+  }
+}

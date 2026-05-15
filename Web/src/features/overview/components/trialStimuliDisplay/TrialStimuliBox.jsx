@@ -1,4 +1,5 @@
-﻿import StimulusIcon from "@/features/study/utils/stimuliUtils.jsx";
+import { useTranslation } from 'react-i18next';
+import StimulusIcon from "@/features/study/utils/stimuliUtils.jsx";
 
 export default function TrialStimuliBox({ title, trialNumber, slots, highlight = false }) {
     if (!slots) return null
@@ -21,10 +22,11 @@ export default function TrialStimuliBox({ title, trialNumber, slots, highlight =
 }
 
 function StimulusCard({ slotNumber, stimuli }) {
+    const { t } = useTranslation('overview');
     return (
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow hover:shadow-lg transition p-5 border border-gray-100 dark:border-gray-700 flex flex-col gap-2">
             <div className="font-semibold text-lg mb-2 text-accent dark:text-accent-light">
-                Proband Slot {slotNumber}
+                {t('stimuli.participantSlot', { n: slotNumber })}
             </div>
             <ul className="text-sm space-y-2">
                 {stimuli.map((stimulus) => (

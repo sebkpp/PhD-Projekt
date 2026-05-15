@@ -1,7 +1,9 @@
 ﻿import TrialParticipantConfigCard from './TrialParticipantConfigTile';
 import {useEffect, useMemo, useState} from "react";
+import { useTranslation } from 'react-i18next';
 
 function TrialParticipantsTile({ allowedStimuli, onChange, trial_number, configs, validationErrors = [], showValidation }) {
+    const { t } = useTranslation('experiment');
     const stimuli = useMemo(() => allowedStimuli || [], [allowedStimuli]);
 
     function handleConfigChange(slot, config) {
@@ -15,7 +17,7 @@ function TrialParticipantsTile({ allowedStimuli, onChange, trial_number, configs
             <TrialParticipantConfigCard
                 allowedStimuli={stimuli}
                 onChange={config => handleConfigChange(1, config)}
-                label="Proband 1"
+                label={t('participants.slot1')}
                 slot={1}
                 trial_number={trial_number}
                 config={configs["Slot 1"] || {}}
@@ -25,7 +27,7 @@ function TrialParticipantsTile({ allowedStimuli, onChange, trial_number, configs
             <TrialParticipantConfigCard
                 allowedStimuli={stimuli}
                 onChange={config => handleConfigChange(2, config)}
-                label="Proband 2"
+                label={t('participants.slot2')}
                 slot={2}
                 trial_number={trial_number}
                 config={configs["Slot 2"] || {}}

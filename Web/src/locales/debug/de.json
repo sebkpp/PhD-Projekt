@@ -1,0 +1,50 @@
+{
+  "controller": {
+    "title": "Debug Simulator",
+    "subtitle": "Teste Participant-Verbindung, Bereitschaft und Handovers ohne Unity-Anwendung.",
+    "refresh": "↻ Aktualisieren",
+    "trialActive": "Trial #{{id}} aktiv",
+    "noTrial": "Kein aktiver Trial",
+    "noTrialWarning": "Starte zuerst einen Trial über Studie → Experiment → Übersicht → Trial starten, dann ist der Handover-Simulator verfügbar. Verbindung und Bereitschaft können bereits jetzt gesetzt werden.",
+    "panels": {
+      "connection": "Verbindung",
+      "connectionDesc": "Simuliert Spieler-Join und Heartbeat. Trennen stoppt den Heartbeat; der Backend-Timeout markiert den Spieler nach 10 s als offline.",
+      "readiness": "Bereitschaft",
+      "readinessDesc": "Setzt oder entfernt die Bereitschaft je Slot. Die Trial-Übersicht wertet diesen Zustand aus, bevor ein Trial gestartet werden kann.",
+      "handover": "Handover-Simulation",
+      "handoverDesc": "Generiert alle 2 Sekunden einen zufälligen Handover mit realistischen Zeitstempeln. Benötigt einen aktiven Trial mit mindestens 2 Teilnehmern.",
+      "waitingForTrial": "Warte auf aktiven Trial…"
+    }
+  },
+  "connection": {
+    "participant": "Proband {{n}}",
+    "connected": "verbunden",
+    "connecting": "verbindet…",
+    "disconnected": "getrennt",
+    "error": "Fehler",
+    "connectButton": "Verbinden",
+    "disconnectButton": "Trennen",
+    "heartbeatInfo": "Heartbeat wird alle 2 s gesendet. Nach dem Trennen markiert das Backend den Spieler nach ~10 s als offline."
+  },
+  "readiness": {
+    "participant": "Proband {{n}}",
+    "ready": "bereit",
+    "notReady": "nicht bereit",
+    "setReady": "Als bereit markieren",
+    "removeReady": "Bereitschaft entfernen"
+  },
+  "handover": {
+    "trialId": "Trial ID",
+    "participants": "Teilnehmer",
+    "noParticipants": "keine geladen",
+    "minParticipantsHint": "Mindestens 2 Teilnehmer im Trial erforderlich.",
+    "startButton": "▶ Simulation starten",
+    "stopButton": "⏹ Simulation stoppen",
+    "sent": "Gesendet:",
+    "reset": "zurücksetzen",
+    "lastHandover": "Letzter Handover",
+    "id": "ID",
+    "object": "Objekt",
+    "giverReceiver": "Geber → Empfänger"
+  }
+}

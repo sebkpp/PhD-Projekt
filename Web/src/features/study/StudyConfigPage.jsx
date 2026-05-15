@@ -1,5 +1,6 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import QuestionnaireSelector from "@/features/questionnaire/components/QuestionnaireSelector/questionnaireSelector";
 import { useStudyConfig } from "@/features/study/hooks/useStudyConfig";
 import SaveConfirmDialog from "@/features/study/components/SaveConfirmDialog";
@@ -9,6 +10,7 @@ import StimuliConfigCard from "@/features/study/components/StimuliConfigCard.jsx
 import Breadcrumbs from "@/components/Breadcrumbs.jsx";
 
 export default function StudyConfigurationPage() {
+    const { t } = useTranslation(['study', 'navigation']);
     const { studyId } = useParams();
     const navigate = useNavigate();
     const [saving, setSaving] = useState(false);
@@ -28,14 +30,14 @@ export default function StudyConfigurationPage() {
     };
 
     const breadcrumbItems = [
-        { label: "Studienübersicht", to: "/" },
-        { label: "Neue Studie" }
+        { label: t('navigation:breadcrumbs.studyOverview'), to: "/" },
+        { label: t('study:config.newStudy') }
     ];
 
     return (
         <div className="p-6 min-h-screen bg-gray-900 text-gray-100">
             <Breadcrumbs items={breadcrumbItems} styled={true} className="mb-6"/>
-            <h1 className="text-2xl font-bold mb-6">Studie konfigurieren</h1>
+            <h1 className="text-2xl font-bold mb-6">{t('study:config.title')}</h1>
             <div className="flex gap-6 mb-6">
                 <div className="flex-1">
                     <GeneralInfoForm
@@ -53,8 +55,8 @@ export default function StudyConfigurationPage() {
 
             {/* Fragebögen */}
             <div className="bg-gray-800 rounded-lg p-6 mb-6 shadow-md">
-                <h2 className="text-xl font-semibold mb-4">Fragebögen</h2>
-                <p className="text-gray-400 mb-2">Wählen Sie die Fragebögen aus, die für alle Experimente gelten sollen.</p>
+                <h2 className="text-xl font-semibold mb-4">{t('study:config.questionnairesSection')}</h2>
+                <p className="text-gray-400 mb-2">{t('study:config.questionnairesHint')}</p>
                 <QuestionnaireSelector
                     selectedQuestionnaires={localConfig?.questionnaires ?? []}
                     onChange={(q) => updateLocalConfig("questionnaires", q)}
@@ -71,8 +73,8 @@ export default function StudyConfigurationPage() {
 
             <SaveConfirmDialog
                 open={showConfirm}
-                title={"Studiekonfiguration abschließen"}
-                message={"Sind Sie sicher, dass Sie die Konfiguration der Studie abschließen möchten? Danach können keine Änderungen mehr gemacht werden."}
+                title={t('study:config.confirmTitle')}
+                message={t('study:config.confirmMessage')}
                 onCancel={() => setShowConfirm(false)}
                 onConfirm={() => {
                     setShowConfirm(false);

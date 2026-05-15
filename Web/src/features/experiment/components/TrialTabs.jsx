@@ -1,4 +1,7 @@
-﻿export default function TrialTabs({ tabs, activeIndex, setActiveIndex, addTab, removeTab, maxTrials }) {
+﻿import { useTranslation } from 'react-i18next';
+
+export default function TrialTabs({ tabs, activeIndex, setActiveIndex, addTab, removeTab, maxTrials }) {
+    const { t } = useTranslation('experiment');
     return (
         <div className="flex gap-2 overflow-x-auto px-4 pt-4 -mb-px">
             {tabs.map((tab, index) => (
@@ -17,7 +20,7 @@
                         <button
                             onClick={() => removeTab(index)}
                             className="absolute -top-2 -right-2 bg-gray-700 text-white hover:bg-red-500 transition-colors rounded-full w-5 h-5 text-xs shadow"
-                            title="Tab löschen"
+                            title={t('tabs.deleteTab')}
                         >
                             ✕
                         </button>

@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "title": "Studies Meta-Analysis",
+    "selectStudies": "Select Studies",
+    "noStudies": "No completed or active studies available.",
+    "baseline": "Baseline (ms):",
+    "compareButton": "Compare Studies",
+    "comparingButton": "Comparing...",
+    "minStudiesHint": "Select at least 2 studies",
+    "descriptiveWarning": "Descriptive comparison — no inferential test (different participants per study)",
+    "loadingStudies": "Loading studies...",
+    "loadingData": "Loading data..."
+  },
+  "study": {
+    "title": "Study Analysis",
+    "breadcrumb": "Study Analysis",
+    "breadcrumbStudy": "Study",
+    "breadcrumbOverview": "Study Overview",
+    "tabs": {
+      "performance": "Performance",
+      "questionnaires": "Questionnaires",
+      "eyetracking": "Eye-Tracking",
+      "export": "Export"
+    },
+    "loading": {
+      "performance": "Loading performance data...",
+      "questionnaires": "Loading questionnaire data...",
+      "eyetracking": "Loading eye-tracking data..."
+    },
+    "inferential": {
+      "title": "Inferential Analysis",
+      "transferDuration": "Inferential Analysis — Transfer Duration",
+      "aoiDwellTime": "Inferential Analysis — AOI Dwell-Time",
+      "noData": "Insufficient data for inferential tests (n < 3 per condition)."
+    },
+    "export": {
+      "title": "Export Data",
+      "csvButton": "Download CSV",
+      "xlsxButton": "Download Excel",
+      "exportingButton": "Exporting...",
+      "hint": "Exports all handover data for study {{studyId}}."
+    }
+  },
+  "experiment": {
+    "title": "Experiment Analysis",
+    "breadcrumb": "Experiment Analysis",
+    "tabs": {
+      "details": "Experiment Info",
+      "performance": "Performance",
+      "eyetracking": "Eye-Tracking",
+      "ux": "Questionnaires / UX",
+      "compare": "Comparisons"
+    },
+    "loading": {
+      "performance": "Loading performance data...",
+      "questionnaires": "Loading questionnaire data...",
+      "eyetracking": "Loading eye-tracking data...",
+      "phases": "Loading phases & transitions...",
+      "ppi": "Calculating PPI...",
+      "saccade": "Calculating saccade rate...",
+      "compare": "Loading comparison data..."
+    },
+    "descriptiveWarning": "Descriptive analysis of a single measurement run. Inferential evaluation across all experiments → Study Analysis.",
+    "placeholder": {
+      "correlationMatrix": "Correlation matrix (coming in Session B)"
+    }
+  },
+  "shared": {
+    "loading": "Loading...",
+    "significant": "Significant",
+    "notSignificant": "Not significant",
+    "noAnalysis": "No analysis",
+    "mainEffect": "Main effect:",
+    "posthoc": "Post-hoc ({{count}} pairs):",
+    "test": "Test:",
+    "descriptiveOnlyDefault": "This comparison is purely descriptive. Since different studies have different participants, inferential tests between studies are not permitted."
+  }
+}

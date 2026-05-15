@@ -2,8 +2,10 @@
 import { useQuestionnaireStartQrUrl } from './useQuestionnaireStartQrUrl'
 import { useQuestionnaireCompletionStatus } from './useQuestionnaireCompletionStatus'
 import { useStudyQuestionnaires } from '@/features/questionnaire/hooks/useStudyQuestionnaires.js'
+import { useTranslation } from 'react-i18next'
 
 export default function ParticipantQuestionnaireStatus({ experimentId, slot, status, trialId }) {
+    const { t } = useTranslation('overview')
     const participant = status?.participants?.find((p) => p.slot === slot)
     const participant_id = participant?.participant_id
     const submitted = participant?.submitted
@@ -30,8 +32,8 @@ export default function ParticipantQuestionnaireStatus({ experimentId, slot, sta
             />
             <div className="mt-2 text-sm text-gray-300">
                 {loading
-                    ? "Lade Status..."
-                    : `Fragebögen: ${completedCount} / ${totalCount} ausgefüllt`}
+                    ? t('qr.loadingStatus')
+                    : t('qr.questionnairesFilled', { completed: completedCount, total: totalCount })}
             </div>
         </div>
     )

@@ -1,4 +1,6 @@
-﻿export default function ParticipantQuestionnaireForm({
+import { useTranslation } from 'react-i18next';
+
+export default function ParticipantQuestionnaireForm({
                                                          age,
                                                          setAge,
                                                          gender,
@@ -10,11 +12,13 @@
                                                          submitted,
                                                          onSubmit,
                                                      }) {
+    const { t } = useTranslation('participant');
+
     if (submitted) {
         return (
             <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6">
-                <h1 className="text-2xl font-bold mb-4">Vielen Dank!</h1>
-                <p>Deine Angaben wurden gespeichert.</p>
+                <h1 className="text-2xl font-bold mb-4">{t('demography.successTitle')}</h1>
+                <p>{t('demography.successText')}</p>
             </div>
         )
     }
@@ -22,15 +26,15 @@
     return (
         <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
             <div className="max-w-xl w-full">
-                <h1 className="text-2xl font-bold mb-6 text-center">Teilnehmer-Fragebogen</h1>
+                <h1 className="text-2xl font-bold mb-6 text-center">{t('demography.title')}</h1>
                 <p className="text-sm text-gray-400 text-center mb-8">
-                    Bitte beantworte die folgenden Angaben. Deine Teilnahme bleibt anonym.
+                    {t('demography.subtitle')}
                 </p>
 
                 <div className="space-y-6">
                     {/* Alter */}
                     <div>
-                        <label className="block font-semibold mb-1">Alter</label>
+                        <label className="block font-semibold mb-1">{t('demography.age')}</label>
                         <input
                             type="number"
                             value={age}
@@ -41,31 +45,31 @@
 
                     {/* Geschlecht */}
                     <div>
-                        <label className="block font-semibold mb-1">Geschlecht</label>
+                        <label className="block font-semibold mb-1">{t('demography.gender')}</label>
                         <select
                             value={gender}
                             onChange={(e) => setGender(e.target.value)}
                             className="w-full bg-gray-800 border border-border rounded px-3 py-2"
                         >
-                            <option value="">Bitte auswählen</option>
-                            <option value="male">Männlich</option>
-                            <option value="female">Weiblich</option>
-                            <option value="diverse">Divers</option>
+                            <option value="">{t('demography.pleaseSelect')}</option>
+                            <option value="male">{t('demography.male')}</option>
+                            <option value="female">{t('demography.female')}</option>
+                            <option value="diverse">{t('demography.diverse')}</option>
                         </select>
                     </div>
 
                     {/* Händigkeit */}
                     <div>
-                        <label className="block font-semibold mb-1">Händigkeit</label>
+                        <label className="block font-semibold mb-1">{t('demography.handedness')}</label>
                         <select
                             value={handedness}
                             onChange={(e) => setHandedness(e.target.value)}
                             className="w-full bg-gray-800 border border-border rounded px-3 py-2"
                         >
-                            <option value="">Bitte auswählen</option>
-                            <option value="right">Rechtshändig</option>
-                            <option value="left">Linkshändig</option>
-                            <option value="ambi">Beidhändig</option>
+                            <option value="">{t('demography.pleaseSelect')}</option>
+                            <option value="right">{t('demography.rightHanded')}</option>
+                            <option value="left">{t('demography.leftHanded')}</option>
+                            <option value="ambi">{t('demography.ambidextrous')}</option>
                         </select>
                     </div>
 
@@ -80,7 +84,7 @@
                         disabled={loading}
                         className="mt-4 px-6 py-3 bg-accent text-white rounded hover:bg-green-600 transition-all w-full"
                     >
-                        {loading ? "Absenden..." : "Absenden"}
+                        {loading ? t('demography.submittingButton') : t('demography.submitButton')}
                     </button>
                 </div>
             </div>

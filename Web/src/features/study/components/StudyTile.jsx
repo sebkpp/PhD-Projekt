@@ -1,14 +1,16 @@
 ﻿import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import {useStudyParticipants} from "@/features/study/hooks/useStudyParticipants.js";
 
 export default function StudyTile({ study, experimentCount, onDelete }) {
     const navigate = useNavigate();
+    const { t } = useTranslation('study');
     const { participants, loading } = useStudyParticipants(study?.study_id);
 
     if (!study) {
         return (
             <div className="bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col justify-center items-center min-h-[140px] text-gray-400">
-                Keine Studiendaten vorhanden
+                {t('tile.noData')}
             </div>
         );
     }
@@ -41,7 +43,7 @@ export default function StudyTile({ study, experimentCount, onDelete }) {
                         <button
                             className="text-gray-400 hover:text-red-500 p-1 rounded transition-colors"
                             onClick={() => handleDelete(study.study_id)}
-                            title="Studie löschen"
+                            title={t('tile.deleteTitle')}
                             style={{ lineHeight: 0 }}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
@@ -58,22 +60,21 @@ export default function StudyTile({ study, experimentCount, onDelete }) {
                 {/* Meta-Infos links */}
                 <div className="flex flex-col gap-1 text-sm text-gray-300">
                     <div>
-                        <span className="font-semibold">Experimente:</span> {experimentCount ?? 0}
+                        <span className="font-semibold">{t('tile.experiments')}:</span> {experimentCount ?? 0}
                     </div>
                     <div>
-                        <span className="font-semibold">Teilnehmer:</span> {participants.length ?? 0}
+                        <span className="font-semibold">{t('tile.participants')}:</span> {participants.length ?? 0}
                     </div>
                     <div>
-                        <span className="font-semibold">Erstellt am:</span>{" "}
+                        <span className="font-semibold">{t('tile.createdAt')}:</span>{" "}
                         {study.created_at ? new Date(study.created_at).toLocaleDateString() : "-"}
                     </div>
                     <div>
-                        <span className="font-semibold">Beschreibung:</span>{" "}
+                        <span className="font-semibold">{t('tile.description')}:</span>{" "}
                         {study.config.description
                             ? study.config.description.slice(0, 30) + (study.config.description.length > 30 ? "…" : "")
                             : "-"}
                     </div>
-
                 </div>
 
                 {/* Buttons rechts */}
@@ -90,7 +91,7 @@ export default function StudyTile({ study, experimentCount, onDelete }) {
                         }
                         disabled={study.status === "Entwurf"}
                     >
-                        Experimente anzeigen
+                        {t('tile.viewExperiments')}
                     </button>
                     <button
                         className={`py-2 rounded-lg shadow-md transition-colors ${
@@ -104,7 +105,7 @@ export default function StudyTile({ study, experimentCount, onDelete }) {
                         }
                         disabled={study.status !== "Entwurf"}
                     >
-                        Study konfigurieren
+                        {t('tile.configure')}
                     </button>
                     <button
                         className={`py-2 rounded-lg shadow-md transition-colors ${
@@ -118,7 +119,7 @@ export default function StudyTile({ study, experimentCount, onDelete }) {
                         }
                         disabled={study.status === "Entwurf"}
                     >
-                        Analyse
+                        {t('tile.analyse')}
                     </button>
                 </div>
             </div>

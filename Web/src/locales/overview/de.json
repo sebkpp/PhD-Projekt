@@ -1,0 +1,41 @@
+{
+  "control": {
+    "startTrial": "▶️ Trial starten",
+    "endTrial": "⏹️ Trial beenden",
+    "waitingBothReady": "⏳ Warte, bis beide Probanden bereit sind.",
+    "waitingQuestionnaires": "⏳ Warte, bis alle Fragebögen abgeschlossen sind.",
+    "allTrialsFinished": "✅ Alle Trials wurden beendet.",
+    "readyToStart": "✅ Beide Probanden sind bereit. Du kannst den Trial starten.",
+    "trialRunning": "▶️ Trial {{current}} von {{total}} läuft...",
+    "trialEnded": "⏹️ Trial {{completed}} von {{total}} beendet.",
+    "demographyPending": "Der Trial kann erst gestartet werden, wenn beide Probanden den Demographie-Fragebogen ausgefühlt haben und bereit sind."
+  },
+  "readiness": {
+    "title": "Bereitschaft der Probanden",
+    "participant": "Proband {{id}}",
+    "ready": "🟢 ja",
+    "notReady": "🔴 nein",
+    "label": "Bereitschaft:"
+  },
+  "handover": {
+    "title": "Handover-Interaktionen",
+    "empty": "Noch keine Übergaben erfolgt.",
+    "columns": {
+      "object": "Object",
+      "giver": "Giver",
+      "receiver": "Receiver"
+    }
+  },
+  "stimuli": {
+    "allDone": "Alle Trials beendet.",
+    "currentTrial": "Aktueller Trial",
+    "nextTrial": "Nächster Trial",
+    "participantSlot": "Proband Slot {{n}}"
+  },
+  "qr": {
+    "participantRegistration": "Probanden Registierung",
+    "questionnaireLink": "Fragebogen-Link für die Probanden (nach Demographie)",
+    "loadingStatus": "Lade Status...",
+    "questionnairesFilled": "Fragebögen: {{completed}} / {{total}} ausgefüllt"
+  }
+}

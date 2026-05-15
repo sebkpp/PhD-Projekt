@@ -1,20 +1,18 @@
 import { useState, useRef, useEffect } from "react"
+import { useTranslation } from 'react-i18next'
 
 const PLAYERS = [
-    { id: "1", label: "Proband 1", color: "blue" },
-    { id: "2", label: "Proband 2", color: "green" },
+    { id: "1", n: 1 },
+    { id: "2", n: 2 },
 ]
 
 export default function ParticipantJoinSimulator() {
+    const { t } = useTranslation('debug')
     const [status, setStatus] = useState({ "1": "disconnected", "2": "disconnected" })
     const heartbeatRefs = useRef({ "1": null, "2": null })
 
     useEffect(() => {
-        return () => {
-            Object.values(heartbeatRefs.current).forEach(id => {
-                if (id) clearInterval(id)
-            })
-        }
+        return () => Object.values(heartbeatRefs.current).forEach(id => { if (id) clearInterval(id) })
     }, [])
 
     const joinPlayer = async (playerId) => {
@@ -43,9 +41,7 @@ export default function ParticipantJoinSimulator() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ player_id: playerId })
             })
-        } catch {
-            // ignore
-        }
+        } catch { /* ignore */ }
     }
 
     const leavePlayer = (playerId) => {
@@ -58,52 +54,37 @@ export default function ParticipantJoinSimulator() {
 
     return (
         <div className="flex flex-col gap-3">
-            {PLAYERS.map(({ id, label }) => {
+            {PLAYERS.map(({ id, n }) => {
                 const s = status[id]
                 const connected = s === "connected"
                 const connecting = s === "connecting"
                 const error = s === "error"
-
                 return (
-                    <div
-                        key={id}
-                        className={`flex items-center justify-between rounded-lg px-4 py-3 border transition-colors ${
-                            connected
-                                ? 'border-green-700 bg-green-900/20'
-                                : error
-                                    ? 'border-red-700 bg-red-900/20'
-                                    : 'border-gray-700 bg-gray-800/50'
-                        }`}
-                    >
+                    <div key={id} className={`flex items-center justify-between rounded-lg px-4 py-3 border transition-colors ${
+                        connected ? 'border-green-700 bg-green-900/20' : error ? 'border-red-700 bg-red-900/20' : 'border-gray-700 bg-gray-800/50'
+                    }`}>
                         <div className="flex items-center gap-2">
                             <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                                connected ? 'bg-green-400 animate-pulse'
-                                    : connecting ? 'bg-yellow-400 animate-pulse'
-                                        : error ? 'bg-red-400'
-                                            : 'bg-gray-500'
+                                connected ? 'bg-green-400 animate-pulse' : connecting ? 'bg-yellow-400 animate-pulse' : error ? 'bg-red-400' : 'bg-gray-500'
                             }`} />
-                            <span className="text-sm font-medium">{label}</span>
+                            <span className="text-sm font-medium">{t('connection.participant', { n })}</span>
                             <span className="text-xs text-gray-500">
-                                {connected ? 'verbunden' : connecting ? 'verbindet…' : error ? 'Fehler' : 'getrennt'}
+                                {connected ? t('connection.connected') : connecting ? t('connection.connecting') : error ? t('connection.error') : t('connection.disconnected')}
                             </span>
                         </div>
                         <button
                             onClick={() => connected ? leavePlayer(id) : joinPlayer(id)}
                             disabled={connecting}
                             className={`text-xs px-3 py-1.5 rounded font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                                connected
-                                    ? 'bg-red-700 hover:bg-red-600 text-white'
-                                    : 'bg-blue-700 hover:bg-blue-600 text-white'
+                                connected ? 'bg-red-700 hover:bg-red-600 text-white' : 'bg-blue-700 hover:bg-blue-600 text-white'
                             }`}
                         >
-                            {connected ? 'Trennen' : 'Verbinden'}
+                            {connected ? t('connection.disconnectButton') : t('connection.connectButton')}
                         </button>
                     </div>
                 )
             })}
-            <p className="text-xs text-gray-500 leading-relaxed">
-                Heartbeat wird alle 2 s gesendet. Nach dem Trennen markiert das Backend den Spieler nach ~10 s als offline.
-            </p>
+            <p className="text-xs text-gray-500 leading-relaxed">{t('connection.heartbeatInfo')}</p>
         </div>
     )
 }

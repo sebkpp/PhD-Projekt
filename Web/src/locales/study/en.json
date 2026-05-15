@@ -1,0 +1,65 @@
+{
+  "overview": {
+    "title": "Study Overview",
+    "newStudy": "Create New Study",
+    "noStudies": "No studies available.",
+    "experiments": "Experiments",
+    "newExperiment": "Create New Experiment",
+    "noExperiments": "No experiments available."
+  },
+  "actions": {
+    "evaluate": "Go to Analysis",
+    "closeStudy": "Close Study",
+    "closeStudyConfirm": "Are you sure you want to close this study? This action cannot be undone."
+  },
+  "info": {
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "researcher": "Researcher",
+    "participants": "Participants",
+    "experimentsCount": "Experiments"
+  },
+  "tile": {
+    "noData": "No study data available",
+    "experiments": "Experiments",
+    "participants": "Participants",
+    "createdAt": "Created on",
+    "description": "Description",
+    "viewExperiments": "View Experiments",
+    "configure": "Configure Study",
+    "analyse": "Analysis",
+    "deleteTitle": "Delete Study",
+    "deleteConfirm": "Are you sure you want to delete this study? This action cannot be undone.",
+    "confirmDelete": "Yes, delete"
+  },
+  "generalInfo": {
+    "title": "General Information",
+    "nameLabel": "Name *",
+    "namePlaceholder": "e.g. Visual Stimuli Study",
+    "piLabel": "Principal Investigator",
+    "piPlaceholder": "e.g. Smith",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Brief description of the study"
+  },
+  "stimuliCard": {
+    "title": "Study-wide Stimuli & Avatar",
+    "activeStimuli": "Active Stimuli:",
+    "avatarVisibility": "Avatar Visibility:",
+    "pleaseSelect": "Please select",
+    "trialCount": "Number of Trials:",
+    "permutate": "Permutate Trials:",
+    "permutated": "Permutated",
+    "fixedOrder": "Fixed Order"
+  },
+  "config": {
+    "title": "Configure Study",
+    "newStudy": "New Study",
+    "questionnairesSection": "Questionnaires",
+    "questionnairesHint": "Select the questionnaires that should apply to all experiments.",
+    "confirmTitle": "Finalize Study Configuration",
+    "confirmMessage": "Are you sure you want to finalize the study configuration? No further changes can be made after this.",
+    "saveDraftButton": "Save as Draft",
+    "savingButton": "Saving...",
+    "finalizeButton": "Finalize Study Configuration"
+  }
+}

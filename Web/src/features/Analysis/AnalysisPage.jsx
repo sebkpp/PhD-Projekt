@@ -6,11 +6,7 @@ import CrossStudyChart from "@/features/Analysis/components/CrossStudyChart.jsx"
 import LoadingSpinner from "@/features/Analysis/components/shared/LoadingSpinner.jsx";
 import ErrorMessage from "@/features/Analysis/components/shared/ErrorMessage.jsx";
 import DescriptiveOnlyWarning from "@/features/Analysis/components/shared/DescriptiveOnlyWarning.jsx";
-
-const breadcrumbItems = [
-    { label: "Studienübersicht", to: "/" },
-    { label: "Studien-Meta-Analyse" },
-];
+import { useTranslation } from 'react-i18next';
 
 function aggregateStudyPerformance(studyId, studyName, performanceData) {
     const byCondition = performanceData?.performance?.by_condition;
@@ -38,6 +34,11 @@ function aggregateStudyPerformance(studyId, studyName, performanceData) {
 }
 
 export default function AnalysisPage() {
+    const { t } = useTranslation(['analysis', 'navigation']);
+    const breadcrumbItems = [
+        { label: t('navigation:breadcrumbs.studyOverview'), to: "/" },
+        { label: t('navigation:breadcrumbs.metaAnalysis') },
+    ];
     const { studies, loading: studiesLoading, error: studiesError } = useStudies();
     const [selectedIds, setSelectedIds] = useState(new Set());
     const [baselineMs, setBaselineMs] = useState(300);
@@ -92,15 +93,15 @@ export default function AnalysisPage() {
     return (
         <div className="p-6 relative bg-gray-900 min-h-screen text-gray-100">
             <Breadcrumbs items={breadcrumbItems} styled={true} className="mb-6" />
-            <h1 className="text-2xl font-bold mb-6">Studien-Meta-Analyse</h1>
+            <h1 className="text-2xl font-bold mb-6">{t('analysis:meta.title')}</h1>
 
             {/* Study selection panel */}
             <div className="bg-gray-800 rounded-xl p-4 mb-6">
-                <h2 className="text-lg font-semibold mb-3">Studien auswählen</h2>
-                {studiesLoading && <LoadingSpinner message="Studien laden..." />}
+                <h2 className="text-lg font-semibold mb-3">{t('analysis:meta.selectStudies')}</h2>
+                {studiesLoading && <LoadingSpinner message={t('analysis:meta.loadingStudies')} />}
                 {studiesError && <ErrorMessage error={studiesError} />}
                 {!studiesLoading && activeStudies.length === 0 && (
-                    <p className="text-gray-400">Keine abgeschlossenen oder aktiven Studien vorhanden.</p>
+                    <p className="text-gray-400">{t('analysis:meta.noStudies')}</p>
                 )}
                 <div className="flex flex-col gap-2">
                     {activeStudies.map(study => (
@@ -120,7 +121,7 @@ export default function AnalysisPage() {
 
             {/* Baseline input */}
             <div className="flex items-center gap-3 mb-6">
-                <label className="text-sm text-gray-300">Baseline (ms):</label>
+                <label className="text-sm text-gray-300">{t('analysis:meta.baseline')}</label>
                 <input
                     type="number"
                     value={baselineMs}
@@ -135,19 +136,19 @@ export default function AnalysisPage() {
                 disabled={selectedIds.size < 2 || comparing}
                 className="px-6 py-2 rounded bg-blue-700 text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-blue-600 mb-6"
             >
-                {comparing ? "Vergleiche..." : "Studien vergleichen"}
+                {comparing ? t('analysis:meta.comparingButton') : t('analysis:meta.compareButton')}
             </button>
             {selectedIds.size < 2 && (
-                <p className="text-xs text-gray-500 mb-4">Mindestens 2 Studien auswählen</p>
+                <p className="text-xs text-gray-500 mb-4">{t('analysis:meta.minStudiesHint')}</p>
             )}
 
             {compareError && <ErrorMessage error={compareError} />}
 
-            {comparing && <LoadingSpinner message="Daten werden geladen..." />}
+            {comparing && <LoadingSpinner message={t('analysis:meta.loadingData')} />}
 
             {chartData && !comparing && (
                 <div>
-                    <DescriptiveOnlyWarning message="Deskriptiver Vergleich — kein inferenzieller Test (unterschiedliche Teilnehmer je Studie)" />
+                    <DescriptiveOnlyWarning message={t('analysis:meta.descriptiveWarning')} />
                     <div className="mt-4">
                         <CrossStudyChart data={chartData} metric="Transfer Duration (ms)" />
                     </div>

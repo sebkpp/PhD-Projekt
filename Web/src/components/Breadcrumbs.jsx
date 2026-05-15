@@ -1,9 +1,10 @@
 ﻿import { Link } from "react-router-dom";
+import LanguageSwitcher from "@/components/LanguageSwitcher.jsx";
 
 export default function Breadcrumbs({ items, styled = false, className = "" }) {
     return (
         <nav aria-label="breadcrumb" className={`${styled
-            ? "bg-gray-800/80 backdrop-blur-sm rounded-lg px-4 shadow-md h-10 flex items-center"
+            ? "bg-gray-800/80 backdrop-blur-sm rounded-lg px-4 shadow-md h-10 flex items-center justify-between"
             : ""} ${className}`}>
             <ol className="flex items-center space-x-1">
                 {items.map((item, idx) => (
@@ -27,6 +28,7 @@ export default function Breadcrumbs({ items, styled = false, className = "" }) {
                     </li>
                 ))}
             </ol>
+            {styled && <LanguageSwitcher />}
         </nav>
     );
 }

@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 /**
  * Generischer Fragebogen-Renderer.
  * Rendert Slider-, Likert- oder Bipolar-Widgets basierend auf questionnaire.scale_type.
  */
 export default function DynamicQuestionnaireForm({ questionnaire, onChange, responses, onValidationChange }) {
+    const { t } = useTranslation('questionnaire')
     const items = questionnaire?.items ?? []
     const scaleType = questionnaire?.scale_type ?? 'slider'
     const scaleMin = questionnaire?.scale_min ?? 0
@@ -19,7 +21,7 @@ export default function DynamicQuestionnaireForm({ questionnaire, onChange, resp
     }, [responses, items, onValidationChange])
 
     if (items.length === 0) {
-        return <p className="text-gray-400">Keine Items für diesen Fragebogen vorhanden.</p>
+        return <p className="text-gray-400">{t('dynamic.noItems')}</p>
     }
 
     return (
