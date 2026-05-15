@@ -1,1 +1,10 @@
-{}
+{
+  "form": {
+    "title": "Versuchs-Konfiguration",
+    "questionnairesSection": "Fragebögen für die Probanden",
+    "deleteTrial": "Trial löschen",
+    "saveButton": "Weiter zu „Warten auf Probanden"",
+    "savingButton": "Speichere Trials...",
+    "errorTitle": "Bitte beheben Sie folgende Fehler:"
+  }
+}

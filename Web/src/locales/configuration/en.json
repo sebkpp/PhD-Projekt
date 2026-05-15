@@ -1,1 +1,10 @@
-{}
+{
+  "form": {
+    "title": "Trial Configuration",
+    "questionnairesSection": "Questionnaires for Participants",
+    "deleteTrial": "Delete Trial",
+    "saveButton": "Continue to \"Waiting for Participants\"",
+    "savingButton": "Saving Trials...",
+    "errorTitle": "Please fix the following errors:"
+  }
+}
