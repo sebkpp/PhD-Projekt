@@ -86,6 +86,8 @@ Assets/Third Party/Commercial/
 Assets/Third Party/Commercial.meta
 Assets/Third Party/Rocketbox/
 Assets/Third Party/Rocketbox.meta
+Assets/Editor/x64/Bakery/
+Assets/Editor/x64/Bakery.meta
 
 # Internal planning/brainstorming docs
 docs/superpowers/
