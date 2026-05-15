@@ -1,1 +1,50 @@
-{}
+{
+  "controller": {
+    "title": "Debug Simulator",
+    "subtitle": "Test participant connection, readiness, and handovers without the Unity application.",
+    "refresh": "↻ Refresh",
+    "trialActive": "Trial #{{id}} active",
+    "noTrial": "No active trial",
+    "noTrialWarning": "Start a trial first via Study → Experiment → Overview → Start Trial, then the handover simulator becomes available. Connection and readiness can already be set now.",
+    "panels": {
+      "connection": "Connection",
+      "connectionDesc": "Simulates player join and heartbeat. Disconnecting stops the heartbeat; the backend marks the player as offline after ~10 s.",
+      "readiness": "Readiness",
+      "readinessDesc": "Sets or removes readiness per slot. The trial overview checks this state before a trial can be started.",
+      "handover": "Handover Simulation",
+      "handoverDesc": "Generates a random handover every 2 seconds with realistic timestamps. Requires an active trial with at least 2 participants.",
+      "waitingForTrial": "Waiting for active trial…"
+    }
+  },
+  "connection": {
+    "participant": "Participant {{n}}",
+    "connected": "connected",
+    "connecting": "connecting…",
+    "disconnected": "disconnected",
+    "error": "Error",
+    "connectButton": "Connect",
+    "disconnectButton": "Disconnect",
+    "heartbeatInfo": "Heartbeat sent every 2 s. After disconnecting, the backend marks the player as offline after ~10 s."
+  },
+  "readiness": {
+    "participant": "Participant {{n}}",
+    "ready": "ready",
+    "notReady": "not ready",
+    "setReady": "Mark as ready",
+    "removeReady": "Remove readiness"
+  },
+  "handover": {
+    "trialId": "Trial ID",
+    "participants": "Participants",
+    "noParticipants": "none loaded",
+    "minParticipantsHint": "At least 2 participants in the trial required.",
+    "startButton": "▶ Start Simulation",
+    "stopButton": "⏹ Stop Simulation",
+    "sent": "Sent:",
+    "reset": "reset",
+    "lastHandover": "Last Handover",
+    "id": "ID",
+    "object": "Object",
+    "giverReceiver": "Giver → Receiver"
+  }
+}
