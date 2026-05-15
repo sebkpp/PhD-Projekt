@@ -1,1 +1,12 @@
-{}
+{
+  "waiting": {
+    "waitText": "Bitte warte, bis der aktuelle Trial beendet ist und die Fragebögen freigeschaltet werden.",
+    "readyText": "Die Fragebögen sind jetzt bereit.",
+    "continueButton": "Weiter zum nächsten Fragebogen 🚀"
+  },
+  "closing": {
+    "title": "Vielen Dank!",
+    "saved": "Deine Antworten wurden erfolgreich gespeichert.",
+    "instructions": "Du kannst das Fenster jetzt schließen oder auf weitere Anweisungen warten."
+  }
+}
