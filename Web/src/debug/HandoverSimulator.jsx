@@ -1,60 +1,68 @@
-﻿// src/debug/handoverSimulator.jsx
-import React, { useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
+
+const OBJECTS = [
+    "Würfel", "Quader", "Langer Quader", "Flacher Quader",
+    "Bogen", "Zylinder", "Halber Zylinder", "Dreieck",
+]
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min
+}
 
 export default function HandoverSimulator({ currentTrialId, participantIds }) {
-    const [simActive, setSimActive] = React.useState(false)
+    const [active, setActive] = useState(false)
+    const [count, setCount] = useState(0)
+    const [lastHandover, setLastHandover] = useState(null)
     const intervalRef = useRef(null)
 
-    const OBJECTS = [
-        "Würfel",
-        "Quader",
-        "Langer Quader",
-        "Flacher Quader",
-        "Bogen",
-        "Zylinder",
-        "Halber Zylinder",
-        "Dreieck"]
+    const canStart = currentTrialId !== null && participantIds.length >= 2
 
-    function getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min
-    }
+    const runHandover = async () => {
+        const grasped_object = OBJECTS[randomInt(0, OBJECTS.length - 1)]
+        const shuffled = [...participantIds].sort(() => Math.random() - 0.5)
+        const giver = shuffled[0]
+        const receiver = shuffled[1]
 
-    const startSim = () => {
-        if (!currentTrialId) return
-        setSimActive(true)
-        intervalRef.current = setInterval(() => {
-            const grasped_object = OBJECTS[getRandomInt(0, OBJECTS.length - 1)]
-            const shuffled = [...participantIds].sort(() => Math.random() - 0.5)
-            const giver = shuffled[0]
-            const receiver = shuffled[1]
-            // Basiszeitpunkt
-            const base = Date.now()
-            // Zufällige Zeitabstände (in ms)
-            const t1 = base
-            const t2 = base + getRandomInt(200, 1200)
-            const t3 = t2 + getRandomInt(200, 1200)
-            const t4 = t3 + getRandomInt(200, 1200)
+        const base = Date.now()
+        const t2 = base + randomInt(200, 1200)
+        const t3 = t2 + randomInt(200, 1200)
+        const t4 = t3 + randomInt(200, 1200)
 
-            const handover = {
-                grasped_object,
-                giver_grasped_object: new Date(t1).toISOString(),
-                receiver_touched_object: new Date(t2).toISOString(),
-                receiver_grasped_object: new Date(t3).toISOString(),
-                giver_released_object: new Date(t4).toISOString(),
-                trial_id: currentTrialId,
-                giver,
-                receiver
-            }
-            fetch(`/api/trials/${currentTrialId}/handovers`, {
+        try {
+            const createRes = await fetch(`/api/handovers/trials/${currentTrialId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(handover)
-            }).catch(console.error)
-        }, 2000)
+                body: JSON.stringify({ giver, receiver, grasped_object })
+            })
+            if (!createRes.ok) return
+            const { handover_id } = await createRes.json()
+
+            await fetch(`/api/handovers/${handover_id}/phases`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    giver_grasped_object: new Date(base).toISOString(),
+                    receiver_touched_object: new Date(t2).toISOString(),
+                    receiver_grasped_object: new Date(t3).toISOString(),
+                    giver_released_object: new Date(t4).toISOString(),
+                })
+            })
+
+            setCount(c => c + 1)
+            setLastHandover({ grasped_object, giver, receiver, handover_id })
+        } catch {
+            // ignore
+        }
     }
 
-    const stopSim = () => {
-        setSimActive(false)
+    const start = () => {
+        if (!canStart) return
+        setActive(true)
+        intervalRef.current = setInterval(runHandover, 2000)
+    }
+
+    const stop = () => {
+        setActive(false)
         if (intervalRef.current) {
             clearInterval(intervalRef.current)
             intervalRef.current = null
@@ -62,36 +70,83 @@ export default function HandoverSimulator({ currentTrialId, participantIds }) {
     }
 
     useEffect(() => {
-        if (!currentTrialId) stopSim()
-        return () => stopSim()
+        if (!currentTrialId) stop()
+        return () => stop()
     }, [currentTrialId])
 
-
     return (
-        <div className="mb-4">
-
-            <div className="mb-2 px-3 py-2 bg-gray-900 rounded text-gray-200 flex gap-6 items-center">
-            <span>
-                <strong>Trial&nbsp;ID:</strong> {currentTrialId ?? <span className="text-gray-500">–</span>}
-            </span>
-                <span>
-                <strong>Teilnehmer:</strong> {participantIds?.length > 0
-                    ? participantIds.join(', ')
-                    : <span className="text-gray-500">keine</span>}
-            </span>
+        <div className="flex flex-col gap-4">
+            {/* Trial / participant info */}
+            <div className="rounded-lg bg-gray-800/60 border border-gray-700 px-4 py-3 text-sm space-y-1">
+                <div className="flex justify-between">
+                    <span className="text-gray-400">Trial ID</span>
+                    <span className="font-mono font-medium">
+                        {currentTrialId ?? <span className="text-gray-500">–</span>}
+                    </span>
+                </div>
+                <div className="flex justify-between">
+                    <span className="text-gray-400">Teilnehmer</span>
+                    <span className="font-mono font-medium">
+                        {participantIds.length > 0
+                            ? participantIds.join(', ')
+                            : <span className="text-gray-500">keine geladen</span>}
+                    </span>
+                </div>
             </div>
 
+            {participantIds.length < 2 && currentTrialId !== null && (
+                <p className="text-xs text-yellow-500">
+                    Mindestens 2 Teilnehmer im Trial erforderlich.
+                </p>
+            )}
+
+            {/* Controls */}
             <button
-                onClick={simActive ? stopSim : startSim}
-                className={`px-4 py-2 rounded transition-colors duration-200
-        ${!currentTrialId
-                    ? "bg-gray-700 text-gray-400 cursor-not-allowed"
-                    : "bg-pink-600 text-white hover:bg-pink-700 cursor-pointer"
+                onClick={active ? stop : start}
+                disabled={!canStart}
+                className={`w-full py-2.5 rounded-lg font-medium text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                    active
+                        ? 'bg-red-700 hover:bg-red-600 text-white'
+                        : 'bg-pink-700 hover:bg-pink-600 text-white'
                 }`}
-                disabled={!currentTrialId}
             >
-                {simActive ? "Stoppe Handover Simulation" : "Starte Handover Simulation"}
+                {active ? '⏹ Simulation stoppen' : '▶ Simulation starten'}
             </button>
+
+            {/* Stats */}
+            <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${active ? 'bg-pink-400 animate-pulse' : 'bg-gray-600'}`} />
+                    <span className="text-gray-400">Gesendet:</span>
+                    <span className="font-mono font-semibold">{count}</span>
+                </div>
+                {count > 0 && (
+                    <button
+                        onClick={() => { setCount(0); setLastHandover(null) }}
+                        className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                    >
+                        zurücksetzen
+                    </button>
+                )}
+            </div>
+
+            {lastHandover && (
+                <div className="rounded-lg bg-gray-800/60 border border-gray-700 px-4 py-3 text-xs space-y-1">
+                    <p className="text-gray-400 font-medium mb-1">Letzter Handover</p>
+                    <div className="flex justify-between">
+                        <span className="text-gray-500">ID</span>
+                        <span className="font-mono">{lastHandover.handover_id}</span>
+                    </div>
+                    <div className="flex justify-between">
+                        <span className="text-gray-500">Objekt</span>
+                        <span>{lastHandover.grasped_object}</span>
+                    </div>
+                    <div className="flex justify-between">
+                        <span className="text-gray-500">Geber → Empfänger</span>
+                        <span className="font-mono">{lastHandover.giver} → {lastHandover.receiver}</span>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

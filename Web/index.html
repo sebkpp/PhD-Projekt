@@ -3,10 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vite + React + Tailwind Test</title>
+  <title>VR Study Management</title>
+  <style>
+    #root:empty ~ #app-loading {
+      display: flex;
+    }
+    #app-loading {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #030712;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      font-family: system-ui, sans-serif;
+    }
+    #app-loading .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid #374151;
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    #app-loading p {
+      color: #6b7280;
+      font-size: 14px;
+      margin: 0;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
 <div id="root"></div>
+<div id="app-loading">
+  <div class="spinner"></div>
+  <p>Anwendung wird geladen…</p>
+</div>
 <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>

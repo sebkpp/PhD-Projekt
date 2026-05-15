@@ -1,27 +1,40 @@
-﻿import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react"
+
+const PLAYERS = [
+    { id: "1", label: "Proband 1", color: "blue" },
+    { id: "2", label: "Proband 2", color: "green" },
+]
 
 export default function ParticipantJoinSimulator() {
-    const [connected1, setConnected1] = useState(false);
-    const [connected2, setConnected2] = useState(false);
+    const [status, setStatus] = useState({ "1": "disconnected", "2": "disconnected" })
+    const heartbeatRefs = useRef({ "1": null, "2": null })
 
-    const heartbeatInterval1 = useRef(null);
-    const heartbeatInterval2 = useRef(null);
+    useEffect(() => {
+        return () => {
+            Object.values(heartbeatRefs.current).forEach(id => {
+                if (id) clearInterval(id)
+            })
+        }
+    }, [])
 
-    const joinPlayer = async (playerId, setConnected, heartbeatRef) => {
+    const joinPlayer = async (playerId) => {
+        setStatus(s => ({ ...s, [playerId]: "connecting" }))
         try {
             const res = await fetch('/api/participants/join', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ player_id: playerId })
-            });
+            })
             if (res.ok) {
-                setConnected(true);
-                heartbeatRef.current = setInterval(() => sendHeartbeat(playerId), 2000);
+                setStatus(s => ({ ...s, [playerId]: "connected" }))
+                heartbeatRefs.current[playerId] = setInterval(() => sendHeartbeat(playerId), 2000)
+            } else {
+                setStatus(s => ({ ...s, [playerId]: "error" }))
             }
-        } catch (e) {
-            console.error(e);
+        } catch {
+            setStatus(s => ({ ...s, [playerId]: "error" }))
         }
-    };
+    }
 
     const sendHeartbeat = async (playerId) => {
         try {
@@ -29,54 +42,68 @@ export default function ParticipantJoinSimulator() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ player_id: playerId })
-            });
-        } catch (e) {
-            console.error(e);
+            })
+        } catch {
+            // ignore
         }
-    };
+    }
 
-    const leavePlayer = async (playerId, setConnected, heartbeatRef) => {
-        if (heartbeatRef.current) {
-            clearInterval(heartbeatRef.current);
-            heartbeatRef.current = null;
+    const leavePlayer = (playerId) => {
+        if (heartbeatRefs.current[playerId]) {
+            clearInterval(heartbeatRefs.current[playerId])
+            heartbeatRefs.current[playerId] = null
         }
-        try {
-            await fetch('/api/participants/mock_connection', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ player_id: playerId, connected: false })
-            });
-        } catch (e) {
-            console.error(e);
-        }
-        setConnected(false);
-    };
-
-    useEffect(() => {
-        return () => {
-            if (heartbeatInterval1.current) clearInterval(heartbeatInterval1.current);
-            if (heartbeatInterval2.current) clearInterval(heartbeatInterval2.current);
-        };
-    }, []);
+        setStatus(s => ({ ...s, [playerId]: "disconnected" }))
+    }
 
     return (
-        <div className="space-y-4">
-            <div>
-                <button
-                    onClick={() => connected1 ? leavePlayer("1", setConnected1, heartbeatInterval1) : joinPlayer("1", setConnected1, heartbeatInterval1)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded"
-                >
-                    {connected1 ? "Proband 1 trennen" : "Proband 1 verbinden"}
-                </button>
-            </div>
-            <div>
-                <button
-                    onClick={() => connected2 ? leavePlayer("2", setConnected2, heartbeatInterval2) : joinPlayer("2", setConnected2, heartbeatInterval2)}
-                    className="px-4 py-2 bg-green-600 text-white rounded"
-                >
-                    {connected2 ? "Proband 2 trennen" : "Proband 2 verbinden"}
-                </button>
-            </div>
+        <div className="flex flex-col gap-3">
+            {PLAYERS.map(({ id, label }) => {
+                const s = status[id]
+                const connected = s === "connected"
+                const connecting = s === "connecting"
+                const error = s === "error"
+
+                return (
+                    <div
+                        key={id}
+                        className={`flex items-center justify-between rounded-lg px-4 py-3 border transition-colors ${
+                            connected
+                                ? 'border-green-700 bg-green-900/20'
+                                : error
+                                    ? 'border-red-700 bg-red-900/20'
+                                    : 'border-gray-700 bg-gray-800/50'
+                        }`}
+                    >
+                        <div className="flex items-center gap-2">
+                            <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                                connected ? 'bg-green-400 animate-pulse'
+                                    : connecting ? 'bg-yellow-400 animate-pulse'
+                                        : error ? 'bg-red-400'
+                                            : 'bg-gray-500'
+                            }`} />
+                            <span className="text-sm font-medium">{label}</span>
+                            <span className="text-xs text-gray-500">
+                                {connected ? 'verbunden' : connecting ? 'verbindet…' : error ? 'Fehler' : 'getrennt'}
+                            </span>
+                        </div>
+                        <button
+                            onClick={() => connected ? leavePlayer(id) : joinPlayer(id)}
+                            disabled={connecting}
+                            className={`text-xs px-3 py-1.5 rounded font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                                connected
+                                    ? 'bg-red-700 hover:bg-red-600 text-white'
+                                    : 'bg-blue-700 hover:bg-blue-600 text-white'
+                            }`}
+                        >
+                            {connected ? 'Trennen' : 'Verbinden'}
+                        </button>
+                    </div>
+                )
+            })}
+            <p className="text-xs text-gray-500 leading-relaxed">
+                Heartbeat wird alle 2 s gesendet. Nach dem Trennen markiert das Backend den Spieler nach ~10 s als offline.
+            </p>
         </div>
-    );
+    )
 }
