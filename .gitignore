@@ -1,4 +1,4 @@
 # Superpowers local working files (plans, specs, brainstorming)
-docs/
-!docs/images/
+docs/*
+!docs/images
 !docs/images/**
