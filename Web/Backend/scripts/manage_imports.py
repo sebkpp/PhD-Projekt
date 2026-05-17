@@ -151,17 +151,20 @@ def _resync_sequences():
 
 
 def main():
-    answer = input("Import mock data? (y/n): ").strip().lower()
-    include_mock = answer == 'y'
+    print("⚠️  WARNING: This script will DELETE ALL data in the database and reimport.")
+    confirm = input("Type 'yes' to continue: ").strip().lower()
+    if confirm != 'yes':
+        print("Aborted.")
+        return
 
-    if include_mock:
-        print("\nResetting all tables before import...")
-        reset_tables()
+    print("\nResetting all tables...")
+    reset_tables()
 
     print("--- Static data ---")
     import_static()
 
-    if include_mock:
+    answer = input("\nImport mock data? (y/n): ").strip().lower()
+    if answer == 'y':
         print("\n--- Mock data ---")
         import_mock()
 
