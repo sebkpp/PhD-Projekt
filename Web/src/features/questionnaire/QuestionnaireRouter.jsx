@@ -37,7 +37,7 @@ export default function QuestionnaireRouter() {
 
     return (
         <div className="min-h-screen bg-background text-foreground p-8 flex flex-col items-center">
-            <div className="ml-16 w-full max-w-3xl flex items-center mb-6">
+            <div className="ml-16 w-full max-w-4xl flex items-center mb-6">
                 <h2 className="text-xl font-semibold mr-8">
                     {currentQuestionnaire?.name} - {t('router.participant', { slot })}
                 </h2>

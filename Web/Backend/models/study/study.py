@@ -61,6 +61,24 @@ class Study(Base):
         return data
 
 
+class StudyConfigCreate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    principal_investigator: Optional[str] = None
+    trial_number: Optional[int] = None
+    trials_permuted: Optional[bool] = None
+    study_type: Optional[str] = 'stimulus_comparison'
+
+
+class StudyQuestionnaireCreate(BaseModel):
+    questionnaire_id: int
+    order_index: Optional[int] = 0
+
+
+class StudyStimuliCreate(BaseModel):
+    stimuli_type_id: int
+
+
 class StudyBase(BaseModel):
     status: Optional[str] = None
     started_at: Optional[date] = None
@@ -68,11 +86,15 @@ class StudyBase(BaseModel):
 
 
 class StudyCreate(StudyBase):
-    pass
+    config: Optional[StudyConfigCreate] = None
+    questionnaires: Optional[List[StudyQuestionnaireCreate]] = Field(default_factory=list)
+    stimuli: Optional[List[StudyStimuliCreate]] = Field(default_factory=list)
 
 
 class StudyUpdate(StudyBase):
-    pass
+    config: Optional[StudyConfigCreate] = None
+    questionnaires: Optional[List[StudyQuestionnaireCreate]] = None
+    stimuli: Optional[List[StudyStimuliCreate]] = None
 
 
 class StudyResponse(BaseModel):

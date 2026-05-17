@@ -19,8 +19,10 @@ class StudyQuestionnaireRepository:
         )
         return [
             {
+                "study_id": entry.study_id,
                 "questionnaire_id": entry.questionnaire_id,
                 "order_index": entry.order_index,
+                "trigger_timing": entry.trigger_timing,
                 "name": entry.questionnaire.name if entry.questionnaire else None
             }
             for entry in entries

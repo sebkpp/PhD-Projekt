@@ -1,5 +1,5 @@
 ﻿export async function getExperimentQuestionnaires(experimentId, participantId) {
-    const response = await fetch(`/api/experiments/${experimentId}/participants/${participantId}/questionnaires`)
+    const response = await fetch(`/api/questionnaires/experiments/${experimentId}/participants/${participantId}/questionnaires`)
     console.log("response", response)
 
     if (!response.ok) throw new Error('Fehler beim Laden der Fragebögen')
@@ -11,7 +11,8 @@ export async function fetchQuestionnaireById(id) {
     const response = await fetch(`/api/questionnaires/${id}`)
     if (response.status === 404) throw new Error('Fragebogen nicht gefunden')
     if (!response.ok) throw new Error('Fehler beim Laden des Fragebogens')
-    return response.json()
+    const json = await response.json()
+    return json.data
 }
 
 export async function getStudyQuestionnaires(study_id) {

@@ -7,11 +7,9 @@ from Backend.services.stimuli_service import get_all_stimuli
 router = APIRouter(prefix="/stimuli", tags=["stimuli"])
 
 class StimulusResponse(BaseModel):
-    stimuli_type_id: int
-    type_name: str
-
-    class Config:
-        from_attributes = True
+    id: int
+    name: str
+    type: str
 
 def get_db():
     db = SessionLocal()

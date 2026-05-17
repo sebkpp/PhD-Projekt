@@ -64,7 +64,14 @@ def get_questionnaires_for_experiment(session, experiment_id):
 
 def get_questionnaires_by_study_id(session, study_id):
     sq_repo = StudyQuestionnaireRepository(session)
-    return sq_repo.get_by_study_id(study_id)
+    ordered = sq_repo.get_by_study_id(study_id)  # [{questionnaire_id, order_index, ...}]
+    q_repo = QuestionnaireRepository(session)
+    result = []
+    for entry in ordered:
+        q = q_repo.get_by_id(entry["questionnaire_id"])
+        if q:
+            result.append(q.to_dict())
+    return result
 
 def get_questionnaires_by_trial_id(session, trial_id):
     q_repo = QuestionnaireRepository(session)

@@ -3,18 +3,30 @@ from Backend.db.questionnaires.questionnaire_respository import QuestionnaireRep
 from Backend.db.study.study_repository import StudyRepository
 from Backend.db.trial.trial import TrialRepository
 from Backend.db.trial.trial_slot_repository import TrialSlotRepository
+from Backend.db.trial.trial_slot_stimulus import TrialSlotStimulusRepository
 from Backend.models import Trial
 from Backend.services.participant_service import get_participants_by_experiment
 
 
 def save_trials(session, experiment_id, trials, selected_questionnaires):
     trial_repo = TrialRepository(session)
+    slot_repo = TrialSlotRepository(session)
+    stimulus_repo = TrialSlotStimulusRepository(session)
 
     for trial_data in trials:
-
-        # save trial to database
         trial_number = trial_data["trial_number"]
         trial = trial_repo.create(experiment_id, trial_number)
+
+        slots = trial_data.get("slots", {})
+        for slot_key, slot_config in slots.items():
+            slot_number = int(slot_key.replace("Slot ", ""))
+            trial_slot = slot_repo.create(trial.trial_id, slot_number)
+
+            active_stimuli = (slot_config or {}).get("active_stimuli", {})
+            for type_name, stimuli_config in active_stimuli.items():
+                stimulus_id = (stimuli_config or {}).get("selected_stimuli_id")
+                if stimulus_id:
+                    stimulus_repo.create(trial_slot.trial_slot_id, int(stimulus_id))
 
     return {
         "status": "ok",

@@ -1,4 +1,5 @@
-﻿from typing import Any, List, Optional
+﻿import traceback
+from typing import Any, List, Optional
 from fastapi import APIRouter, HTTPException, status, Depends, Path
 from pydantic import BaseModel
 
@@ -21,10 +22,14 @@ def get_db():
     finally:
         db.close()
 
-class ExperimentCreateRequest(BaseModel):
+class ExperimentSettingsCreate(BaseModel):
     description: Optional[str] = None
     study_id: int
     researcher: Optional[str] = None
+    trialConfig: Optional[Any] = None
+
+class ExperimentCreateRequest(BaseModel):
+    experimentSettings: ExperimentSettingsCreate
 
 class ExperimentIdResponse(BaseModel):
     experiment_id: int
@@ -48,13 +53,27 @@ async def create_experiment_route(
         db: Session = Depends(get_db)
 ) -> ExperimentIdResponse:
     try:
-        data = {"experimentSettings": payload.model_dump()}
+        data = payload.model_dump()
         experiment = create_experiment(db, data)
+        db.flush()
+
+        trial_config = payload.experimentSettings.trialConfig or {}
+        if trial_config:
+            trials_list = [
+                {
+                    "trial_number": int(trial_key.replace("Trial ", "")),
+                    "slots": slot_configs
+                }
+                for trial_key, slot_configs in trial_config.items()
+            ]
+            save_trials(db, experiment.experiment_id, trials_list, [])
+
         db.commit()
         return ExperimentIdResponse(experiment_id=experiment.experiment_id)
     except Exception as e:
+        traceback.print_exc()
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 
@@ -114,7 +133,7 @@ async def get_experiment_route(
         experiment = get_experiment_by_id(db, experiment_id)
         if not experiment:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Experiment not found")
-        return experiment
+        return experiment.to_dict()
     except HTTPException:
         raise
     except Exception as e:

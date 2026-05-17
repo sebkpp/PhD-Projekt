@@ -27,6 +27,7 @@
     "description": "Description",
     "viewExperiments": "View Experiments",
     "configure": "Configure Study",
+
     "analyse": "Analysis",
     "deleteTitle": "Delete Study",
     "deleteConfirm": "Are you sure you want to delete this study? This action cannot be undone.",
@@ -50,6 +51,18 @@
     "permutate": "Permutate Trials:",
     "permutated": "Permutated",
     "fixedOrder": "Fixed Order"
+  },
+  "status": {
+    "Entwurf": "Draft",
+    "Aktiv": "Active",
+    "Abgeschlossen": "Completed"
+  },
+  "errors": {
+    "loadConfig": "Error loading study configuration",
+    "nameRequired": "Please enter a name.",
+    "saveFailed": "Error saving: {{msg}}",
+    "loadStudies": "Error loading studies",
+    "deleteStudy": "Error deleting study"
   },
   "config": {
     "title": "Configure Study",

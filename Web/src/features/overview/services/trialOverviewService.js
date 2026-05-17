@@ -11,7 +11,7 @@ export async function fetchStimuli() {
 }
 
 export async function fetchHandovers(trialId) {
-    const res = await fetch(`/api/trials/${trialId}/handovers`)
+    const res = await fetch(`/api/handovers/trials/${trialId}`)
     if (!res.ok) throw new Error("Fehler beim Laden der Handovers")
     return await res.json()
 }
@@ -23,7 +23,7 @@ export async function getParticipantsForExperiment(experimentId) {
 }
 
 export async function startTrial(trialId) {
-    const response = await fetch(`/api/trial/${trialId}/start`, {
+    const response = await fetch(`/api/trials/${trialId}/start`, {
         method: 'POST'
     });
 
@@ -35,7 +35,7 @@ export async function startTrial(trialId) {
 }
 
 export async function endTrial(trialId) {
-    const response = await fetch(`/api/trial/${trialId}/end`, {
+    const response = await fetch(`/api/trials/${trialId}/end`, {
         method: 'POST',
     });
 
@@ -78,7 +78,7 @@ export async function loadStimulusMap() {
 }
 
 export async function getTrialById(trialId) {
-    const res = await fetch(`/api/trial/${trialId}`)
+    const res = await fetch(`/api/trials/${trialId}`)
     if (!res.ok) throw new Error("Fehler beim Laden des Trials")
     return await res.json()
 }

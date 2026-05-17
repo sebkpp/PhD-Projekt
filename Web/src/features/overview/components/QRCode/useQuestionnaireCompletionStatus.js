@@ -14,7 +14,7 @@ export function useQuestionnaireCompletionStatus(experimentId, participantId, tr
             let count = 0
             for (const name of questionnaireNames) {
                 const res = await fetch(
-                    `/api/questionnaire-responses?participant_id=${participantId}&trial_id=${trialId}&questionnaire_name=${encodeURIComponent(name)}`
+                    `/api/questionnaires/responses?participant_id=${participantId}&trial_id=${trialId}&questionnaire_name=${encodeURIComponent(name)}`
                 )
                 if (res.ok) {
                     const data = await res.json()

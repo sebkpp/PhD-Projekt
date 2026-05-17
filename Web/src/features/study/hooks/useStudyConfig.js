@@ -1,5 +1,6 @@
 ﻿import {useEffect, useState} from "react";
 import {createStudy, fetchStudyById, updateStudy} from "../services/studyService";
+import i18n from '@/i18n';
 
 export function useStudyConfig(studyId) {
     const [config, setConfig] = useState();
@@ -21,7 +22,7 @@ export function useStudyConfig(studyId) {
             setConfig(data);
             setError(null);
         } catch (err) {
-            setError(err.message || "Fehler beim Laden der Studienkonfiguration");
+            setError(err.message || i18n.t('study:errors.loadConfig'));
         }
     }
 
@@ -30,7 +31,10 @@ export function useStudyConfig(studyId) {
     }
 
     async function saveConfig(status) {
-        if (!localConfig.config?.name?.trim()) return;
+        if (!localConfig?.config?.name?.trim()) {
+            setError(i18n.t('study:errors.nameRequired'));
+            return false;
+        }
 
         try {
             const payload = {
@@ -38,18 +42,19 @@ export function useStudyConfig(studyId) {
                 status
             };
 
-            console.log("Saving config:", payload);
             let result;
             if (currentId) {
                 result = await updateStudy(currentId, payload);
             } else {
                 result = await createStudy(payload);
-                setCurrentId(result.id);
+                setCurrentId(result.study_id);
             }
             setConfig(result);
             setError(null);
+            return true;
         } catch (err) {
-            setError("Fehler beim Speichern");
+            setError(i18n.t('study:errors.saveFailed', { msg: err.message ?? i18n.t('common:status.unknown') }));
+            return false;
         }
     }
 

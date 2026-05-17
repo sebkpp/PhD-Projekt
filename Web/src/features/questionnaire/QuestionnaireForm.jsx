@@ -69,7 +69,7 @@ export default function QuestionnaireForm({
     }, [resetSignal, reset])
 
     return (
-        <form onSubmit={onSubmit} className="space-y-6 bg-background text-foreground p-6 rounded-md max-w-3xl mx-auto">
+        <form onSubmit={onSubmit} className="space-y-6 bg-background text-foreground p-6 rounded-md w-full max-w-4xl">
             <DynamicQuestionnaireForm
                 questionnaire={questionnaire}
                 onChange={handleChange}

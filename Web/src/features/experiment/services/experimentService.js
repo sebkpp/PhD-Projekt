@@ -1,7 +1,7 @@
 ﻿const API_BASE = "/api";
 
 export async function createExperiment({ experimentSettings }) {
-    const res = await fetch(`${API_BASE}/experiments`, {
+    const res = await fetch(`${API_BASE}/experiments/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ experimentSettings })

@@ -76,7 +76,7 @@ async def create_study_route(
     try:
         study = create_study(db, payload.model_dump())
         db.commit()
-        return study
+        return get_study_by_id(db, study.study_id)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

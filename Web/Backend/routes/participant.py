@@ -18,7 +18,7 @@ from Backend.models.participant import ParticipantResponse
 from sqlalchemy.orm import Session
 from Backend.db_session import SessionLocal
 
-router = APIRouter(prefix="/api/participants", tags=["participants"])
+router = APIRouter(prefix="/participants", tags=["participants"])
 
 
 class PlayerJoinRequest(BaseModel):

@@ -1,6 +1,6 @@
 ﻿export async function submitQuestionnaire(participantId, trialId, questionnaireName, responses) {
 
-    const response = await fetch('/api/submit-questionnaire', {
+    const response = await fetch('/api/questionnaires/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

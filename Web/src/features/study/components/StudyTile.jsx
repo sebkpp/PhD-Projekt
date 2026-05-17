@@ -32,12 +32,12 @@ export default function StudyTile({ study, experimentCount, onDelete }) {
             {/* Header: Name + Status */}
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                <h3 className="text-lg font-bold text-gray-100">{study.config.name ?? ''}</h3>
+                <h3 className="text-lg font-bold text-gray-100">{study.config?.name ?? ''}</h3>
                     <span className="text-xs text-gray-400">ID: {study.study_id}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <span className={`px-2 py-1 rounded ${statusColor} text-sm font-semibold`}>
-                        {study.status}
+                        {t(`status.${study.status}`, study.status)}
                     </span>
                     {study.status === "Entwurf" && (
                         <button
@@ -71,7 +71,7 @@ export default function StudyTile({ study, experimentCount, onDelete }) {
                     </div>
                     <div>
                         <span className="font-semibold">{t('tile.description')}:</span>{" "}
-                        {study.config.description
+                        {study.config?.description
                             ? study.config.description.slice(0, 30) + (study.config.description.length > 30 ? "…" : "")
                             : "-"}
                     </div>

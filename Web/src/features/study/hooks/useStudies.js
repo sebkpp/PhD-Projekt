@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect } from "react";
 import { fetchStudies, deleteStudy } from "../services/studyService";
+import i18n from '@/i18n';
 
 export function useStudies() {
     const [studies, setStudies] = useState([]);
@@ -18,7 +19,7 @@ export function useStudies() {
             setStudies(sortedData);
             setError(null); // Fehler zurücksetzen, falls erfolgreich
         } catch(err) {
-            handleError(err, "Fehler beim Laden der Studien");
+            handleError(err, i18n.t('study:errors.loadStudies'));
         } finally {
             setLoading(false);
         }
@@ -30,7 +31,7 @@ export function useStudies() {
             setStudies(prev => prev.filter(s => s.study_id !== studyId));
             setError(null); // Fehler zurücksetzen, falls erfolgreich
         } catch (err) {
-            handleError(err, "Fehler beim Löschen der Studie");
+            handleError(err, i18n.t('study:errors.deleteStudy'));
         }
     }
 

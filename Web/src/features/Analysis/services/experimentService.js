@@ -9,7 +9,7 @@
 
 export async function fetchQuestionnaireResponsesById(experimentId) {
     if (!experimentId) throw new Error("experimentId ist erforderlich");
-    const response = await fetch(`/api/experiments/${experimentId}/questionnaire-responses`);
+    const response = await fetch(`/api/questionnaires/experiments/${experimentId}/questionnaire-responses`);
     if (!response.ok) {
         throw new Error("Fehler beim Laden der Questionnaire-Responses");
     }
@@ -18,7 +18,7 @@ export async function fetchQuestionnaireResponsesById(experimentId) {
 
 export async function fetchHandoversByExperimentId(experimentId) {
     if (!experimentId) throw new Error("experimentId ist erforderlich");
-    const response = await fetch(`/api/experiments/${experimentId}/handovers`);
+    const response = await fetch(`/api/handovers/experiments/${experimentId}`);
     if (!response.ok) {
         throw new Error("Fehler beim Laden der Handovers");
     }

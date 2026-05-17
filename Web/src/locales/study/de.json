@@ -26,7 +26,7 @@
     "createdAt": "Erstellt am",
     "description": "Beschreibung",
     "viewExperiments": "Experimente anzeigen",
-    "configure": "Study konfigurieren",
+    "configure": "Studie konfigurieren",
     "analyse": "Analyse",
     "deleteTitle": "Studie löschen",
     "deleteConfirm": "Möchtest du diese Studie wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
@@ -50,6 +50,18 @@
     "permutate": "Trials permutieren:",
     "permutated": "Permutiert",
     "fixedOrder": "Fixe Reihenfolge"
+  },
+  "status": {
+    "Entwurf": "Entwurf",
+    "Aktiv": "Aktiv",
+    "Abgeschlossen": "Abgeschlossen"
+  },
+  "errors": {
+    "loadConfig": "Fehler beim Laden der Studienkonfiguration",
+    "nameRequired": "Bitte einen Namen eingeben.",
+    "saveFailed": "Fehler beim Speichern: {{msg}}",
+    "loadStudies": "Fehler beim Laden der Studien",
+    "deleteStudy": "Fehler beim Löschen der Studie"
   },
   "config": {
     "title": "Studie konfigurieren",

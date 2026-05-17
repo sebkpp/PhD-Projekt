@@ -14,6 +14,10 @@ class StudyStimuli(Base):
     study = relationship("Study", back_populates="stimuli")
     stimuli_type = relationship("StimulusType", back_populates="studies")
 
+    @property
+    def name(self):
+        return self.stimuli_type.type_name if self.stimuli_type else None
+
     def to_dict(self):
         return {
             "study_id": self.study_id,

@@ -24,9 +24,9 @@ export default function StudyConfigurationPage() {
 
     const handleSave = async (status) => {
         setSaving(true);
-        await saveConfig(status);
+        const success = await saveConfig(status);
         setSaving(false);
-        navigate('/');
+        if (success) navigate('/');
     };
 
     const breadcrumbItems = [
