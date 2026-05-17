@@ -306,10 +306,10 @@ ALTER TABLE public.questionnaire_item OWNER TO postgres;
 
 --
 -- TOC entry 244 (class 1259 OID 16817)
--- Name: questionaire_item_questionnaire_item_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: questionnaire_item_questionnaire_item_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.questionaire_item_questionnaire_item_id_seq
+CREATE SEQUENCE public.questionnaire_item_questionnaire_item_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -318,15 +318,15 @@ CREATE SEQUENCE public.questionaire_item_questionnaire_item_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.questionaire_item_questionnaire_item_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.questionnaire_item_questionnaire_item_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 5121 (class 0 OID 0)
 -- Dependencies: 244
--- Name: questionaire_item_questionnaire_item_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: questionnaire_item_questionnaire_item_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.questionaire_item_questionnaire_item_id_seq OWNED BY public.questionnaire_item.questionnaire_item_id;
+ALTER SEQUENCE public.questionnaire_item_questionnaire_item_id_seq OWNED BY public.questionnaire_item.questionnaire_item_id;
 
 
 --
@@ -347,10 +347,10 @@ ALTER TABLE public.questionnaire OWNER TO postgres;
 
 --
 -- TOC entry 243 (class 1259 OID 16809)
--- Name: questionaire_questionnaire_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: questionnaire_questionnaire_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.questionaire_questionnaire_id_seq
+CREATE SEQUENCE public.questionnaire_questionnaire_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -359,15 +359,15 @@ CREATE SEQUENCE public.questionaire_questionnaire_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.questionaire_questionnaire_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.questionnaire_questionnaire_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 5122 (class 0 OID 0)
 -- Dependencies: 243
--- Name: questionaire_questionnaire_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: questionnaire_questionnaire_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.questionaire_questionnaire_id_seq OWNED BY public.questionnaire.questionnaire_id;
+ALTER SEQUENCE public.questionnaire_questionnaire_id_seq OWNED BY public.questionnaire.questionnaire_id;
 
 
 --
@@ -388,10 +388,10 @@ ALTER TABLE public.questionnaire_response OWNER TO postgres;
 
 --
 -- TOC entry 245 (class 1259 OID 16831)
--- Name: questionare_response_qestionnaire_response_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: questionnaire_response_questionnaire_response_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.questionare_response_qestionnaire_response_id_seq
+CREATE SEQUENCE public.questionnaire_response_questionnaire_response_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -400,15 +400,15 @@ CREATE SEQUENCE public.questionare_response_qestionnaire_response_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.questionare_response_qestionnaire_response_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.questionnaire_response_questionnaire_response_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 5123 (class 0 OID 0)
 -- Dependencies: 245
--- Name: questionare_response_qestionnaire_response_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: questionnaire_response_questionnaire_response_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.questionare_response_qestionnaire_response_id_seq OWNED BY public.questionnaire_response.questionnaire_response_id;
+ALTER SEQUENCE public.questionnaire_response_questionnaire_response_id_seq OWNED BY public.questionnaire_response.questionnaire_response_id;
 
 
 --
@@ -426,10 +426,10 @@ ALTER TABLE public.stimuli_combination OWNER TO postgres;
 
 --
 -- TOC entry 239 (class 1259 OID 16732)
--- Name: simuli_combination_stimulu_combination_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: stimuli_combination_stimulus_combination_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.simuli_combination_stimulu_combination_id_seq
+CREATE SEQUENCE public.stimuli_combination_stimulus_combination_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -438,15 +438,15 @@ CREATE SEQUENCE public.simuli_combination_stimulu_combination_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.simuli_combination_stimulu_combination_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.stimuli_combination_stimulus_combination_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 5124 (class 0 OID 0)
 -- Dependencies: 239
--- Name: simuli_combination_stimulu_combination_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: stimuli_combination_stimulus_combination_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.simuli_combination_stimulu_combination_id_seq OWNED BY public.stimuli_combination.stimulus_combination_id;
+ALTER SEQUENCE public.stimuli_combination_stimulus_combination_id_seq OWNED BY public.stimuli_combination.stimulus_combination_id;
 
 
 --
@@ -670,10 +670,10 @@ ALTER TABLE public.study_stimuli OWNER TO postgres;
 
 --
 -- TOC entry 247 (class 1259 OID 17247)
--- Name: sudy_study_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: study_study_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.sudy_study_id_seq
+CREATE SEQUENCE public.study_study_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -682,15 +682,15 @@ CREATE SEQUENCE public.sudy_study_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.sudy_study_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.study_study_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 5128 (class 0 OID 0)
 -- Dependencies: 247
--- Name: sudy_study_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: study_study_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.sudy_study_id_seq OWNED BY public.study.study_id;
+ALTER SEQUENCE public.study_study_id_seq OWNED BY public.study.study_id;
 
 
 --
@@ -852,7 +852,7 @@ ALTER TABLE ONLY public.participant ALTER COLUMN participant_id SET DEFAULT next
 -- Name: questionnaire questionnaire_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.questionnaire ALTER COLUMN questionnaire_id SET DEFAULT nextval('public.questionaire_questionnaire_id_seq'::regclass);
+ALTER TABLE ONLY public.questionnaire ALTER COLUMN questionnaire_id SET DEFAULT nextval('public.questionnaire_questionnaire_id_seq'::regclass);
 
 
 --
@@ -860,7 +860,7 @@ ALTER TABLE ONLY public.questionnaire ALTER COLUMN questionnaire_id SET DEFAULT 
 -- Name: questionnaire_item questionnaire_item_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.questionnaire_item ALTER COLUMN questionnaire_item_id SET DEFAULT nextval('public.questionaire_item_questionnaire_item_id_seq'::regclass);
+ALTER TABLE ONLY public.questionnaire_item ALTER COLUMN questionnaire_item_id SET DEFAULT nextval('public.questionnaire_item_questionnaire_item_id_seq'::regclass);
 
 
 --
@@ -868,7 +868,7 @@ ALTER TABLE ONLY public.questionnaire_item ALTER COLUMN questionnaire_item_id SE
 -- Name: questionnaire_response questionnaire_response_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.questionnaire_response ALTER COLUMN questionnaire_response_id SET DEFAULT nextval('public.questionare_response_qestionnaire_response_id_seq'::regclass);
+ALTER TABLE ONLY public.questionnaire_response ALTER COLUMN questionnaire_response_id SET DEFAULT nextval('public.questionnaire_response_questionnaire_response_id_seq'::regclass);
 
 
 --
@@ -884,7 +884,7 @@ ALTER TABLE ONLY public.stimuli ALTER COLUMN stimulus_id SET DEFAULT nextval('pu
 -- Name: stimuli_combination stimulus_combination_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.stimuli_combination ALTER COLUMN stimulus_combination_id SET DEFAULT nextval('public.simuli_combination_stimulu_combination_id_seq'::regclass);
+ALTER TABLE ONLY public.stimuli_combination ALTER COLUMN stimulus_combination_id SET DEFAULT nextval('public.stimuli_combination_stimulus_combination_id_seq'::regclass);
 
 
 --
@@ -900,7 +900,7 @@ ALTER TABLE ONLY public.stimulus_type ALTER COLUMN stimulus_type_id SET DEFAULT 
 -- Name: study study_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.study ALTER COLUMN study_id SET DEFAULT nextval('public.sudy_study_id_seq'::regclass);
+ALTER TABLE ONLY public.study ALTER COLUMN study_id SET DEFAULT nextval('public.study_study_id_seq'::regclass);
 
 
 --

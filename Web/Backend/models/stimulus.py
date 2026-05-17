@@ -16,6 +16,7 @@ class Stimulus(Base):
 
     stimulus_id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
+    description = Column(String, nullable=True)
     stimulus_type_id = Column(Integer, ForeignKey('stimulus_type.stimulus_type_id'), nullable=False)
 
     stimulus_type = relationship("StimulusType", back_populates="stimuli")
@@ -33,6 +34,7 @@ class Stimulus(Base):
         return {
             "stimulus_id": self.stimulus_id,
             "name": self.name,
+            "description": self.description,
             "stimulus_type": self.stimulus_type.type_name if self.stimulus_type else None,
             "visuals": [visual.stimulus_name for visual in self.visuals],
             "auditives": [

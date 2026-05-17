@@ -128,15 +128,22 @@ def import_mock():
 
 
 SEQUENCE_RESYNC_SQL = """
-SELECT setval('experiment_experiment_id_seq',                COALESCE((SELECT MAX(experiment_id)       FROM experiment),        0));
-SELECT setval('trial_trial_id_seq',                          COALESCE((SELECT MAX(trial_id)            FROM trial),             0));
-SELECT setval('trial_slot_trial_slot_id_seq',                COALESCE((SELECT MAX(trial_slot_id)       FROM trial_slot),        0));
-SELECT setval('sudy_study_id_seq',                           COALESCE((SELECT MAX(study_id)            FROM study),             0));
-SELECT setval('participant_participant_id_seq',               COALESCE((SELECT MAX(participant_id)      FROM participant),       0));
-SELECT setval('questionaire_questionnaire_id_seq',           COALESCE((SELECT MAX(questionnaire_id)    FROM questionnaire),     0));
-SELECT setval('questionaire_item_questionnaire_item_id_seq', COALESCE((SELECT MAX(questionnaire_item_id) FROM questionnaire_item), 0));
-SELECT setval('questionare_response_qestionnaire_response_id_seq', COALESCE((SELECT MAX(questionnaire_response_id) FROM questionnaire_response), 0));
-SELECT setval('handover_handover_id_seq', COALESCE((SELECT MAX(handover_id) FROM handover), 0));
+SELECT setval('experiment_experiment_id_seq',                          COALESCE((SELECT MAX(experiment_id)            FROM experiment),            0));
+SELECT setval('trial_trial_id_seq',                                    COALESCE((SELECT MAX(trial_id)                 FROM trial),                 0));
+SELECT setval('trial_slot_trial_slot_id_seq',                          COALESCE((SELECT MAX(trial_slot_id)            FROM trial_slot),            0));
+SELECT setval('study_study_id_seq',                                    COALESCE((SELECT MAX(study_id)                 FROM study),                 0));
+SELECT setval('study_config_study_config_id_seq',                      COALESCE((SELECT MAX(study_config_id)          FROM study_config),          0));
+SELECT setval('participant_participant_id_seq',                         COALESCE((SELECT MAX(participant_id)           FROM participant),           0));
+SELECT setval('questionnaire_questionnaire_id_seq',                    COALESCE((SELECT MAX(questionnaire_id)         FROM questionnaire),         0));
+SELECT setval('questionnaire_item_questionnaire_item_id_seq',          COALESCE((SELECT MAX(questionnaire_item_id)    FROM questionnaire_item),    0));
+SELECT setval('questionnaire_response_questionnaire_response_id_seq',  COALESCE((SELECT MAX(questionnaire_response_id) FROM questionnaire_response), 0));
+SELECT setval('handover_handover_id_seq',                              COALESCE((SELECT MAX(handover_id)              FROM handover),              0));
+SELECT setval('eye_tracking_eye_tracking_id_seq',                      COALESCE((SELECT MAX(eye_tracking_id)          FROM eye_tracking),          0));
+SELECT setval('stimuli_stimulus_id_seq',                               COALESCE((SELECT MAX(stimulus_id)              FROM stimuli),               0));
+SELECT setval('stimuli_combination_stimulus_combination_id_seq',       COALESCE((SELECT MAX(stimulus_combination_id)  FROM stimuli_combination),   0));
+SELECT setval('stimulus_type_stimulus_type_id_seq',                    COALESCE((SELECT MAX(stimulus_type_id)         FROM stimulus_type),         0));
+SELECT setval('area_of_interest_aoi_id_seq',                           COALESCE((SELECT MAX(aoi_id)                   FROM area_of_interest),      0));
+SELECT setval('avatar_visibility_avatar_visibility_id_seq',            COALESCE((SELECT MAX(avatar_visibility_id)     FROM avatar_visibility),     0));
 """
 
 
