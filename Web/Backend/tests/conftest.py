@@ -79,7 +79,7 @@ def study_id(client):
 @pytest.fixture(scope="function")
 def experiment_id(client, study_id):
     """Creates an experiment in the fixture study and returns its experiment_id."""
-    resp = client.post("/experiments/", json={"name": "Test Experiment", "study_id": study_id})
+    resp = client.post("/experiments/", json={"experimentSettings": {"study_id": study_id}})
     assert resp.status_code == 201
     return resp.json()["experiment_id"]
 
@@ -87,7 +87,7 @@ def experiment_id(client, study_id):
 @pytest.fixture(scope="function")
 def participant_id(client):
     """Creates a participant and returns its participant_id."""
-    resp = client.post("/api/participants/", json={"age": 25, "gender": "m", "handedness": "right"})
+    resp = client.post("/participants/", json={"age": 25, "gender": "m", "handedness": "right"})
     assert resp.status_code == 201
     return resp.json()["participant_id"]
 

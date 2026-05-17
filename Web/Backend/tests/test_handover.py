@@ -11,7 +11,7 @@ def trial_id(client, experiment_id):
     """
     resp = client.post(
         f"/experiments/{experiment_id}/trials",
-        json={"trials": [{"trial_number": 1, "slots": []}], "questionnaires": []}
+        json={"trials": [{"trial_number": 1, "slots": {}}], "questionnaires": []}
     )
     assert resp.status_code == 201, resp.text
     trials = client.get(f"/experiments/{experiment_id}/trials").json()
@@ -25,7 +25,7 @@ def participant_ids(client):
     ids = []
     for _ in range(2):
         resp = client.post(
-            "/api/participants/",
+            "/participants/",
             json={"age": 25, "gender": "m", "handedness": "right"}
         )
         assert resp.status_code == 201, resp.text
@@ -58,7 +58,7 @@ def _setup_trial(client, experiment_id: int, participant_id: int) -> int:
 
 
 def _create_second_participant(client) -> int:
-    resp = client.post("/api/participants/", json={"age": 30, "gender": "f", "handedness": "left"})
+    resp = client.post("/participants/", json={"age": 30, "gender": "f", "handedness": "left"})
     assert resp.status_code == 201
     return resp.json()["participant_id"]
 

@@ -13,8 +13,7 @@ def _get_or_create_experiment() -> int:
     assert study_resp.status_code == 201
     study_id = study_resp.json()["study_id"]
     exp_resp = client.post("/experiments/", json={
-        "name": "Trial Test Experiment",
-        "study_id": study_id
+        "experimentSettings": {"study_id": study_id}
     })
     assert exp_resp.status_code == 201
     return exp_resp.json()["experiment_id"]

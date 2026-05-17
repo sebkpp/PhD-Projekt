@@ -3,10 +3,11 @@ from starlette import status
 
 def test_create_experiment(client, study_id):
     resp = client.post("/experiments/", json={
-        "name": "Test Experiment",
-        "study_id": study_id,
-        "description": "A test experiment",
-        "researcher": "Dr. Test"
+        "experimentSettings": {
+            "study_id": study_id,
+            "description": "A test experiment",
+            "researcher": "Dr. Test"
+        }
     })
     assert resp.status_code == status.HTTP_201_CREATED
     data = resp.json()

@@ -408,8 +408,8 @@ def test_analyze_study_questionnaires_two_conditions(
     from Backend.services.data_analysis.questionnaire_analysis_service import analyze_study_questionnaires
 
     # Two experiments in the same study
-    resp_a = client.post("/experiments/", json={"name": "Exp A", "study_id": study_id})
-    resp_b = client.post("/experiments/", json={"name": "Exp B", "study_id": study_id})
+    resp_a = client.post("/experiments/", json={"experimentSettings": {"study_id": study_id}})
+    resp_b = client.post("/experiments/", json={"experimentSettings": {"study_id": study_id}})
     exp_a_id = resp_a.json()["experiment_id"]
     exp_b_id = resp_b.json()["experiment_id"]
 

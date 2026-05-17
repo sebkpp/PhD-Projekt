@@ -46,7 +46,7 @@ def create_study(session, data):
     s_repo = StudyRepository(session)
     study = s_repo.create(study_fields)
 
-    study_config = create_study_config(session, study.study_id, data.get("config", {}))
+    study_config = create_study_config(session, study.study_id, data.get("config") or {})
     stimuli_data = data.get("stimuli", [])
     for stim in stimuli_data:
         # Falls stim ein dict ist, extrahiere die ID

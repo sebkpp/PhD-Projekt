@@ -303,4 +303,4 @@ def test_get_questionnaire_by_id_200(client):
     # Fetch by ID
     resp2 = client.get(f"/questionnaires/{q_id}")
     assert resp2.status_code == 200
-    assert resp2.json()["questionnaire_id"] == q_id
+    assert resp2.json()["data"]["questionnaire_id"] == q_id

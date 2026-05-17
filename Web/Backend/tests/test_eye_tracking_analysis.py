@@ -446,8 +446,8 @@ def test_analyze_study_eye_tracking_two_conditions(
     from Backend.services.data_analysis.eye_tracking_analysis_service import analyze_study_eye_tracking
 
     # Create two experiments in the same study
-    resp_a = client.post("/experiments/", json={"name": "Exp A", "study_id": study_id})
-    resp_b = client.post("/experiments/", json={"name": "Exp B", "study_id": study_id})
+    resp_a = client.post("/experiments/", json={"experimentSettings": {"study_id": study_id}})
+    resp_b = client.post("/experiments/", json={"experimentSettings": {"study_id": study_id}})
     assert resp_a.status_code == 201 and resp_b.status_code == 201
     exp_a_id = resp_a.json()["experiment_id"]
     exp_b_id = resp_b.json()["experiment_id"]

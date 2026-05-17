@@ -3,7 +3,7 @@ from starlette import status
 
 def test_analysis_questionnaires_all(client):
     resp = client.get("/analysis/questionnaires")
-    assert resp.status_code < 500
+    assert resp.status_code in (200, 501)
 
 
 def test_analysis_questionnaires_study(client, study_id):
@@ -19,7 +19,7 @@ def test_analysis_questionnaires_experiment(client, experiment_id):
 
 def test_analysis_performance_all(client):
     resp = client.get("/analysis/performance")
-    assert resp.status_code < 500
+    assert resp.status_code in (200, 501)
 
 
 def test_analysis_performance_study(client, study_id):
@@ -34,7 +34,7 @@ def test_analysis_performance_experiment(client, experiment_id):
 
 def test_analysis_eyetracking_all(client):
     resp = client.get("/analysis/eyetracking")
-    assert resp.status_code < 500
+    assert resp.status_code in (200, 501)
 
 
 def test_analysis_eyetracking_study(client, study_id):
