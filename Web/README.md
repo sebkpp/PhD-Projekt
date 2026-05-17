@@ -94,6 +94,20 @@ During setup you will be asked for:
 - **Database user** — usually `postgres` on Windows, your macOS username on Mac
 - **Database password** — the password you want to use (on Windows, this will also be set as the PostgreSQL superuser password)
 
+### Generated `.env` file
+
+The setup script creates `Backend/.env` automatically from your input. It is never committed to version control. The file has the following structure:
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=vr_study
+DB_USER=postgres
+DB_PASSWORD=your_password
+```
+
+If you need to change the database connection later (e.g. after reinstalling PostgreSQL or changing your password), edit this file directly. The backend reads it on every start via `db_session.py`.
+
 If the setup script cannot find `uv` or `npm` after installing them, close the terminal, open a new one, and run the script again. This is a known Windows behaviour when newly installed tools are not yet visible in the current session.
 
 ---
@@ -161,12 +175,22 @@ The following data is imported from `Backend/data/static/` during setup and is r
 
 A pre-built example dataset is available in `Backend/data/testmock/`. It contains a complete study with experiments, trials, participants, handover events, eye tracking data, and questionnaire responses. This is useful for exploring the application and its analysis features without needing to conduct a real study first.
 
-To import it, run from the `Web/` directory:
+---
+
+## Managing Imports (`manage_imports.py`)
+
+`Backend/scripts/manage_imports.py` is the central script for importing data into the database. It always performs a full reset first (all tables are truncated and sequences restarted), then re-imports static reference data, and optionally imports the mock dataset.
+
+> **Prerequisite:** `Backend/.env` must exist and contain valid database credentials before running this script. The script connects to the database defined there. If the file is missing, run the setup script first or create it manually — see [Generated `.env` file](#generated-env-file) above for the required structure.
+
+Run from the `Web/` directory:
 
 ```bash
 cd Backend/scripts
 uv run python manage_imports.py
 ```
+
+The script will prompt for confirmation before deleting any data, and then ask whether to also import mock data.
 
 ---
 
