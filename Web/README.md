@@ -124,12 +124,25 @@ To stop the application, close the terminal windows (Windows) or press `Ctrl+C` 
 
 ## Alternative: Opening with JetBrains WebStorm
 
-If you have [JetBrains WebStorm](https://www.jetbrains.com/webstorm/) installed, you can open the `Web/` folder directly in WebStorm. After running the setup script at least once (to create `.env` and install dependencies), you can start backend and frontend from within the IDE:
+If you have [JetBrains WebStorm](https://www.jetbrains.com/webstorm/) installed, you can open the `Web/` folder directly in WebStorm and run both processes from the IDE. Run the setup script at least once first so that `.env` and all dependencies are in place.
 
-- **Frontend:** Open the `package.json` file and click the green run button next to `"dev"`, or use the built-in npm tool window (`View → Tool Windows → npm`).
-- **Backend:** Create a run configuration for `Backend/app.py` using the Python interpreter from the `.venv` folder inside `Web/`. Set the working directory to `Web/`.
+### Frontend (Vite) Run Configuration
 
-WebStorm also provides integrated terminal access, code completion for both Python and JavaScript, and database tooling for connecting to PostgreSQL.
+Create a new **npm** run configuration (`Run → Edit Configurations → + → npm`). Select `Web/package.json`, set the command to `run` and the script to `dev`.
+
+![Vite run configuration in WebStorm](../docs/images/viteConfig.png)
+
+### Backend (FastAPI) Run Configuration
+
+Create a new **Python** run configuration (`Run → Edit Configurations → + → Python`). Set the run type to `module`, the module to `Backend.app`, and the working directory to your local `Web/` folder. Select the `uv`-managed interpreter from `Web/.venv`.
+
+> **Important:** The "Paths to `.env` files" field must point to your local `Backend/.env`. This path is machine-specific and must be adjusted to match your system. The `.env.test` file in the same folder is a dummy used only for the automated test suite — it does not contain real database credentials.
+>
+> The working directory must be `Web/`, not `Web/Backend/`. The module `Backend.app` is resolved relative to `Web/`.
+
+![Backend run configuration in WebStorm](../docs/images/backendConfig.png)
+
+WebStorm also provides integrated terminal access, code completion for both Python and JavaScript, and database tooling for connecting to PostgreSQL (see [WebStorm Database Tool](#webstorm-database-tool) below).
 
 ---
 
