@@ -1,0 +1,6 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "SonicSensor")(type "KiCad")(uri "${KIPRJMOD}/SonicSensor.kicad_sym")(options "")(descr ""))
+  (lib (name "waveshare_esp32_s3_mini_zero")(type "KiCad")(uri "/home/felix/Downloads/waveshare_esp32_s3_mini_zero.kicad_sym")(options "")(descr ""))
+  (lib (name "TP4056")(type "KiCad")(uri "${KIPRJMOD}/TP4056.kicad_sym")(options "")(descr ""))
+)

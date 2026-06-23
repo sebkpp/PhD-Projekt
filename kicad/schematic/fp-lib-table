@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "ESP_global")(type "KiCad")(uri "/home/felix/Documents/Uni/something something/ESP_global.pretty")(options "")(descr ""))
+)
